@@ -30,9 +30,8 @@ My great uncle Ahmad, my great uncle Harb & my uncle Zain. Allah yrhamkom.
 
 ![harb](/images/harb.jpeg)
 
-Alexia Ntakos. For every moral, every lesson, and every piece of wisdom you taught me. Without you being there for me and pushing me throughout all these years, I don't know if any of this would have ever come out of me if it wasn't for you being there. I love you with my entire soul. You'll never understand the capacity of love and I have for you.
-
-Layla Comeau. A huge part of this exists because you refused to let me stop. You're the reason all of this is happening, you're the reason the light didn't shed. You're an amazing writer and a beautiful mind. 
+Sophia. For every moral, every lesson, and every piece of wisdom you taught me. Without you being there for me and pushing me throughout all these years, I don't know if any of this would have ever come out of me if it wasn't for you being there. I love you with my entire soul. You'll never understand the capacity of love and I have for you.
+A huge part of this exists because you refused to let me stop. You're the reason all of this is happening, you're the reason the light didn't shed. You're an amazing soul and a beautiful mind. 
 
 Mohamed Salama. For taking me under your wing when I was still finding my way. None of this would have started, happened, or manifested without your love, courage, and belief in me. You helped plant the seed long before I knew what it could become.
 
@@ -42,7 +41,7 @@ Toren Berios. For the creative mind, and the humour we share. That studio in Mis
 
 Bianca Morelli. For being one of my biggest inspirations. I love you. You're great and utterly divine. For reminding me that beauty exists both within a person and in the way they make others feel. Your influence will always live within me and mean the world to me.
 
-Nabulsi. Azooz. Persian Boy. Idris. Kenshi & Rocky. Waleed Musa. Sabir Hirsi. Baby Draco. Omar Aljokhadar.
+Hashim. Omar Aljokhadar. Gassan AlKurdi. Nabulsi. Azooz. Persian Boy. Idris. Kenshi & Rocky. Waleed Musa. Sabir Hirsi. Baby Draco.
 
 Influenced by the works and artistry of: Madonna Ciccone, Christopher Breaux, Aubrey Graham, Rakim Mayers, Solána Imani Rowe, Bill Kapri. Sami Hamed, Jacques Webber II, Jahron Brathwaite, Rakim Allen, Josiah Ramel, Calvin Scruby, Toren Berios, Killaxbeats, Mohamed Salama, Ibrahim Skaik, Abel Tesfaye, Nayvadius Cash, Tyler-Justin Sharpe, Laith Hasan, Miles McCollum, Razi Derrick, and Tione Merritt.
 
