@@ -27,6 +27,26 @@ const postsWithThumbs = posts.map((post) => {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Turath</title>
+    <style is:global>
+      /* GIF background — front page only */
+      body.home {
+        background-image: url('/images/background.gif');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+      }
+
+      body.home .post-card a {
+        background: rgba(255, 255, 255, 0.92);
+      }
+
+      body.home .hero {
+        background: rgba(255, 255, 255, 0.85);
+        border-radius: 12px;
+        padding: 2rem 1rem;
+      }
+    </style>
   </head>
   <body class="home">
     <header>
@@ -69,22 +89,3 @@ const postsWithThumbs = posts.map((post) => {
     </footer>
   </body>
 </html>
-/* GIF background — front page only */
-body.home {
-  background-image: url('/images/background.gif');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-}
-
-body.home .post-card a {
-  background: rgba(255, 255, 255, 0.92);
-}
-
-body.home .hero {
-  background: rgba(255, 255, 255, 0.85);
-  border-radius: 12px;
-  padding: 2rem 1rem;
-}
-
