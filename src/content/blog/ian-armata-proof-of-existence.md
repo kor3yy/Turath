@@ -2,6 +2,7 @@
 title: "Ian Armata: Proof of Existence"
 pubDate: 2026-10-15
 description: "At only 21 years old, Ian Armata has built a photography career around showing up, meeting people, and keeping things natural — from a joke hype video to photographing some of the biggest names in rap."
+thumbnail: "/images/1DC793DA-8D65-467B-AC83-1AB4D2BC77E9.JPG"
 ---
 
 At only 21 years old, Ian Armata is already finding his place in an industry where timing, connections, and perspective can mean everything. Raised in a town outside Atlanta, Georgia, with a family that supported him through every pursuit, Armata has built his photography career around a simple philosophy: show up, meet people, and keep pushing your craft forward. He doesn't believe there's a limit to creativity.
