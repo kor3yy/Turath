@@ -4,7 +4,6 @@ pubDate: 2026-10-15
 description: "For Ian Armata, photography has always been about more than the pictures. It's the music, the people, and the moments that make it all worth it. At 21, he's only getting started."
 thumbnail: "/images/1DC793DA-8D65-467B-AC83-1AB4D2BC77E9.JPG"
 ---
-
  <img src="/images/1DC793DA-8D65-467B-AC83-1AB4D2BC77E9.JPG"/>
  
 At only 21 years old, Ian Armata is already finding his place in an industry where timing, connections, and perspective can mean everything. Raised in a town outside Atlanta, Georgia, with a family that supported him through every pursuit, Armata has built his photography career around a simple philosophy: show up, meet people, and keep pushing your craft forward. He doesn't believe there's a limit to creativity.
@@ -46,11 +45,21 @@ Music and film sit at the centre of Armata's creative world. He describes music 
 
 That influence carries into his photography. Rather than dramatically altering what he captures, he gravitates toward keeping things natural, preserving the atmosphere of a moment instead of transforming it into something unrecognizable. He combined his two favourite worlds together.
 
+<figure>
+  <img src="/images/9417D6C7-800B-4C38-B0B3-53AB1B02BAB7.JPG"/>
+  <figcaption>Destroy Lonely, Summer Smash 2025, Day2, Bridgeview, Illinois, June 21st, 2025</figcaption>
+</figure>
+
 "I keep everything natural to an extent. I want to make a viewer feel like they were there in a way."
 
 It is an approach that places the experience ahead of the spectacle. Whether he is photographing an artist onstage or capturing a moment away from the spotlight, his goal is to bring the viewer closer to what happened. The image becomes more than documentation; it becomes a way of revisiting a place, a performance, and a feeling.
 
 His musical influences are just as personal. Lil Yachty remains his favourite artist, someone he has listened to since 2020 and whose work he continues to appreciate beyond the music itself.
+
+<figure>
+  <img src="/images/34AA1CDB-6D80-4E30-967F-920A0A121392.JPG"/>
+  <figcaption>Lil Yachty & Karrahboo, It's Us Volume 2 Tour, Center Stage, Atlanta, Georgia, May 26th, 2026</figcaption>
+</figure>
 
 "He's a genuine good person and artist," Armata says. "It's always amazing to get to shoot him."
 
@@ -59,6 +68,11 @@ Being able to photograph an artist whose music has accompanied him for years giv
 ## Familiar Faces, Lasting Connections
 
 As his work has circulated through concerts, tours, and creative communities, Armata has started to recognize the reach of his photography. He does not claim to be known around the world, but he understands that his images sometimes travel further than his name.
+
+<figure>
+  <img src="/images/E2AFFBF5-A9C0-4FB9-B569-9C1693F6C92D.JPG"/>
+  <figcaption>Che Encore Tour Tabernacle, Atlanta, Georgia, May 9th, 2026</figcaption>
+</figure>
 
 "A lot of people have seen my work without knowing me," he explains. "Anytime I get recognized at a show, I get told, 'I've seen you before,' but never like, 'Oh, you're this person,' you know?"
 
