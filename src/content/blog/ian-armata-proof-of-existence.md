@@ -6,7 +6,7 @@ thumbnail: "/images/1DC793DA-8D65-467B-AC83-1AB4D2BC77E9.JPG"
 ---
  <img src="/images/1DC793DA-8D65-467B-AC83-1AB4D2BC77E9.JPG"/>
  
-At only 21 years old, Ian Armata is already finding his place in an industry where timing, connections, and perspective can mean everything. Raised in a town outside Atlanta, Georgia, with a family that supported him through every pursuit, Armata has built his photography career around a simple philosophy: show up, meet people, and keep pushing your craft forward. He doesn't believe there's a limit to creativity.
+At only 21 years old, Armata is already finding his place in an industry where timing, connections, and perspective can mean everything. Raised in a town outside Atlanta, Georgia, with a family that supported him through every pursuit, Armata has built his photography career around a simple philosophy: show up, meet people, and keep pushing your craft forward. He doesn't believe there's a limit to creativity.
 
 His entry into photography was never part of some carefully constructed plan. It started as a joke.
 
@@ -14,7 +14,7 @@ His entry into photography was never part of some carefully constructed plan. It
 
 What began with a simple hobby eventually grew into photographing his school's teams before graduation opened the door to something bigger: music.
 
-Ian was mesmerized by music. His entire world was built around music. His first concert shoot was Kodie Shane, marking the beginning of a journey that would take him into venues, behind the scenes, and alongside some of the most recognizable names in rap today.
+Armata was mesmerized by music. His entire world was built around music. His first concert shoot was Kodie Shane, marking the beginning of a journey that would take him into venues, behind the scenes, and alongside some of the most recognizable names in rap today.
 
 <figure>
   <img src="/images/28A96D51-9331-404F-8F05-191892AA823E.JPG"/>
@@ -31,7 +31,7 @@ For Armata, the experience mattered beyond the quality of the images. It was an 
 
 ## Seeing Through the Lens
 
-Music and film sit at the centre of Armata's creative world. He describes music as a constant presence in his life, listening for nearly all 18 hours he spends awake each day, while it continues to shape the way he sees and interprets the world around him.
+Music and film sit at the center of Armata's creative world. He describes music as a constant presence in his life, listening for nearly all 18 hours he spends awake each day, while it continues to shape the way he sees and interprets the world around him.
 
 That influence carries into his photography. Rather than dramatically altering what he captures, he gravitates toward keeping things natural, preserving the atmosphere of a moment instead of transforming it into something unrecognizable. He combined his two favourite worlds together.
 
@@ -165,7 +165,7 @@ To the younger generation, his message is one of persistence and self-belief.
 
 "Keep your head high, shake hands, meet people and show up. If you put your mind to it, anything you want can and will be accomplished."
 
-At 21, Ian Armata is still working toward the stadium tour he sees in his dreams. There are more artists to photograph, more stories to tell, and more opportunities to earn. He does not pretend to have reached the end of his journey.
+At 21, Armata is still working toward the stadium tour he sees in his dreams. There are more artists to photograph, more stories to tell, and more opportunities to earn. He does not pretend to have reached the end of his journey.
 
 <figure>
   <img src="/images/EBDA0D63-42B5-465E-BE9C-8DF69DD2D9B4.JPG"/>
