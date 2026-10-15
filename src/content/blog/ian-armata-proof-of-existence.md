@@ -5,6 +5,8 @@ description: "For Ian Armata, photography has always been about more than the pi
 thumbnail: "/images/1DC793DA-8D65-467B-AC83-1AB4D2BC77E9.JPG"
 ---
 
+/images/1DC793DA-8D65-467B-AC83-1AB4D2BC77E9.JPG
+
 At only 21 years old, Ian Armata is already finding his place in an industry where timing, connections, and perspective can mean everything. Raised in a town outside Atlanta, Georgia, with a family that supported him through every pursuit, Armata has built his photography career around a simple philosophy: show up, meet people, and keep pushing your craft forward. He doesn't believe there's a limit to creativity.
 
 His entry into photography was never part of some carefully constructed plan. It started as a joke.
@@ -25,12 +27,16 @@ Ian was mesmerized by music. His entire world was built around music. His first 
   <figcaption>Lil Yachty, at the Yacht Water Pop-Up, Athens, Georgia. November 14th, 2025</figcaption>
 </figure>
 
-
 But it was not an overnight success story. One of the moments that helped change his perspective came when he photographed Ken Carson during the Great Chaos Tour. Looking back, he admits the pictures were far from his best work.
 
 "The feedback wasn't amazing, and the pics were highkey terrible," he says. "But, like bro, it was one of the biggest artists at the time."
 
 It was 2024, and Ken Carson was the #98th most streamed artist in the world, with his biggest album being released the year prior. His peak and career were at an all-time high, so the significance of this moment couldn't be put in words.
+
+<figure>
+  <img src="/images/2BCB3240-C3B9-4FE6-ACCF-2136FDC2E192"/>
+  <figcaption>Ken Carson's Pop-up, Atlanta, Georgia. August 13th, 2026</figcaption>
+</figure>
 
 For Armata, the experience mattered beyond the quality of the images. It was an opportunity to be in the same room, learn from the experience, and recognize what he wanted to pursue. Sometimes, the moments that push a creative forward are not the ones that make them look their best, but the ones that show them how much further they can go. To master their craft.
 
