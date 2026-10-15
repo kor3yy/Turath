@@ -1,0 +1,27 @@
+[[routes]]
+pattern = "tturatth.com"
+custom_domain = true
+
+name = "turath-blog"
+compatibility_date = "2026-08-21"
+
+[assets]
+directory = "./dist"
+[[routes]]
+pattern = "tturatth.com"
+custom_domain = true
+
+
+cat > wrangler.toml << 'EOF'
+name = "turath-blog"
+compatibility_date = "2026-08-21"
+
+[assets]
+directory = "./dist"
+
+[[routes]]
+pattern = "tturatth.com"
+custom_domain = true
+EOF
+
+

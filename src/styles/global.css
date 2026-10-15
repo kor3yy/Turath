@@ -219,3 +219,21 @@ footer {
   border-radius: 4px;
   object-fit: cover;
 }
+/* GIF background — front page only */
+body.home {
+  background-image: url('/images/background.gif');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+body.home .post-card a {
+  background: rgba(255, 255, 255, 0.92);
+}
+
+body.home .hero {
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 12px;
+  padding: 2rem 1rem;
+}
