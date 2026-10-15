@@ -1,7 +1,7 @@
 ---
 title: "Ian Armata: Proof of Existence"
 pubDate: 2026-10-15
-description: "At only 21 years old, Ian Armata has built a photography career around showing up, meeting people, and keeping things natural — from a joke hype video to photographing some of the biggest names in rap."
+description: "For Ian Armata, photography has always been about more than the pictures. It's the music, the people, and the moments that make it all worth it. At 21, he's only getting started."
 thumbnail: "/images/1DC793DA-8D65-467B-AC83-1AB4D2BC77E9.JPG"
 ---
 
@@ -11,9 +11,20 @@ His entry into photography was never part of some carefully constructed plan. It
 
 "I did a hype video for one of my buddy's Hyba basketball league," he recalls. "I got good feedback immediately, so I just kept going, and now I'm here."
 
+<figure>
+  <img src="/images/EBDA0D63-42B5-465E-BE9C-8DF69DD2D9B4.JPG"/>
+  <figcaption>Young Thug, at the New Generation Tour, Coca Cola Amphitheater, Alabama, September 25th, 2026</figcaption>
+</figure>
+
 What began with a simple hobby eventually grew into photographing his school's teams before graduation opened the door to something bigger: music.
 
 Ian was mesmerized by music. His entire world was built around music. His first concert shoot was Kodie Shane, marking the beginning of a journey that would take him into venues, behind the scenes, and alongside some of the most recognizable names in rap today.
+
+<figure>
+  <img src="/images/7D7DA6B8-A1CE-4081-819D-449AE0FC9EDA.JPG"/>
+  <figcaption>Lil Yachty, at the Yacht Water Pop-Up, Athens, Georgia. November 14th, 2025</figcaption>
+</figure>
+
 
 But it was not an overnight success story. One of the moments that helped change his perspective came when he photographed Ken Carson during the Great Chaos Tour. Looking back, he admits the pictures were far from his best work.
 
