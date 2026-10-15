@@ -1,5 +1,5 @@
 ---
-title: "Ian Armata: Proof of Existence"
+title: "Armata Visuals: Proof of Existence"
 pubDate: 2026-10-15
 description: "For Ian Armata, photography has always been about more than the pictures. It's the music, the people, and the moments that make it all worth it. At 21, he's only getting started."
 thumbnail: "/images/1DC793DA-8D65-467B-AC83-1AB4D2BC77E9.JPG"
