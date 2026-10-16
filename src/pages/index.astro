@@ -29,24 +29,24 @@ const postsWithThumbs = posts.map((post) => ({
     <title>Turath</title>
 
     <style is:global>
-  
-/* Homepage background — still image */
-body.home {
-  background-image: url('/images/6bb21238-7f80-4c33-9544-e25c57cd383a.png');
-background-size: 100% auto;
-background-position: center top;
-  background-attachment: scroll;
-  background-repeat: no-repeat;
-  background-color: #ffffff;
-}
+      /* Homepage background */
+      body.home {
+        background-image: url('/images/6bb21238-7f80-4c33-9544-e25c57cd383a.png');
+        background-size: 100% auto;
+        background-position: center top;
+        background-attachment: scroll;
+        background-repeat: no-repeat;
+        background-color: #ffffff;
+      }
 
-@media (max-width: 600px) {
-  body.home {
-    background-size: 100% auto;
-    background-position: center top;
-    background-repeat: no-repeat;
-  }
-}
+      @media (max-width: 600px) {
+        body.home {
+          background-size: 100% auto;
+          background-position: center top;
+          background-repeat: no-repeat;
+        }
+      }
+
       /* White background behind article cards */
       body.home .post-card a {
         background: rgba(255, 255, 255, 0.92);
@@ -58,13 +58,40 @@ background-position: center top;
         border-radius: 12px;
         padding: 2rem 1rem;
       }
+
+      /* Website logo */
+      body.home header nav .logo {
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+      }
+
+      body.home .site-logo {
+        display: block;
+        width: 120px;
+        height: auto;
+        object-fit: contain;
+      }
+
+      @media (max-width: 600px) {
+        body.home .site-logo {
+          width: 90px;
+        }
+      }
     </style>
   </head>
 
   <body class="home">
     <header>
       <nav>
-        <a href="/" class="logo">Turath</a>
+        <a href="/" class="logo" aria-label="Turath homepage">
+          <img
+            src="/images/korteiz.jpg"
+            alt="Turath logo"
+            class="site-logo"
+          />
+        </a>
+
         <div class="nav-links">
           <a href="/">Home</a>
           <a href="/about">About</a>
