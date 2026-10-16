@@ -30,25 +30,23 @@ const postsWithThumbs = posts.map((post) => ({
 
     <style is:global>
       /* Animated GIF background */
-      body.home {
-        background-image: url('/images/background.gif');
-        background-size: auto 100vh;
-        background-position: center top;
-        background-attachment: scroll;
-        background-repeat: repeat-y;
-        background-color: #ffffff;
-      }
+     body.home {
+  background-image: url('/images/background.gif');
+  background-size: cover;
+  background-position: center top;
+  background-attachment: scroll;
+  background-repeat: no-repeat;
+  background-color: #ffffff;
+}
 
-      /* Fit the background to phone screens */
-      @media (max-width: 600px) {
-        body.home {
-          background-size: 100% auto;
-          background-position: center top;
-          background-attachment: scroll;
-          background-repeat: repeat-y;
-        }
-      }
-
+@media (max-width: 600px) {
+  body.home {
+    background-size: 100% auto;
+    background-position: center top;
+    background-attachment: scroll;
+    background-repeat: no-repeat;
+  }
+}
       /* White background behind article cards */
       body.home .post-card a {
         background: rgba(255, 255, 255, 0.92);
