@@ -1,3 +1,4 @@
+
 ---
 import { getCollection } from 'astro:content';
 
@@ -20,6 +21,15 @@ const { Content } = await post.render();
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{post.data.title} — Turath</title>
     <meta name="description" content={post.data.description} />
+
+    <meta property="og:title" content={post.data.title} />
+    <meta property="og:description" content={post.data.description} />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content={`https://tturatth.com/blog/${post.slug}/`} />
+    {post.data.thumbnail && (
+      <meta property="og:image" content={`https://tturatth.com${post.data.thumbnail}`} />
+    )}
+
     <link rel="stylesheet" href="/styles/global.css" />
   </head>
   <body>
@@ -36,7 +46,13 @@ const { Content } = await post.render();
       <article class="post-article">
         <a href="/blog" class="back-link">&larr; Back to posts</a>
         <h1>{post.data.title}</h1>
-        <p class="post-date">{post.data.pubDate && post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+        <p class="post-date">
+          {post.data.pubDate?.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })}
+        </p>
         <Content />
       </article>
     </main>
