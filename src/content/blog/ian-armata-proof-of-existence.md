@@ -2,7 +2,7 @@
 title: "Armata Visuals: Proof of Existence"
 pubDate: 2026-10-15
 description: "For Ian Armata, photography has always been about more than the pictures. It's the music, the people, and the moments that make it all worth it. At 21, he's only getting started."
-thumbnail: "/images/tttjenna.jpeg"
+thumbnail: "/images/1DC793DA-8D65-467B-AC83-1AB4D2BC77E9-modified.jpeg"
 ---
  
 At only 21 years old, Armata is already finding his place in an industry where timing, connections, and perspective can mean everything. Raised in a town outside Atlanta, Georgia, with a family that supported him through every pursuit, Armata has built his photography career around a simple philosophy: show up, meet people, and keep pushing your craft forward. He doesn't believe there's a limit to creativity.
