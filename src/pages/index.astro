@@ -70,20 +70,38 @@ const postsWithThumbs = posts.map((post) => {
 
       <section class="posts">
         <h2>Latest Posts</h2>
-        <ul class="post-list">
-          {postsWithThumbs.map((post) => (
-<li class="post-card">
-  <a href={`/blog/${post.slug}/`} data-title={post.data.title}>
-                {post.firstImage && (
-                  <img src={post.firstImage} alt={post.data.title} class="post-thumbnail" />
-                )}
-                <h3>{post.data.title}</h3>
-                <p class="post-date">{post.data.pubDate ? post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : ''}</p>
-                <p>{post.data.description}</p>
-              </a>
-            </li>
-          ))}
-        </ul>
+<ul class="post-list">
+  {postsWithThumbs.map((post) => (
+    <li class="post-card">
+      <a href={`/blog/${post.slug}/`}>
+        <div class="thumbnail-wrap">
+          {post.firstImage && (
+            <img
+              src={post.firstImage}
+              alt={post.data.title}
+              class="post-thumbnail"
+            />
+          )}
+          <span class="thumbnail-title">{post.data.title}</span>
+        </div>
+
+        <h3>{post.data.title}</h3>
+
+        <p class="post-date">
+          {post.data.pubDate
+            ? post.data.pubDate.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })
+            : ''}
+        </p>
+
+        <p>{post.data.description}</p>
+      </a>
+    </li>
+  ))}
+</ul>
       </section>
     </main>
 
