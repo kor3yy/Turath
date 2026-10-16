@@ -2,7 +2,7 @@
 title: "Savia Ashby: Building a New Lane in Pop, One Song at a Time"
 pubDate: 2026-07-23
 description: "How Toronto-based singer-songwriter Savia Ashby is blending dark pop, EDM, rock, and powerful vocals into a sound all her own."
-thumbnail: "/images/beach.jpg"
+thumbnail: "/images/tttsaviasavia.jpeg"
 ---
 
 For Savia Ashby, music has always been connected to identity. Long before she was writing songs or performing, she was shaped by the values, cultures, and experiences that surrounded her growing up. Now, the Toronto-based singer-songwriter is bringing those influences into her own version of pop – one built around strong vocals, honest songwriting, and a sound that refuses to stay in one category.
