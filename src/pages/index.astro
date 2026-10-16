@@ -72,8 +72,8 @@ const postsWithThumbs = posts.map((post) => {
         <h2>Latest Posts</h2>
         <ul class="post-list">
           {postsWithThumbs.map((post) => (
-            <li class="post-card">
-              <a href={`/blog/${post.slug}/`}>
+          <li class="post-card" data-title={post.data.title}>
+  <a href={`/blog/${post.slug}/`}>
                 {post.firstImage && (
                   <img src={post.firstImage} alt={post.data.title} class="post-thumbnail" />
                 )}
