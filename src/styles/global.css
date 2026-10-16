@@ -273,3 +273,41 @@ body.home .hero {
 .post-article figcaption {
   text-align: center;
 }
+
+/* Article thumbnail hover effect */
+.post-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.post-card img {
+  display: block;
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.post-card:hover img {
+  filter: blur(4px);
+  transform: scale(1.05);
+}
+
+.post-card::after {
+  content: attr(data-title);
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  color: white;
+  font-size: 1.3rem;
+  font-weight: 600;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.post-card:hover::after {
+  opacity: 1;
+}
