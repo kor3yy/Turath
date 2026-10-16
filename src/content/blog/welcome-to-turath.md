@@ -2,7 +2,7 @@
 title: "Acknowledgments"
 description: "This project would never have been possible without these beautiful souls, whose love, support, and belief carried me through it all. Their influence in my day to day life lives. A piece of my heart belongs to each of them."
 pinned: true
-thumbnail: /images/harb.jpeg
+thumbnail: /images/harb-modified.jpeg
 ---
 
 Leen. My heart, my soul, my everything. This project—every letter, every code, every character typed, every story, every breath, every heartbeat—is dedicated to you. Your presence changed the shape of my life forever, and you're forever going to be that beautiful decorated soul for me.
