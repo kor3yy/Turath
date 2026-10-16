@@ -274,26 +274,24 @@ body.home .hero {
   text-align: center;
 }
 
+
 /* Article thumbnail hover effect */
-.post-card {
+.post-card a {
   position: relative;
   overflow: hidden;
 }
 
-.post-card img {
-  display: block;
+.post-card .post-thumbnail {
   transition: filter 0.3s ease, transform 0.3s ease;
 }
 
-.post-card:hover img {
-  filter: blur(4px);
-  transform: scale(1.05);
-}
-
-.post-card::after {
+.post-card a::after {
   content: attr(data-title);
   position: absolute;
-  inset: 0;
+  top: 1.5rem;
+  left: 1.5rem;
+  right: 1.5rem;
+  height: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -308,6 +306,11 @@ body.home .hero {
   pointer-events: none;
 }
 
-.post-card:hover::after {
+.post-card a:hover .post-thumbnail {
+  filter: blur(4px);
+  transform: scale(1.05);
+}
+
+.post-card a:hover::after {
   opacity: 1;
 }
