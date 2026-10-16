@@ -237,3 +237,39 @@ body.home .hero {
   border-radius: 12px;
   padding: 2rem 1rem;
 }
+
+
+/* Article reading experience */
+.post-article {
+  text-align: left;
+  max-width: 720px;
+  margin: 0 auto;
+  line-height: 1.8;
+}
+
+.post-article p,
+.post-article h1,
+.post-article h2,
+.post-article h3,
+.post-article ul,
+.post-article ol {
+  text-align: left;
+}
+
+.post-article h1 {
+  line-height: 1.2;
+  margin-bottom: 1rem;
+}
+
+.post-article p {
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.post-article figure {
+  margin: 2.5rem 0;
+}
+
+.post-article figcaption {
+  text-align: center;
+}
