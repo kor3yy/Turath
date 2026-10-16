@@ -1,6 +1,6 @@
 ---
 title: "Acknowledgments"
-description: "This project would never have been possible without these beautiful souls, whose love, support, and belief carried me through it all. Their influence in my day to day life lives. A piece of my heart belongs to each of them."
+description: "This project would never have been possible without these beautiful souls, whose love, support, inspitration, and belief carried me through it all. Their influence in my day to day life lives. A piece of my heart belongs to each one of them."
 pinned: true
 thumbnail: /images/harb-modified.jpeg
 ---
@@ -11,27 +11,18 @@ Your impact is something words will never be able to fully carry. You were, and 
 
 Sara, sister of Leen, for her tenderness,
 
-![sara](/images/sara.jpeg)
-
 Ibrahim, brother of Leen, for aspiring and dreaming.
-
-![ibrahim](/images/ibrahim.PNG) ![1handallah](/images/handallah.jpeg)
 
 Inas, mother of Leen, for the art and legacy she left behind.
 
-![leenalbi](/images/leenalbi.jpg)
+Farah, sister of Leen. For being the sister of my favourite lost soul, my guardian angel, and one of the greatest influences on my world of art, fashion, and music. You aspire and motivate me everyday. Your words are ethereal and your presence is halcyon. Your support has meant more than I could ever put into words. So much of what exists here would never have found its way into the world without you. I love you, and I promise to continue making you proud of me.
 
-Farah, sister of Leen. For being the sister of my favourite lost soul, my guardian angel, and one of the greatest influences on my world of art, fashion, and music. You aspire and motivate me everyday. Your words are ethereal and your presence is halcyon. Your support has meant more than I could ever put into words. So much of what exists here would never have found its way into the
-world without you. I love you, and I promise to continue making you proud of me.
-
-![1DFC6E1B-DF33-402B-A3A7-DCE358213C58](/images/1DFC6E1B-DF33-402B-A3A7-DCE358213C58.JPG)
+My mother. 
 
 My great uncle Ahmad, my great uncle Harb & my uncle Zain. Allah yrhamkom.
 
-![harb](/images/harb.jpeg)
-
-Sophia. For every moral, every lesson, and every piece of wisdom you taught me. Without you being there for me and pushing me throughout all these years, I don't know if any of this would have ever come out of me if it wasn't for you being there. I love you with my entire soul. You'll never understand the capacity of love and I have for you.
-A huge part of this exists because you refused to let me stop. You're the reason all of this is happening, you're the reason the light didn't shed. You're an amazing soul and a beautiful mind. 
+Gizelle. For every moral, every lesson, and every piece of wisdom you taught me. Without you being there for me and pushing me throughout all these years, I don't know if any of this would have ever come out of me if it wasn't for you being there. I love you with my entire soul. You'll never understand the capacity of love and I have for you.
+A huge part of this exists because you refused to let me stop. You're the reason all of this is happening, you're the reason the light didn't shed. You're an amazing soul and a beautiful mind. I love you la chérie.
 
 Mohamed Salama. For taking me under your wing when I was still finding my way. None of this would have started, happened, or manifested without your love, courage, and belief in me. You helped plant the seed long before I knew what it could become.
 
@@ -41,7 +32,7 @@ Toren Berios. For the creative mind, and the humour we share. That studio in Mis
 
 Bianca Morelli. For being one of my biggest inspirations. I love you. You're great and utterly divine. For reminding me that beauty exists both within a person and in the way they make others feel. Your influence will always live within me and mean the world to me.
 
-Hashim. Omar Aljokhadar. Gassan AlKurdi. Nabulsi. Azooz. Persian Boy. Idris. Kenshi & Rocky. Waleed Musa. Sabir Hirsi. Baby Draco.
+Hashim. Omar Aljokhadar. Gassan AlKurdi. Nabulsi. Azooz. Eissa Rehan. Persian Boy. Idris. Kenshi & Rocky. Waleed Musa. Sabir Hirsi. Baby Draco. Sophia-Anne Cross.
 
 Influenced by the works and artistry of: Madonna Ciccone, Christopher Breaux, Aubrey Graham, Rakim Mayers, Solána Imani Rowe, Bill Kapri. Sami Hamed, Jacques Webber II, Jahron Brathwaite, Rakim Allen, Josiah Ramel, Calvin Scruby, Toren Berios, Killaxbeats, Mohamed Salama, Ibrahim Skaik, Abel Tesfaye, Nayvadius Cash, Tyler-Justin Sharpe, Laith Hasan, Miles McCollum, Razi Derrick, and Tione Merritt.
 
