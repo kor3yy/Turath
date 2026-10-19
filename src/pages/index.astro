@@ -1,38 +1,4 @@
 
----
-import TurathIntro from '../components/TurathIntro.astro';
-import { getCollection } from 'astro:content';
-import '../styles/global.css';
-import LiquidCursor from '../components/LiquidCursor.astro';
-import ThemeToggle from '../components/ThemeToggle.astro';
-
-const allPosts = await getCollection('blog');
-
-const pinnedPosts = allPosts
-  .filter((post) => post.data.pinned)
-  .sort((a, b) => (b.data.pubDate?.valueOf() || 0) - (a.data.pubDate?.valueOf() || 0));
-
-const otherPosts = allPosts
-  .filter((post) => !post.data.pinned)
-  .sort((a, b) => (b.data.pubDate?.valueOf() || 0) - (a.data.pubDate?.valueOf() || 0));
-
-const posts = [...pinnedPosts, ...otherPosts];
-
-const postsWithThumbs = posts.map((post) => ({
-  ...post,
-  firstImage: post.data.thumbnail,
-}));
----
-
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Turath</title>
-
-   
-
 <style is:global>
   :root {
     color-scheme: dark;
@@ -54,67 +20,48 @@ const postsWithThumbs = posts.map((post) => ({
 
   html,
   body {
-    background-color: var(--page-bg);
-    color: var(--page-text);
+    min-height: 100%;
+    background: var(--page-bg) !important;
+    color: var(--page-text) !important;
   }
 
   body.home {
-    background-image: none;
-    background-color: var(--page-bg);
-    color: var(--page-text);
     min-height: 100vh;
+    background-image: none !important;
   }
 
   body.home header,
   body.home main,
-  body.home footer {
-    color: var(--page-text);
+  body.home footer,
+  body.home .hero,
+  body.home .posts h2 {
+    color: var(--page-text) !important;
   }
 
   body.home .hero {
-    background: transparent;
-    color: var(--page-text);
-    border: none;
-    border-radius: 0;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
     padding: 2rem 1rem;
-    box-shadow: none;
-  }
-
-  body.home .posts h2,
-  body.home .hero h1 {
-    color: var(--page-text);
-  }
-
-  /* Home and About links */
-  html[data-theme="dark"] body.home .nav-links a,
-  html:not([data-theme="light"]) body.home .nav-links a {
-    color: #fff !important;
-  }
-
-  html[data-theme="light"] body.home .nav-links a {
-    color: #000 !important;
   }
 
   body.home .nav-links a {
+    color: var(--page-text) !important;
     transition: color 0.25s ease;
-  }
-
-  body.home .nav-links a:hover {
-    opacity: 0.65;
   }
 
   body.home .post-card a {
     display: block;
-    background: var(--card-bg);
-    color: var(--card-text);
+    background: var(--card-bg) !important;
+    color: var(--card-text) !important;
     border: 1px solid var(--border-color);
-    transition: background-color 0.25s ease, color 0.25s ease;
   }
 
   body.home .post-card h3,
   body.home .post-card p,
   body.home .thumbnail-title {
-    color: var(--card-text);
+    color: var(--card-text) !important;
   }
 
   body.home header nav .logo {
