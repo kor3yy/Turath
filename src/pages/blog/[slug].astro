@@ -1,8 +1,11 @@
+
+---
 import { getCollection } from 'astro:content';
 import LiquidCursor from '../../components/LiquidCursor.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
+
   return posts.map((post) => ({
     params: { slug: post.slug },
     props: { post },
@@ -18,6 +21,7 @@ const { Content } = await post.render();
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <title>{post.data.title} — Turath</title>
     <meta name="description" content={post.data.description} />
 
@@ -26,16 +30,25 @@ const { Content } = await post.render();
     <meta property="og:type" content="article" />
     <meta
       property="og:url"
-      content={https://tturatth.com/blog/${post.slug}/}
+      content={`https://tturatth.com/blog/${post.slug}/`}
     />
+
     {post.data.thumbnail && (
       <meta
         property="og:image"
-        content={https://tturatth.com${post.data.thumbnail}}
+        content={`https://tturatth.com${post.data.thumbnail}`}
       />
     )}
 
     <link rel="stylesheet" href="/styles/global.css" />
+
+    <style>
+      .post-article {
+        border: none !important;
+        outline: none !important;
+        box-shadow: none !important;
+      }
+    </style>
   </head>
 
   <body>
