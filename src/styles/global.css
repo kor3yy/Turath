@@ -279,3 +279,27 @@ body.home .hero {
 .post-card a:hover .thumbnail-title {
   opacity: 1;
 }
+
+/* theme settings */
+:root {
+  color-scheme: dark;
+  --page-bg: #000;
+  --page-text: #fff;
+  --surface-bg: #111;
+  --border-color: #333;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --page-bg: #fff;
+  --page-text: #111;
+  --surface-bg: #f5f5f5;
+  --border-color: #ddd;
+}
+
+html,
+body {
+  background-color: var(--page-bg);
+  color: var(--page-text);
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
