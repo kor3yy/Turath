@@ -88,13 +88,14 @@ const posts = [...pinnedPosts, ...otherPosts];
         border: 1px solid var(--border-color);
       }
 
-      /* Acknowledgments card: beam stays on the rectangular border */
+      /* Acknowledgments card border */
       body.home .post-card.acknowledgments-card a {
         border-radius: 10px;
         overflow: hidden;
         isolation: isolate;
       }
 
+      /* Keep the animated light confined to the card's edges */
       body.home .post-card.acknowledgments-card a::after {
         content: "";
         position: absolute;
@@ -102,15 +103,15 @@ const posts = [...pinnedPosts, ...otherPosts];
         border: 2px solid transparent;
         border-radius: inherit;
         pointer-events: none;
-        z-index: 5;
+        z-index: 10;
 
         background:
           linear-gradient(transparent, transparent) padding-box,
           conic-gradient(
             from var(--ack-beam-angle, 0deg),
             transparent 0deg,
-            transparent 310deg,
-            var(--ack-beam-color) 342deg,
+            transparent 330deg,
+            var(--ack-beam-color) 348deg,
             transparent 360deg
           ) border-box;
 
