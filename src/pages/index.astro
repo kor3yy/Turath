@@ -30,19 +30,21 @@ const posts = [...pinnedPosts, ...otherPosts];
       :root {
         color-scheme: dark;
         --page-bg: #000;
-        --page-text: #fff;
+        --page-text: #f5f5f5;
         --card-bg: #111;
         --card-text: #fff;
         --border-color: #333;
+        --carousel-muted: #777;
       }
 
       :root[data-theme="light"] {
         color-scheme: light;
         --page-bg: #fff;
-        --page-text: #111;
+        --page-text: #171717;
         --card-bg: #f5f5f5;
-        --card-text: #111;
+        --card-text: #171717;
         --border-color: #ddd;
+        --carousel-muted: #888;
       }
 
       html,
@@ -76,20 +78,6 @@ const posts = [...pinnedPosts, ...otherPosts];
       body.home .nav-links a {
         color: var(--page-text);
         transition: color 0.25s ease;
-      }
-
-      body.home .post-card a {
-        display: block;
-        position: relative;
-        background: var(--card-bg);
-        color: var(--card-text);
-        border: 1px solid var(--border-color);
-      }
-
-      body.home .post-card h3,
-      body.home .post-card p,
-      body.home .thumbnail-title {
-        color: var(--card-text);
       }
 
       body.home header nav .logo {
@@ -143,6 +131,206 @@ const posts = [...pinnedPosts, ...otherPosts];
         opacity: 0.7;
       }
 
+      /* Article carousel */
+      body.home .posts {
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      body.home .posts h2 {
+        margin-bottom: 0;
+      }
+
+      .article-carousel {
+        --card-width: clamp(190px, 27vw, 310px);
+        position: relative;
+        width: 100%;
+        margin-top: 1rem;
+      }
+
+      .carousel-stage {
+        position: relative;
+        height: clamp(370px, 47vw, 475px);
+        overflow: hidden;
+        isolation: isolate;
+        touch-action: pan-y;
+        user-select: none;
+        -webkit-mask-image: linear-gradient(
+          to right,
+          transparent,
+          #000 10%,
+          #000 90%,
+          transparent
+        );
+        mask-image: linear-gradient(
+          to right,
+          transparent,
+          #000 10%,
+          #000 90%,
+          transparent
+        );
+      }
+
+      .carousel-card {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: var(--card-width);
+        height: 355px;
+        padding: 0;
+        overflow: hidden;
+        color: var(--card-text);
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        text-decoration: none;
+        transform:
+          translate(calc(-50% + var(--x, 0px)), -50%)
+          scale(var(--scale, 1));
+        opacity: var(--opacity, 0);
+        z-index: var(--z, 0);
+        filter: blur(var(--blur, 0px));
+        pointer-events: none;
+        transition:
+          transform 550ms cubic-bezier(0.22, 1, 0.36, 1),
+          opacity 450ms ease,
+          filter 450ms ease,
+          border-color 250ms ease;
+        will-change: transform, opacity;
+      }
+
+      .carousel-card.is-visible {
+        pointer-events: auto;
+      }
+
+      .carousel-card.is-active {
+        border-color: var(--page-text);
+        box-shadow: 0 15px 45px rgb(0 0 0 / 20%);
+      }
+
+      .carousel-card.is-visible:not(.is-active) {
+        cursor: pointer;
+      }
+
+      .carousel-card.is-visible:hover {
+        border-color: var(--page-text);
+      }
+
+      .carousel-image-wrap {
+        height: 66%;
+        width: 100%;
+        overflow: hidden;
+        background: var(--border-color);
+      }
+
+      .carousel-image {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        pointer-events: none;
+      }
+
+      .carousel-image-placeholder {
+        display: grid;
+        width: 100%;
+        height: 100%;
+        place-items: center;
+        color: var(--carousel-muted);
+        font-size: 0.8rem;
+      }
+
+      .carousel-card-content {
+        padding: 0.9rem 1rem 1rem;
+      }
+
+      .carousel-card-title {
+        margin: 0 0 0.35rem;
+        color: var(--card-text);
+        font-size: 1rem;
+        line-height: 1.35;
+        overflow-wrap: anywhere;
+      }
+
+      .carousel-card-date {
+        margin: 0;
+        color: var(--carousel-muted);
+        font-size: 0.75rem;
+      }
+
+      .carousel-card-description {
+        display: -webkit-box;
+        margin: 0.45rem 0 0;
+        overflow: hidden;
+        color: var(--carousel-muted);
+        font-size: 0.78rem;
+        line-height: 1.45;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+      }
+
+      /* Controls below the cards */
+      .carousel-controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        width: min(100%, 460px);
+        margin: 0.4rem auto 0;
+      }
+
+      .carousel-arrow {
+        display: grid;
+        flex: 0 0 38px;
+        width: 38px;
+        height: 38px;
+        place-items: center;
+        border: 1px solid var(--border-color);
+        border-radius: 50%;
+        background: var(--card-bg);
+        color: var(--page-text);
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: background 200ms ease, border-color 200ms ease;
+      }
+
+      .carousel-arrow:hover {
+        border-color: var(--page-text);
+      }
+
+      .carousel-slider-wrap {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        gap: 0.4rem;
+      }
+
+      .carousel-slider {
+        width: 100%;
+        height: 3px;
+        margin: 0;
+        accent-color: var(--page-text);
+        cursor: pointer;
+      }
+
+      .carousel-counter {
+        color: var(--carousel-muted);
+        font-size: 0.72rem;
+        text-align: center;
+        letter-spacing: 0.12em;
+      }
+
+      .carousel-hint {
+        margin: 0.9rem 0 0;
+        color: var(--carousel-muted);
+        font-size: 0.72rem;
+        text-align: center;
+      }
+
+      body.home footer {
+        color: var(--carousel-muted);
+      }
+
       @keyframes turath-scroll {
         from {
           transform: translateX(0);
@@ -152,7 +340,20 @@ const posts = [...pinnedPosts, ...otherPosts];
         }
       }
 
-      @media (max-width: 600px) {
+      @keyframes card-float {
+        0%, 100% {
+          margin-top: 0;
+        }
+        50% {
+          margin-top: -7px;
+        }
+      }
+
+      .carousel-card.is-active.is-visible {
+        animation: card-float 4.5s ease-in-out infinite;
+      }
+
+      @media (max-width: 650px) {
         body.home .site-logo {
           width: 50.4px;
         }
@@ -161,10 +362,61 @@ const posts = [...pinnedPosts, ...otherPosts];
           font-size: 0.7rem;
           letter-spacing: 0.14em;
         }
+
+        .article-carousel {
+          --card-width: min(66vw, 270px);
+        }
+
+        .carousel-stage {
+          height: 390px;
+          -webkit-mask-image: linear-gradient(
+            to right,
+            transparent,
+            #000 5%,
+            #000 95%,
+            transparent
+          );
+          mask-image: linear-gradient(
+            to right,
+            transparent,
+            #000 5%,
+            #000 95%,
+            transparent
+          );
+        }
+
+        .carousel-card {
+          height: 330px;
+        }
+
+        .carousel-image-wrap {
+          height: 62%;
+        }
+
+        .carousel-card-content {
+          padding: 0.75rem;
+        }
+
+        .carousel-card-title {
+          font-size: 0.95rem;
+        }
+
+        .carousel-controls {
+          gap: 0.65rem;
+        }
       }
 
       @media (prefers-reduced-motion: reduce) {
         body.home .turath-marquee-track {
+          animation: none;
+        }
+
+        .carousel-card,
+        .carousel-arrow {
+          transition: none !important;
+        }
+
+        .carousel-card.is-active.is-visible {
           animation: none;
         }
       }
@@ -222,48 +474,231 @@ const posts = [...pinnedPosts, ...otherPosts];
       <section class="posts">
         <h2>Latest Posts</h2>
 
-        <ul class="post-list">
-          {posts.map((post) => (
-            <li
-              class:list={[
-                'post-card',
-                post.data.title === 'Acknowledgments' && 'acknowledgments-card',
-              ]}
-            >
-              <a href={`/blog/${post.slug}/`}>
-                <div class="thumbnail-wrap">
-                  {post.data.thumbnail && (
+        <div class="article-carousel" id="article-carousel">
+          <div
+            class="carousel-stage"
+            id="carousel-stage"
+            aria-label="Article carousel. Swipe or use the controls to browse."
+            tabindex="0"
+          >
+            {posts.map((post, index) => (
+              <a
+                class="carousel-card"
+                href={`/blog/${post.slug}/`}
+                data-index={index}
+                aria-label={`Open article: ${post.data.title}`}
+                aria-current="false"
+              >
+                <div class="carousel-image-wrap">
+                  {post.data.thumbnail ? (
                     <img
+                      class="carousel-image"
                       src={post.data.thumbnail}
                       alt={post.data.title}
-                      class="post-thumbnail"
+                      loading={index < 3 ? 'eager' : 'lazy'}
+                      draggable="false"
                     />
+                  ) : (
+                    <div class="carousel-image-placeholder">
+                      TURATH
+                    </div>
                   )}
-                  <span class="thumbnail-title">{post.data.title}</span>
                 </div>
 
-                <h3>{post.data.title}</h3>
+                <div class="carousel-card-content">
+                  <h3 class="carousel-card-title">{post.data.title}</h3>
 
-                <p class="post-date">
-                  {post.data.pubDate
-                    ? post.data.pubDate.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      })
-                    : ''}
-                </p>
+                  <p class="carousel-card-date">
+                    {post.data.pubDate
+                      ? post.data.pubDate.toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        })
+                      : ''}
+                  </p>
 
-                <p>{post.data.description}</p>
+                  <p class="carousel-card-description">
+                    {post.data.description}
+                  </p>
+                </div>
               </a>
-            </li>
-          ))}
-        </ul>
+            ))}
+          </div>
+
+          <div class="carousel-controls">
+            <button
+              class="carousel-arrow"
+              id="carousel-prev"
+              type="button"
+              aria-label="Previous article"
+            >
+              &#8592;
+            </button>
+
+            <div class="carousel-slider-wrap">
+              <input
+                class="carousel-slider"
+                id="carousel-slider"
+                type="range"
+                min="0"
+                max={Math.max(posts.length - 1, 0)}
+                value="0"
+                step="1"
+                aria-label="Choose article"
+              />
+
+              <output class="carousel-counter" id="carousel-counter">
+                {posts.length ? `01 / ${String(posts.length).padStart(2, '0')}` : '00 / 00'}
+              </output>
+            </div>
+
+            <button
+              class="carousel-arrow"
+              id="carousel-next"
+              type="button"
+              aria-label="Next article"
+            >
+              &#8594;
+            </button>
+          </div>
+
+          <p class="carousel-hint">swipe to explore · select a card to read</p>
+        </div>
       </section>
     </main>
 
     <footer>
       <p>&copy; {new Date().getFullYear()} Turath. All rights reserved.</p>
     </footer>
+
+    <script>
+      const carousel = document.querySelector('#article-carousel');
+      const stage = document.querySelector('#carousel-stage');
+      const cards = Array.from(
+        document.querySelectorAll('.carousel-card')
+      ) as HTMLAnchorElement[];
+      const previousButton = document.querySelector('#carousel-prev') as HTMLButtonElement | null;
+      const nextButton = document.querySelector('#carousel-next') as HTMLButtonElement | null;
+      const slider = document.querySelector('#carousel-slider') as HTMLInputElement | null;
+      const counter = document.querySelector('#carousel-counter');
+
+      if (carousel && stage && cards.length > 0 && previousButton && nextButton && slider && counter) {
+        let activeIndex = 0;
+        let startX = 0;
+        let startY = 0;
+        let dragging = false;
+
+        const total = cards.length;
+
+        function signedDistance(index: number, active: number) {
+          let distance = index - active;
+
+          if (distance > total / 2) distance -= total;
+          if (distance < -total / 2) distance += total;
+
+          return distance;
+        }
+
+        function renderCarousel() {
+          const stageWidth = stage.clientWidth;
+          const cardWidth = cards[0].getBoundingClientRect().width || 250;
+          const gap = Math.min(cardWidth * 0.73, stageWidth * 0.22);
+
+          cards.forEach((card, index) => {
+            const distance = signedDistance(index, activeIndex);
+            const absoluteDistance = Math.abs(distance);
+            const visible = absoluteDistance <= 2;
+
+            const scale =
+              absoluteDistance === 0 ? 1 :
+              absoluteDistance === 1 ? 0.82 : 0.66;
+
+            const opacity =
+              absoluteDistance === 0 ? 1 :
+              absoluteDistance === 1 ? 0.78 :
+              absoluteDistance === 2 ? 0.35 : 0;
+
+            const blur =
+              absoluteDistance === 0 ? 0 :
+              absoluteDistance === 1 ? 0.2 : 0.8;
+
+            card.style.setProperty('--x', `${distance * gap}px`);
+            card.style.setProperty('--scale', String(scale));
+            card.style.setProperty('--opacity', String(opacity));
+            card.style.setProperty('--blur', `${blur}px`);
+            card.style.setProperty('--z', String(10 - absoluteDistance));
+            card.classList.toggle('is-active', distance === 0);
+            card.classList.toggle('is-visible', visible);
+            card.setAttribute('aria-current', String(distance === 0));
+            card.setAttribute('tabindex', visible ? '0' : '-1');
+            card.setAttribute('aria-hidden', String(!visible));
+          });
+
+          slider.value = String(activeIndex);
+          counter.textContent =
+            `${String(activeIndex + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`;
+        }
+
+        function goTo(index: number) {
+          activeIndex = ((index % total) + total) % total;
+          renderCarousel();
+        }
+
+        previousButton.addEventListener('click', () => goTo(activeIndex - 1));
+        nextButton.addEventListener('click', () => goTo(activeIndex + 1));
+
+        slider.addEventListener('input', () => {
+          goTo(Number(slider.value));
+        });
+
+        cards.forEach((card, index) => {
+          card.addEventListener('click', (event) => {
+            const distance = signedDistance(index, activeIndex);
+
+            if (distance !== 0) {
+              event.preventDefault();
+              goTo(index);
+            }
+          });
+        });
+
+        stage.addEventListener('keydown', (event) => {
+          if (event.key === 'ArrowLeft') {
+            event.preventDefault();
+            goTo(activeIndex - 1);
+          } else if (event.key === 'ArrowRight') {
+            event.preventDefault();
+            goTo(activeIndex + 1);
+          }
+        });
+
+        stage.addEventListener('pointerdown', (event) => {
+          startX = event.clientX;
+          startY = event.clientY;
+          dragging = true;
+        });
+
+        stage.addEventListener('pointerup', (event) => {
+          if (!dragging) return;
+          dragging = false;
+
+          const deltaX = event.clientX - startX;
+          const deltaY = event.clientY - startY;
+
+          if (Math.abs(deltaX) > 45 && Math.abs(deltaX) > Math.abs(deltaY)) {
+            goTo(activeIndex + (deltaX < 0 ? 1 : -1));
+          }
+        });
+
+        stage.addEventListener('pointercancel', () => {
+          dragging = false;
+        });
+
+        window.addEventListener('resize', renderCarousel);
+
+        renderCarousel();
+      }
+    </script>
   </body>
 </html>
