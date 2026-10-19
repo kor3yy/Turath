@@ -34,7 +34,6 @@ const posts = [...pinnedPosts, ...otherPosts];
         --card-bg: #111;
         --card-text: #fff;
         --border-color: #333;
-        --ack-beam-color: #fff;
       }
 
       :root[data-theme="light"] {
@@ -44,7 +43,6 @@ const posts = [...pinnedPosts, ...otherPosts];
         --card-bg: #f5f5f5;
         --card-text: #111;
         --border-color: #ddd;
-        --ack-beam-color: #000;
       }
 
       html,
@@ -86,48 +84,6 @@ const posts = [...pinnedPosts, ...otherPosts];
         background: var(--card-bg);
         color: var(--card-text);
         border: 1px solid var(--border-color);
-      }
-
-      /* Acknowledgments card border */
-      body.home .post-card.acknowledgments-card a {
-        border-radius: 10px;
-        overflow: hidden;
-        isolation: isolate;
-      }
-
-      /* Keep the animated light confined to the card's edges */
-      body.home .post-card.acknowledgments-card a::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        border: 2px solid transparent;
-        border-radius: inherit;
-        pointer-events: none;
-        z-index: 10;
-
-        background:
-          linear-gradient(transparent, transparent) padding-box,
-          conic-gradient(
-            from var(--ack-beam-angle, 0deg),
-            transparent 0deg,
-            transparent 330deg,
-            var(--ack-beam-color) 348deg,
-            transparent 360deg
-          ) border-box;
-
-        animation: acknowledgments-card-beam 4s linear infinite;
-      }
-
-      @property --ack-beam-angle {
-        syntax: "<angle>";
-        initial-value: 0deg;
-        inherits: false;
-      }
-
-      @keyframes acknowledgments-card-beam {
-        to {
-          --ack-beam-angle: 360deg;
-        }
       }
 
       body.home .post-card h3,
@@ -208,8 +164,7 @@ const posts = [...pinnedPosts, ...otherPosts];
       }
 
       @media (prefers-reduced-motion: reduce) {
-        body.home .turath-marquee-track,
-        body.home .post-card.acknowledgments-card a::after {
+        body.home .turath-marquee-track {
           animation: none;
         }
       }
