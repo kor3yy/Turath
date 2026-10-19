@@ -71,13 +71,13 @@ const postsWithThumbs = posts.map((post) => ({
   body.home footer {
     color: var(--page-text);
   }
-
-  body.home .hero {
-    background: var(--hero-bg);
-    color: var(--page-text);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 2rem 1rem;
+body.home .hero {
+  background: transparent;
+  color: var(--page-text);
+  border: none;
+  border-radius: 0;
+  padding: 2rem 1rem;
+  box-shadow: none;
   }
 
   body.home .posts h2,
@@ -112,8 +112,15 @@ const postsWithThumbs = posts.map((post) => ({
     object-fit: contain;
   }
 
-  body.home .nav-links a {
-    color: var(--page-text);
+ body.home .nav-links a {
+  color: var(--page-text);
+  text-decoration-color: var(--page-text);
+  transition: color 0.25s ease;
+}
+
+body.home .nav-links a:hover {
+  opacity: 0.65;
+}
   }
 
   @media (max-width: 600px) {
