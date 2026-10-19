@@ -303,3 +303,18 @@ body {
   color: var(--page-text);
   transition: background-color 0.25s ease, color 0.25s ease;
 }
+
+/* Keep navigation links synced with the active theme */
+html[data-theme="dark"] .nav-links a {
+  color: #fff !important;
+}
+
+html[data-theme="light"] .nav-links a {
+  color: #000 !important;
+}
+
+/* Smooth colour change */
+.nav-links a {
+  transition: color 0.25s ease;
+}
+
