@@ -13,6 +13,7 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content } = await post.render();
+const isAcknowledgments = post.data.title === 'Acknowledgments';
 ---
 
 <!doctype html>
@@ -53,7 +54,7 @@ const { Content } = await post.render();
     </header>
 
     <main>
-      <article class="post-article">
+      <article class:list={['post-article', isAcknowledgments && 'acknowledgments-glow']}>
         <a href="/blog" class="back-link">&larr; Back to posts</a>
 
         <h1>{post.data.title}</h1>
@@ -75,3 +76,58 @@ const { Content } = await post.render();
     </footer>
   </body>
 </html>
+
+<style is:global>
+  .acknowledgments-glow {
+    position: relative;
+    isolation: isolate;
+    border: 1px solid var(--border-color, #333);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .acknowledgments-glow::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 1.5px;
+    border-radius: inherit;
+    background: conic-gradient(
+      from 0deg,
+      transparent 0deg,
+      transparent 285deg,
+      var(--beam-color, #fff) 330deg,
+      transparent 360deg
+    );
+    animation: acknowledgments-beam 4s linear infinite;
+
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  :root {
+    --beam-color: #fff;
+  }
+
+  :root[data-theme="light"] {
+    --beam-color: #000;
+  }
+
+  @keyframes acknowledgments-beam {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .acknowledgments-glow::before {
+      animation: none;
+    }
+  }
+</style>
