@@ -1,0 +1,186 @@
+
+---
+---
+
+<div class="liquid-cursor" aria-hidden="true">
+  <span class="liquid-cursor__core"></span>
+</div>
+
+<svg class="liquid-filters" aria-hidden="true">
+  <filter id="liquid-warp">
+    <feTurbulence
+      type="fractalNoise"
+      baseFrequency="0.018 0.025"
+      numOctaves="2"
+      seed="8"
+      result="noise"
+    />
+    <feDisplacementMap
+      in="SourceGraphic"
+      in2="noise"
+      scale="22"
+      xChannelSelector="R"
+      yChannelSelector="G"
+    />
+  </filter>
+</svg>
+
+<style>
+  .liquid-filters {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+
+  .liquid-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 76px;
+    height: 76px;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 48% 52% 63% 37% / 42% 44% 56% 58%;
+    background: rgba(255, 255, 255, 0.07);
+    backdrop-filter: invert(1) contrast(1.2);
+    -webkit-backdrop-filter: invert(1) contrast(1.2);
+    filter: url(#liquid-warp);
+    pointer-events: none;
+    z-index: 99999;
+    opacity: 0;
+    transform: translate3d(-50%, -50%, 0);
+    transition:
+      width 0.25s ease,
+      height 0.25s ease,
+      opacity 0.2s ease,
+      border-radius 0.3s ease;
+    mix-blend-mode: difference;
+    will-change: left, top;
+  }
+
+  .liquid-cursor__core {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    top: 50%;
+    left: 50%;
+    border-radius: 50%;
+    background: white;
+    transform: translate(-50%, -50%);
+  }
+
+  .liquid-cursor.is-visible {
+    opacity: 1;
+  }
+
+  .liquid-cursor.is-hovering {
+    width: 105px;
+    height: 105px;
+    border-radius: 35% 65% 43% 57% / 58% 38% 62% 42%;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    html,
+    body,
+    a,
+    button {
+      cursor: none;
+    }
+  }
+
+  @media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+    .liquid-cursor {
+      display: none;
+    }
+
+    html,
+    body,
+    a,
+    button {
+      cursor: auto;
+    }
+  }
+</style>
+
+<script>
+  const initLiquidCursor = () => {
+    const cursor = document.querySelector('.liquid-cursor');
+
+    if (!(cursor instanceof HTMLElement)) return;
+
+    // Prevent duplicate listeners if the page is navigated internally.
+    if (cursor.dataset.initialized === 'true') return;
+    cursor.dataset.initialized = 'true';
+
+    let targetX = -100;
+    let targetY = -100;
+    let currentX = targetX;
+    let currentY = targetY;
+    let animationFrame = 0;
+
+    const animate = () => {
+      currentX += (targetX - currentX) * 0.18;
+      currentY += (targetY - currentY) * 0.18;
+
+      cursor.style.left = `${currentX}px`;
+      cursor.style.top = `${currentY}px`;
+
+      if (
+        Math.abs(targetX - currentX) > 0.1 ||
+        Math.abs(targetY - currentY) > 0.1
+      ) {
+        animationFrame = requestAnimationFrame(animate);
+      } else {
+        animationFrame = 0;
+      }
+    };
+
+    document.addEventListener('pointermove', (event) => {
+      if (event.pointerType !== 'mouse') return;
+
+      targetX = event.clientX;
+      targetY = event.clientY;
+
+      cursor.classList.add('is-visible');
+
+      if (!animationFrame) {
+        animationFrame = requestAnimationFrame(animate);
+      }
+    });
+
+    document.addEventListener('pointerleave', () => {
+      cursor.classList.remove('is-visible');
+    });
+
+    document.addEventListener('pointerover', (event) => {
+      if (event.pointerType !== 'mouse') return;
+
+      const target = event.target;
+
+      if (
+        target instanceof Element &&
+        target.closest('a, button, input, textarea, select, [role="button"]')
+      ) {
+        cursor.classList.add('is-hovering');
+      } else {
+        cursor.classList.remove('is-hovering');
+      }
+    });
+
+    document.addEventListener('pointerout', (event) => {
+      if (event.relatedTarget === null) {
+        cursor.classList.remove('is-visible');
+      }
+    });
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initLiquidCursor, {
+      once: true,
+    });
+  } else {
+    initLiquidCursor();
+  }
+
+  document.addEventListener('astro:page-load', initLiquidCursor);
+</script>
