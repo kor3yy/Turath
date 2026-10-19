@@ -1,73 +1,273 @@
 
-/* Turath theme fix */
+/* TURATH — main layout and themes */
+
 :root {
+  color-scheme: dark;
+  --page-bg: #000;
+  --page-text: #f5f5f5;
+  --surface-bg: #111;
+  --border-color: #333;
+  --color-primary: #e84393;
   --color-text: var(--page-text);
-  --color-text-light: var(--page-text);
+  --color-text-light: #aaa;
   --color-bg: var(--page-bg);
   --color-bg-alt: var(--surface-bg);
   --color-border: var(--border-color);
 }
 
-/* Apply the selected theme to the whole page */
-html,
+:root[data-theme="light"] {
+  color-scheme: light;
+  --page-bg: #fff;
+  --page-text: #171717;
+  --surface-bg: #f5f5f5;
+  --border-color: #ddd;
+  --color-text-light: #555;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: var(--page-bg);
+  color: var(--page-text);
+  scroll-behavior: smooth;
+}
+
 body {
-  background-color: var(--page-bg) !important;
-  color: var(--page-text) !important;
+  margin: 0;
+  min-height: 100vh;
+  background: var(--page-bg);
+  color: var(--page-text);
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.6;
   transition: background-color 0.25s ease, color 0.25s ease;
 }
 
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+}
+
 header {
-  background-color: var(--page-bg) !important;
-  color: var(--page-text) !important;
-  border-color: var(--border-color) !important;
+  width: 100%;
+  background: var(--page-bg);
+  border-bottom: 1px solid var(--border-color);
+}
+
+header nav {
+  max-width: 1100px;
+  min-height: 80px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+header nav .logo {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.site-logo {
+  display: block;
+  width: 58px;
+  height: auto;
+  object-fit: contain;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.nav-links a {
+  color: var(--page-text);
+  transition: color 0.2s ease;
+}
+
+.nav-links a:hover {
+  color: var(--color-primary);
+}
+
+.theme-toggle {
+  padding: 0.5rem 0.8rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--surface-bg);
+  color: var(--page-text);
+  cursor: pointer;
+}
+
+main {
+  width: min(100% - 2rem, 1000px);
+  margin: 0 auto;
+  padding: 2rem 0 4rem;
+}
+
+.hero {
+  padding: 2rem 1rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  background: transparent;
+  color: var(--page-text);
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  line-height: 1.15;
+}
+
+.posts h2 {
+  margin: 0 0 1.5rem;
+  font-size: 1.6rem;
+}
+
+.post-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.post-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--surface-bg);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.post-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--color-primary);
+}
+
+.post-card a {
+  display: block;
+  height: 100%;
+  padding: 1rem;
+  color: var(--page-text);
+}
+
+.thumbnail-wrap {
+  position: relative;
+  overflow: hidden;
+  height: 220px;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  background: var(--surface-bg);
+}
+
+.post-thumbnail {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.thumbnail-title {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  color: #fff;
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-align: center;
+  background: rgb(0 0 0 / 25%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.post-card a:hover .post-thumbnail {
+  filter: blur(4px);
+  transform: scale(1.05);
+}
+
+.post-card a:hover .thumbnail-title {
+  opacity: 1;
+}
+
+.post-card h3 {
+  margin: 0 0 0.5rem;
+  color: var(--page-text);
+  font-size: 1.25rem;
+  line-height: 1.4;
+}
+
+.post-card p {
+  color: var(--color-text-light);
+  overflow-wrap: anywhere;
+}
+
+.post-date {
+  margin: 0.5rem 0;
+  font-size: 0.85rem;
 }
 
 footer {
-  color: var(--page-text) !important;
-  border-color: var(--border-color) !important;
+  padding: 1.5rem;
+  border-top: 1px solid var(--border-color);
+  color: var(--color-text-light);
+  text-align: center;
 }
 
-/* Homepage */
-body.home {
-  background-color: var(--page-bg) !important;
-  background-image: none !important;
-  color: var(--page-text) !important;
+footer p {
+  margin: 0;
 }
 
-body.home .hero {
-  background: transparent !important;
-  border: none !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  color: var(--page-text) !important;
+@media (max-width: 650px) {
+  header nav {
+    padding: 1rem;
+    gap: 0.75rem;
+  }
+
+  .site-logo {
+    width: 48px;
+  }
+
+  .nav-links {
+    gap: 0.8rem;
+  }
+
+  main {
+    width: min(100% - 1.25rem, 1000px);
+    padding-top: 1rem;
+  }
+
+  .post-list {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .thumbnail-wrap {
+    height: 210px;
+  }
 }
 
-body.home .hero h1,
-body.home .posts h2 {
-  color: var(--page-text) !important;
-}
-
-/* Home and About navigation */
-.nav-links a {
-  color: var(--page-text) !important;
-  transition: color 0.25s ease;
-}
-
-/* Article cards */
-body.home .post-card a {
-  background: var(--surface-bg) !important;
-  color: var(--page-text) !important;
-  border-color: var(--border-color) !important;
-}
-
-body.home .post-card h3,
-body.home .post-card p {
-  color: var(--page-text) !important;
-}
-
-/* Theme toggle */
-.theme-toggle {
-  background: var(--surface-bg) !important;
-  color: var(--page-text) !important;
-  border-color: var(--border-color) !important;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }
