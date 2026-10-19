@@ -291,3 +291,10 @@ footer p {
   display: none !important;
 }
 
+/* Remove the border surrounding the Acknowledgments article */
+article:has(h1:first-child),
+article:has(h1) {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
