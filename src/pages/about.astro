@@ -10,7 +10,30 @@ import LiquidCursor from '../components/LiquidCursor.astro';
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>About — Turath</title>
     <link rel="stylesheet" href="/styles/global.css" />
+
+    <style>
+      header nav .logo {
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+      }
+
+      header nav .site-logo {
+        display: block;
+        width: 57.6px;
+        height: auto;
+        max-width: 100%;
+        object-fit: contain;
+      }
+
+      @media (max-width: 600px) {
+        header nav .site-logo {
+          width: 50.4px;
+        }
+      }
+    </style>
   </head>
+
   <body>
     <LiquidCursor />
 
