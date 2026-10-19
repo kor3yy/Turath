@@ -31,57 +31,97 @@ const postsWithThumbs = posts.map((post) => ({
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Turath</title>
 
-    <style is:global>
-      /* Homepage background */
-      body.home {
-        background-image: url('/images/6bb21238-7f80-4c33-9544-e25c57cd383a.png');
-        background-size: 100% auto;
-        background-position: center top;
-        background-attachment: scroll;
-        background-repeat: no-repeat;
-        background-color: #ffffff;
-      }
+   
+<style is:global>
+  :root {
+    color-scheme: dark;
+    --page-bg: #000;
+    --page-text: #fff;
+    --card-bg: #111;
+    --card-text: #fff;
+    --hero-bg: #111;
+    --border-color: #333;
+  }
 
-      @media (max-width: 600px) {
-        body.home {
-          background-size: 100% auto;
-          background-position: center top;
-          background-repeat: no-repeat;
-        }
-      }
+  :root[data-theme="light"] {
+    color-scheme: light;
+    --page-bg: #fff;
+    --page-text: #111;
+    --card-bg: #f5f5f5;
+    --card-text: #111;
+    --hero-bg: #f5f5f5;
+    --border-color: #ddd;
+  }
 
-      /* White background behind article cards */
-      body.home .post-card a {
-        background: rgba(255, 255, 255, 0.92);
-      }
+  html,
+  body {
+    background-color: var(--page-bg);
+    color: var(--page-text);
+  }
 
-      /* Homepage introduction */
-      body.home .hero {
-        background: rgba(255, 255, 255, 0.85);
-        border-radius: 12px;
-        padding: 2rem 1rem;
-      }
+  body.home {
+    background-image: none;
+    background-color: var(--page-bg);
+    color: var(--page-text);
+    min-height: 100vh;
+  }
 
-      /* Website logo */
-      body.home header nav .logo {
-        display: inline-flex;
-        align-items: center;
-        text-decoration: none;
-      }
+  body.home header,
+  body.home main,
+  body.home footer {
+    color: var(--page-text);
+  }
 
-      body.home .site-logo {
-        display: block;
-        width: 57.6px;
-        height: auto;
-        object-fit: contain;
-      }
+  body.home .hero {
+    background: var(--hero-bg);
+    color: var(--page-text);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem 1rem;
+  }
 
-      @media (max-width: 600px) {
-        body.home .site-logo {
-          width: 50.4px;
-        }
-      }
-    </style>
+  body.home .posts h2,
+  body.home .hero h1 {
+    color: var(--page-text);
+  }
+
+  body.home .post-card a {
+    display: block;
+    background: var(--card-bg);
+    color: var(--card-text);
+    border: 1px solid var(--border-color);
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  body.home .post-card h3,
+  body.home .post-card p,
+  body.home .thumbnail-title {
+    color: var(--card-text);
+  }
+
+  body.home header nav .logo {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+  }
+
+  body.home .site-logo {
+    display: block;
+    width: 57.6px;
+    height: auto;
+    object-fit: contain;
+  }
+
+  body.home .nav-links a {
+    color: var(--page-text);
+  }
+
+  @media (max-width: 600px) {
+    body.home .site-logo {
+      width: 50.4px;
+    }
+  }
+</style>
   </head>
 
   <body class="home">
