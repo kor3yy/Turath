@@ -8,15 +8,45 @@ import ThemeToggle from '../components/ThemeToggle.astro';
 
 const allPosts = await getCollection('blog');
 
-const pinnedPosts = allPosts
-  .filter((post) => post.data.pinned)
-  .sort((a, b) => (b.data.pubDate?.valueOf() || 0) - (a.data.pubDate?.valueOf() || 0));
+const newestFirst = (a, b) =>
+  (b.data.pubDate?.valueOf() || 0) - (a.data.pubDate?.valueOf() || 0);
+
+const acknowledgments = allPosts.find((post) =>
+  post.data.title.toLowerCase().includes('acknowledgment')
+);
+
+const photographyNames = ['will', 'ian armata'];
+const musicNames = ['savia', 'razi', 'jenna', 'toren'];
+
+const matchesName = (post, names) =>
+  names.some((name) => post.data.title.toLowerCase().includes(name));
+
+const photographyPosts = photographyNames
+  .map((name) =>
+    allPosts.find((post) => post.data.title.toLowerCase().includes(name))
+  )
+  .filter(Boolean);
+
+const musicPosts = musicNames
+  .map((name) =>
+    allPosts.find((post) => post.data.title.toLowerCase().includes(name))
+  )
+  .filter(Boolean);
+
+const assignedSlugs = new Set([
+  acknowledgments?.slug,
+  ...photographyPosts.map((post) => post.slug),
+  ...musicPosts.map((post) => post.slug),
+].filter(Boolean));
 
 const otherPosts = allPosts
-  .filter((post) => !post.data.pinned)
-  .sort((a, b) => (b.data.pubDate?.valueOf() || 0) - (a.data.pubDate?.valueOf() || 0));
+  .filter((post) => !assignedSlugs.has(post.slug))
+  .sort(newestFirst);
 
-const posts = [...pinnedPosts, ...otherPosts];
+const sections = [
+  { id: 'photography', title: 'Photography', subtitle: 'Images, perspectives & the people behind them', posts: photographyPosts },
+  { id: 'music', title: 'Music', subtitle: 'Sound, artists & creative expression', posts: musicPosts },
+];
 ---
 
 <!doctype html>
@@ -24,27 +54,25 @@ const posts = [...pinnedPosts, ...otherPosts];
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
     <title>Turath</title>
-
     <style is:global>
       :root {
         color-scheme: dark;
         --page-bg: #000;
         --page-text: #f5f5f5;
-        --card-bg: #111;
-        --card-text: #fff;
+        --surface-bg: #111;
         --border-color: #333;
-        --carousel-muted: #777;
+        --muted: #999;
       }
 
       :root[data-theme="light"] {
         color-scheme: light;
         --page-bg: #fff;
         --page-text: #171717;
-        --card-bg: #f5f5f5;
-        --card-text: #171717;
+        --surface-bg: #f5f5f5;
         --border-color: #ddd;
-        --carousel-muted: #888;
+        --muted: #666;
       }
 
       html,
@@ -61,18 +89,23 @@ const posts = [...pinnedPosts, ...otherPosts];
 
       body.home header,
       body.home main,
-      body.home footer,
-      body.home .hero,
-      body.home .posts h2 {
+      body.home footer {
         color: var(--page-text);
       }
 
       body.home .hero {
+        padding: 2.5rem 1rem 1.5rem;
+        text-align: center;
         background: transparent;
         border: none;
         border-radius: 0;
         box-shadow: none;
-        padding: 2rem 1rem;
+      }
+
+      body.home .hero h1 {
+        margin: 0;
+        font-size: clamp(2.8rem, 7vw, 5rem);
+        letter-spacing: -0.055em;
       }
 
       body.home .nav-links a {
@@ -93,8 +126,7 @@ const posts = [...pinnedPosts, ...otherPosts];
         object-fit: contain;
       }
 
-      /* Moving Turath statement */
-      body.home .turath-marquee {
+      .turath-marquee {
         width: 100%;
         overflow: hidden;
         padding: 1rem 0;
@@ -103,14 +135,13 @@ const posts = [...pinnedPosts, ...otherPosts];
         border-bottom: 1px solid var(--border-color);
       }
 
-      body.home .turath-marquee-track {
+      .turath-marquee-track {
         display: flex;
         width: max-content;
-        animation: turath-scroll 8s linear infinite;
-        will-change: transform;
+        animation: turath-scroll 20s linear infinite;
       }
 
-      body.home .turath-marquee-track span {
+      .turath-marquee-track span {
         flex-shrink: 0;
         white-space: nowrap;
         padding-right: 1rem;
@@ -120,166 +151,316 @@ const posts = [...pinnedPosts, ...otherPosts];
         opacity: 0.75;
       }
 
-      body.home .turath-tagline {
-        margin: 0 auto 2rem;
+      .turath-tagline {
+        margin: 0 auto 3rem;
         padding: 0.5rem 1rem;
         text-align: center;
         font-size: 0.85rem;
         font-style: italic;
-        letter-spacing: 0.04em;
+        color: var(--muted);
+      }
+
+      /* Featured acknowledgments */
+      .featured-wrap {
+        display: flex;
+        justify-content: center;
+        margin: 0 auto 4rem;
+      }
+
+      .featured-card {
+        display: block;
+        width: min(100%, 470px);
+        overflow: hidden;
         color: var(--page-text);
-        opacity: 0.7;
-      }
-
-      /* Article carousel */
-      body.home .posts {
-        width: 100%;
-        margin: 0 auto;
-      }
-
-      body.home .posts h2 {
-        margin-bottom: 0;
-      }
-
-      .article-carousel {
-        --card-width: clamp(190px, 27vw, 310px);
-        position: relative;
-        width: 100%;
-        margin-top: 1rem;
-      }
-
-      .carousel-stage {
-        position: relative;
-        height: clamp(370px, 47vw, 475px);
-        overflow: hidden;
-        isolation: isolate;
-        touch-action: pan-y;
-        user-select: none;
-        -webkit-mask-image: linear-gradient(
-          to right,
-          transparent,
-          #000 10%,
-          #000 90%,
-          transparent
-        );
-        mask-image: linear-gradient(
-          to right,
-          transparent,
-          #000 10%,
-          #000 90%,
-          transparent
-        );
-      }
-
-      .carousel-card {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: var(--card-width);
-        height: 355px;
-        padding: 0;
-        overflow: hidden;
-        color: var(--card-text);
-        background: var(--card-bg);
+        background: var(--surface-bg);
         border: 1px solid var(--border-color);
         border-radius: 12px;
         text-decoration: none;
-        transform:
-          translate(calc(-50% + var(--x, 0px)), -50%)
-          scale(var(--scale, 1));
-        opacity: var(--opacity, 0);
-        z-index: var(--z, 0);
-        filter: blur(var(--blur, 0px));
-        pointer-events: none;
-        transition:
-          transform 550ms cubic-bezier(0.22, 1, 0.36, 1),
-          opacity 450ms ease,
-          filter 450ms ease,
-          border-color 250ms ease;
-        will-change: transform, opacity;
+        transition: transform 250ms ease, border-color 250ms ease;
       }
 
-      .carousel-card.is-visible {
-        pointer-events: auto;
-      }
-
-      .carousel-card.is-active {
+      .featured-card:hover {
+        transform: translateY(-4px);
         border-color: var(--page-text);
-        box-shadow: 0 15px 45px rgb(0 0 0 / 20%);
       }
 
-      .carousel-card.is-visible:not(.is-active) {
+      .featured-image {
+        display: block;
+        width: 100%;
+        height: 240px;
+        object-fit: cover;
+      }
+
+      .featured-copy {
+        padding: 1.2rem 1.3rem 1.4rem;
+        text-align: center;
+      }
+
+      .eyebrow {
+        margin: 0 0 0.5rem;
+        color: var(--muted);
+        font-size: 0.68rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+      }
+
+      .featured-copy h2 {
+        margin: 0 0 0.65rem;
+        color: var(--page-text);
+        font-size: 1.5rem;
+      }
+
+      .featured-copy p:last-child {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+
+      /* Category sections */
+      .archive {
+        margin: 0 auto 4rem;
+      }
+
+      .archive-heading {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .archive-heading h2 {
+        margin: 0;
+        font-size: clamp(1.7rem, 4vw, 2.4rem);
+        letter-spacing: -0.04em;
+      }
+
+      .archive-heading p {
+        margin: 0.35rem 0 0;
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      .open-archive {
+        flex-shrink: 0;
+        padding: 0.65rem 0.9rem;
+        border: 1px solid var(--border-color);
+        border-radius: 999px;
+        color: var(--page-text);
+        background: var(--surface-bg);
+        cursor: pointer;
+        transition: border-color 200ms ease;
+      }
+
+      .open-archive:hover,
+      .open-archive[aria-expanded="true"] {
+        border-color: var(--page-text);
+      }
+
+      .category-cover {
+        position: relative;
+        display: block;
+        width: 100%;
+        height: clamp(250px, 39vw, 430px);
+        padding: 0;
+        overflow: hidden;
+        isolation: isolate;
+        border: 1px solid var(--border-color);
+        border-radius: 14px;
+        background: var(--surface-bg);
+        color: white;
+        text-align: left;
         cursor: pointer;
       }
 
-      .carousel-card.is-visible:hover {
-        border-color: var(--page-text);
-      }
-
-      .carousel-image-wrap {
-        height: 66%;
+      .cover-image {
+        position: absolute;
+        inset: 0;
         width: 100%;
-        overflow: hidden;
-        background: var(--border-color);
+        height: 100%;
+        object-fit: cover;
+        opacity: 0;
+        transform: scale(1.025);
+        transition: opacity 1.8s ease, transform 7s ease;
       }
 
-      .carousel-image {
+      .cover-image.is-current {
+        opacity: 1;
+        transform: scale(1.09);
+      }
+
+      .cover-shade {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        background: linear-gradient(
+          0deg,
+          rgb(0 0 0 / 83%) 0%,
+          rgb(0 0 0 / 25%) 50%,
+          rgb(0 0 0 / 8%) 100%
+        );
+        pointer-events: none;
+      }
+
+      .cover-copy {
+        position: absolute;
+        inset: auto 1.5rem 1.5rem;
+        z-index: 2;
+        pointer-events: none;
+      }
+
+      .cover-copy .eyebrow {
+        color: rgb(255 255 255 / 75%);
+      }
+
+      .cover-copy h3 {
+        margin: 0;
+        color: white;
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        letter-spacing: -0.05em;
+      }
+
+      .cover-copy p {
+        max-width: 520px;
+        margin: 0.4rem 0 0;
+        color: rgb(255 255 255 / 80%);
+        font-size: 0.9rem;
+      }
+
+      .cover-index {
+        position: absolute;
+        top: 1.2rem;
+        right: 1.2rem;
+        z-index: 2;
+        color: white;
+        font-size: 0.75rem;
+        letter-spacing: 0.12em;
+        pointer-events: none;
+      }
+
+      /* Open section carousel */
+      .section-view {
+        display: none;
+        margin-top: 1.5rem;
+      }
+
+      .section-view.is-open {
+        display: block;
+        animation: reveal-section 400ms ease both;
+      }
+
+      @keyframes reveal-section {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      .section-view-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .section-view-top p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.8rem;
+      }
+
+      .article-stage {
+        position: relative;
+        height: clamp(350px, 44vw, 440px);
+        overflow: hidden;
+        isolation: isolate;
+        touch-action: pan-y;
+        -webkit-mask-image: linear-gradient(
+          to right, transparent, #000 12%, #000 88%, transparent
+        );
+        mask-image: linear-gradient(
+          to right, transparent, #000 12%, #000 88%, transparent
+        );
+      }
+
+      .article-card {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        display: block;
+        width: clamp(190px, 27vw, 290px);
+        height: 330px;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        color: var(--page-text);
+        background: var(--surface-bg);
+        text-decoration: none;
+        opacity: var(--opacity, 0);
+        z-index: var(--z, 0);
+        pointer-events: none;
+        transform: translate(calc(-50% + var(--x, 0px)), -50%) scale(var(--scale, 1));
+        transition: transform 500ms cubic-bezier(.2,.8,.2,1), opacity 400ms ease;
+      }
+
+      .article-card.is-visible {
+        pointer-events: auto;
+      }
+
+      .article-card.is-active {
+        border-color: var(--page-text);
+        box-shadow: 0 14px 35px rgb(0 0 0 / 20%);
+        animation: gentle-float 5s ease-in-out infinite;
+      }
+
+      .article-card-image-wrap {
+        height: 62%;
+        overflow: hidden;
+        background: var(--surface-bg);
+      }
+
+      .article-card img {
         display: block;
         width: 100%;
         height: 100%;
         object-fit: cover;
-        pointer-events: none;
+        transition: filter 300ms ease, transform 300ms ease;
       }
 
-      .carousel-image-placeholder {
-        display: grid;
-        width: 100%;
-        height: 100%;
-        place-items: center;
-        color: var(--carousel-muted);
-        font-size: 0.8rem;
+      .article-card:hover img {
+        filter: blur(4px);
+        transform: scale(1.05);
       }
 
-      .carousel-card-content {
-        padding: 0.9rem 1rem 1rem;
+      .article-card-copy {
+        padding: 0.8rem 1rem;
       }
 
-      .carousel-card-title {
+      .article-card-copy h4 {
         margin: 0 0 0.35rem;
-        color: var(--card-text);
         font-size: 1rem;
         line-height: 1.35;
-        overflow-wrap: anywhere;
       }
 
-      .carousel-card-date {
-        margin: 0;
-        color: var(--carousel-muted);
-        font-size: 0.75rem;
-      }
-
-      .carousel-card-description {
+      .article-card-copy p {
         display: -webkit-box;
-        margin: 0.45rem 0 0;
+        margin: 0;
         overflow: hidden;
-        color: var(--carousel-muted);
-        font-size: 0.78rem;
-        line-height: 1.45;
+        color: var(--muted);
+        font-size: 0.76rem;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 2;
       }
 
-      /* Controls below the cards */
-      .carousel-controls {
+      .section-controls {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 1rem;
-        width: min(100%, 460px);
-        margin: 0.4rem auto 0;
+        gap: 0.9rem;
+        width: min(100%, 430px);
+        margin: 0.5rem auto 0;
       }
 
-      .carousel-arrow {
+      .section-arrow {
         display: grid;
         flex: 0 0 38px;
         width: 38px;
@@ -287,137 +468,95 @@ const posts = [...pinnedPosts, ...otherPosts];
         place-items: center;
         border: 1px solid var(--border-color);
         border-radius: 50%;
-        background: var(--card-bg);
+        background: var(--surface-bg);
         color: var(--page-text);
-        font-size: 1.2rem;
+        font-size: 1.1rem;
         cursor: pointer;
-        transition: background 200ms ease, border-color 200ms ease;
       }
 
-      .carousel-arrow:hover {
-        border-color: var(--page-text);
-      }
-
-      .carousel-slider-wrap {
-        display: flex;
+      .section-slider-wrap {
         flex: 1;
-        flex-direction: column;
-        gap: 0.4rem;
       }
 
-      .carousel-slider {
+      .section-slider {
         width: 100%;
-        height: 3px;
-        margin: 0;
         accent-color: var(--page-text);
         cursor: pointer;
       }
 
-      .carousel-counter {
-        color: var(--carousel-muted);
-        font-size: 0.72rem;
+      .section-count {
+        color: var(--muted);
+        font-size: 0.7rem;
         text-align: center;
         letter-spacing: 0.12em;
       }
 
-      .carousel-hint {
-        margin: 0.9rem 0 0;
-        color: var(--carousel-muted);
-        font-size: 0.72rem;
-        text-align: center;
+      .other-articles {
+        margin-top: 4rem;
       }
 
-      body.home footer {
-        color: var(--carousel-muted);
+      .other-articles h2 {
+        margin-bottom: 1rem;
+      }
+
+      .other-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+      }
+
+      .other-link {
+        padding: 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        background: var(--surface-bg);
+        color: var(--page-text);
+      }
+
+      .other-link p {
+        margin-bottom: 0;
+        color: var(--muted);
+        font-size: 0.85rem;
       }
 
       @keyframes turath-scroll {
-        from {
-          transform: translateX(0);
-        }
-        to {
-          transform: translateX(-50%);
-        }
+        to { transform: translateX(-50%); }
       }
 
-      @keyframes card-float {
-        0%, 100% {
-          margin-top: 0;
-        }
-        50% {
-          margin-top: -7px;
-        }
-      }
-
-      .carousel-card.is-active.is-visible {
-        animation: card-float 4.5s ease-in-out infinite;
+      @keyframes gentle-float {
+        0%, 100% { margin-top: 0; }
+        50% { margin-top: -5px; }
       }
 
       @media (max-width: 650px) {
-        body.home .site-logo {
-          width: 50.4px;
-        }
-
-        body.home .turath-marquee-track span {
+        body.home .site-logo { width: 50.4px; }
+        .turath-marquee-track span {
           font-size: 0.7rem;
           letter-spacing: 0.14em;
         }
-
-        .article-carousel {
-          --card-width: min(66vw, 270px);
+        .featured-image { height: 205px; }
+        .archive-heading { align-items: start; }
+        .archive-heading p { max-width: 230px; }
+        .category-cover { height: 300px; }
+        .cover-copy { inset: auto 1rem 1rem; }
+        .article-stage { height: 370px; }
+        .article-card {
+          width: min(66vw, 260px);
+          height: 315px;
         }
-
-        .carousel-stage {
-          height: 390px;
-          -webkit-mask-image: linear-gradient(
-            to right,
-            transparent,
-            #000 5%,
-            #000 95%,
-            transparent
-          );
-          mask-image: linear-gradient(
-            to right,
-            transparent,
-            #000 5%,
-            #000 95%,
-            transparent
-          );
-        }
-
-        .carousel-card {
-          height: 330px;
-        }
-
-        .carousel-image-wrap {
-          height: 62%;
-        }
-
-        .carousel-card-content {
-          padding: 0.75rem;
-        }
-
-        .carousel-card-title {
-          font-size: 0.95rem;
-        }
-
-        .carousel-controls {
-          gap: 0.65rem;
-        }
+        .article-card-image-wrap { height: 60%; }
+        .other-list { grid-template-columns: 1fr; }
       }
 
       @media (prefers-reduced-motion: reduce) {
-        body.home .turath-marquee-track {
-          animation: none;
+        .turath-marquee-track,
+        .article-card.is-active {
+          animation: none !important;
         }
-
-        .carousel-card,
-        .carousel-arrow {
+        .cover-image,
+        .article-card,
+        .featured-card {
           transition: none !important;
-        }
-
-        .carousel-card.is-active.is-visible {
-          animation: none;
         }
       }
     </style>
@@ -436,12 +575,10 @@ const posts = [...pinnedPosts, ...otherPosts];
             class="site-logo"
           />
         </a>
-
         <div class="nav-links">
           <a href="/">Home</a>
           <a href="/about">About</a>
         </div>
-
         <ThemeToggle />
       </nav>
     </header>
@@ -451,19 +588,11 @@ const posts = [...pinnedPosts, ...otherPosts];
         <h1>Turath</h1>
       </section>
 
-      <div
-        class="turath-marquee"
-        aria-label="Culture. Art. Expression. History."
-      >
+      <div class="turath-marquee" aria-label="Culture. Art. Expression. History.">
         <div class="turath-marquee-track" aria-hidden="true">
-          <span>CULTURE. ART. EXPRESSION. HISTORY. &nbsp; · &nbsp;</span>
-          <span>CULTURE. ART. EXPRESSION. HISTORY. &nbsp; · &nbsp;</span>
-          <span>CULTURE. ART. EXPRESSION. HISTORY. &nbsp; · &nbsp;</span>
-          <span>CULTURE. ART. EXPRESSION. HISTORY. &nbsp; · &nbsp;</span>
-          <span>CULTURE. ART. EXPRESSION. HISTORY. &nbsp; · &nbsp;</span>
-          <span>CULTURE. ART. EXPRESSION. HISTORY. &nbsp; · &nbsp;</span>
-          <span>CULTURE. ART. EXPRESSION. HISTORY. &nbsp; · &nbsp;</span>
-          <span>CULTURE. ART. EXPRESSION. HISTORY. &nbsp; · &nbsp;</span>
+          {Array.from({ length: 8 }).map(() => (
+            <span>CULTURE. ART. EXPRESSION. HISTORY. &nbsp; · &nbsp;</span>
+          ))}
         </div>
       </div>
 
@@ -471,101 +600,133 @@ const posts = [...pinnedPosts, ...otherPosts];
         orchestrated through articles &amp; perspectives.
       </p>
 
-      <section class="posts">
-        <h2>Latest Posts</h2>
+      {acknowledgments && (
+        <div class="featured-wrap">
+          <a class="featured-card" href={`/blog/${acknowledgments.slug}/`}>
+            {acknowledgments.data.thumbnail && (
+              <img
+                class="featured-image"
+                src={acknowledgments.data.thumbnail}
+                alt=""
+              />
+            )}
+            <div class="featured-copy">
+              <p class="eyebrow">A personal dedication</p>
+              <h2>Acknowledgments</h2>
+              <p>{acknowledgments.data.description}</p>
+            </div>
+          </a>
+        </div>
+      )}
 
-        <div class="article-carousel" id="article-carousel">
-          <div
-            class="carousel-stage"
-            id="carousel-stage"
-            aria-label="Article carousel. Swipe or use the controls to browse."
-            tabindex="0"
+      {sections.map((section) => (
+        <section class="archive" id={`${section.id}-archive`}>
+          <div class="archive-heading">
+            <div>
+              <h2>{section.title}</h2>
+              <p>{section.subtitle}</p>
+            </div>
+            <button
+              class="open-archive"
+              type="button"
+              data-open-section={section.id}
+              aria-expanded="false"
+            >
+              Explore →
+            </button>
+          </div>
+
+          <button
+            class="category-cover"
+            type="button"
+            data-open-section={section.id}
+            aria-label={`Explore ${section.title} articles`}
           >
-            {posts.map((post, index) => (
-              <a
-                class="carousel-card"
-                href={`/blog/${post.slug}/`}
-                data-index={index}
-                aria-label={`Open article: ${post.data.title}`}
-                aria-current="false"
-              >
-                <div class="carousel-image-wrap">
-                  {post.data.thumbnail ? (
-                    <img
-                      class="carousel-image"
-                      src={post.data.thumbnail}
-                      alt={post.data.title}
-                      loading={index < 3 ? 'eager' : 'lazy'}
-                      draggable="false"
-                    />
-                  ) : (
-                    <div class="carousel-image-placeholder">
-                      TURATH
-                    </div>
-                  )}
+            {section.posts.map((post, index) => (
+              post.data.thumbnail && (
+                <img
+                  class:list={['cover-image', index === 0 && 'is-current']}
+                  src={post.data.thumbnail}
+                  alt=""
+                  data-cover-index={index}
+                  loading="lazy"
+                />
+              )
+            ))}
+            <span class="cover-shade"></span>
+            <span class="cover-index">
+              {String(section.posts.length).padStart(2, '0')} ARTICLES
+            </span>
+            <span class="cover-copy">
+              <span class="eyebrow">Explore the archive</span>
+              <h3>{section.title}</h3>
+              <p>Open the collection to browse its stories.</p>
+            </span>
+          </button>
+
+          <div class="section-view" id={`${section.id}-view`}>
+            <div class="section-view-top">
+              <p>Move through the collection</p>
+              <p>{section.posts.length} articles</p>
+            </div>
+
+            <div class="article-stage" data-stage={section.id} tabindex="0">
+              {section.posts.map((post, index) => (
+                <a
+                  class="article-card"
+                  href={`/blog/${post.slug}/`}
+                  data-card-index={index}
+                  aria-label={`Open ${post.data.title}`}
+                >
+                  <div class="article-card-image-wrap">
+                    {post.data.thumbnail && (
+                      <img src={post.data.thumbnail} alt={post.data.title} loading="lazy" />
+                    )}
+                  </div>
+                  <div class="article-card-copy">
+                    <h4>{post.data.title}</h4>
+                    <p>{post.data.description}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+
+            <div class="section-controls">
+              <button class="section-arrow" type="button" data-prev={section.id} aria-label="Previous article">←</button>
+              <div class="section-slider-wrap">
+                <input
+                  class="section-slider"
+                  type="range"
+                  min="0"
+                  max={Math.max(section.posts.length - 1, 0)}
+                  value="0"
+                  step="1"
+                  data-slider={section.id}
+                  aria-label={`Choose ${section.title} article`}
+                />
+                <div class="section-count" data-count={section.id}>
+                  {section.posts.length ? `01 / ${String(section.posts.length).padStart(2, '0')}` : '00 / 00'}
                 </div>
+              </div>
+              <button class="section-arrow" type="button" data-next={section.id} aria-label="Next article">→</button>
+            </div>
+          </div>
+        </section>
+      ))}
 
-                <div class="carousel-card-content">
-                  <h3 class="carousel-card-title">{post.data.title}</h3>
-
-                  <p class="carousel-card-date">
-                    {post.data.pubDate
-                      ? post.data.pubDate.toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                        })
-                      : ''}
-                  </p>
-
-                  <p class="carousel-card-description">
-                    {post.data.description}
-                  </p>
-                </div>
+      {otherPosts.length > 0 && (
+        <section class="other-articles">
+          <h2>More articles</h2>
+          <div class="other-list">
+            {otherPosts.map((post) => (
+              <a class="other-link" href={`/blog/${post.slug}/`}>
+                <strong>{post.data.title}</strong>
+                <p>{post.data.description}</p>
               </a>
             ))}
           </div>
-
-          <div class="carousel-controls">
-            <button
-              class="carousel-arrow"
-              id="carousel-prev"
-              type="button"
-              aria-label="Previous article"
-            >
-              &#8592;
-            </button>
-
-            <div class="carousel-slider-wrap">
-              <input
-                class="carousel-slider"
-                id="carousel-slider"
-                type="range"
-                min="0"
-                max={Math.max(posts.length - 1, 0)}
-                value="0"
-                step="1"
-                aria-label="Choose article"
-              />
-
-              <output class="carousel-counter" id="carousel-counter">
-                {posts.length ? `01 / ${String(posts.length).padStart(2, '0')}` : '00 / 00'}
-              </output>
-            </div>
-
-            <button
-              class="carousel-arrow"
-              id="carousel-next"
-              type="button"
-              aria-label="Next article"
-            >
-              &#8594;
-            </button>
-          </div>
-
-          <p class="carousel-hint">swipe to explore · select a card to read</p>
-        </div>
-      </section>
+        </section>
+      )}
     </main>
 
     <footer>
@@ -573,90 +734,111 @@ const posts = [...pinnedPosts, ...otherPosts];
     </footer>
 
     <script>
-      const carousel = document.querySelector('#article-carousel');
-      const stage = document.querySelector('#carousel-stage');
-      const cards = Array.from(
-        document.querySelectorAll('.carousel-card')
-      ) as HTMLAnchorElement[];
-      const previousButton = document.querySelector('#carousel-prev') as HTMLButtonElement | null;
-      const nextButton = document.querySelector('#carousel-next') as HTMLButtonElement | null;
-      const slider = document.querySelector('#carousel-slider') as HTMLInputElement | null;
-      const counter = document.querySelector('#carousel-counter');
+      const wrapAround = (value, length) =>
+        length ? ((value % length) + length) % length : 0;
 
-      if (carousel && stage && cards.length > 0 && previousButton && nextButton && slider && counter) {
-        let activeIndex = 0;
-        let startX = 0;
-        let startY = 0;
-        let dragging = false;
+      // Crossfade the posters for each category forever.
+      document.querySelectorAll('.archive').forEach((archive) => {
+        const images = Array.from(archive.querySelectorAll('.cover-image'));
+        if (images.length < 2) return;
 
-        const total = cards.length;
+        let current = 0;
+        window.setInterval(() => {
+          images[current].classList.remove('is-current');
+          current = (current + 1) % images.length;
+          images[current].classList.add('is-current');
+        }, 5000);
+      });
 
-        function signedDistance(index: number, active: number) {
+      // Each collection gets its own looping article carousel.
+      document.querySelectorAll('.archive').forEach((archive) => {
+        const section = archive.id.replace('-archive', '');
+        const stage = archive.querySelector('.article-stage');
+        const cards = Array.from(archive.querySelectorAll('.article-card'));
+        const slider = archive.querySelector('.section-slider');
+        const count = archive.querySelector('.section-count');
+        const previous = archive.querySelector('[data-prev]');
+        const next = archive.querySelector('[data-next]');
+        const view = archive.querySelector('.section-view');
+        const openButtons = archive.querySelectorAll('[data-open-section]');
+
+        if (!stage || !slider || !count || !view || cards.length === 0) {
+          openButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+              view?.classList.toggle('is-open');
+            });
+          });
+          return;
+        }
+
+        let active = 0;
+        let pointerStart = null;
+
+        function distanceFrom(index) {
           let distance = index - active;
-
-          if (distance > total / 2) distance -= total;
-          if (distance < -total / 2) distance += total;
-
+          if (distance > cards.length / 2) distance -= cards.length;
+          if (distance < -cards.length / 2) distance += cards.length;
           return distance;
         }
 
-        function renderCarousel() {
+        function render() {
           const stageWidth = stage.clientWidth;
-          const cardWidth = cards[0].getBoundingClientRect().width || 250;
-          const gap = Math.min(cardWidth * 0.73, stageWidth * 0.22);
+          const cardWidth = cards[0].getBoundingClientRect().width || 230;
+          const gap = Math.min(cardWidth * 0.82, stageWidth * 0.25);
 
           cards.forEach((card, index) => {
-            const distance = signedDistance(index, activeIndex);
-            const absoluteDistance = Math.abs(distance);
-            const visible = absoluteDistance <= 2;
-
-            const scale =
-              absoluteDistance === 0 ? 1 :
-              absoluteDistance === 1 ? 0.82 : 0.66;
-
-            const opacity =
-              absoluteDistance === 0 ? 1 :
-              absoluteDistance === 1 ? 0.78 :
-              absoluteDistance === 2 ? 0.35 : 0;
-
-            const blur =
-              absoluteDistance === 0 ? 0 :
-              absoluteDistance === 1 ? 0.2 : 0.8;
+            const distance = distanceFrom(index);
+            const absolute = Math.abs(distance);
+            const visible = absolute <= 2;
 
             card.style.setProperty('--x', `${distance * gap}px`);
-            card.style.setProperty('--scale', String(scale));
-            card.style.setProperty('--opacity', String(opacity));
-            card.style.setProperty('--blur', `${blur}px`);
-            card.style.setProperty('--z', String(10 - absoluteDistance));
+            card.style.setProperty('--scale', String(
+              absolute === 0 ? 1 : absolute === 1 ? 0.83 : 0.68
+            ));
+            card.style.setProperty('--opacity', String(
+              absolute === 0 ? 1 : absolute === 1 ? 0.78 : absolute === 2 ? 0.3 : 0
+            ));
+            card.style.setProperty('--z', String(10 - absolute));
             card.classList.toggle('is-active', distance === 0);
             card.classList.toggle('is-visible', visible);
-            card.setAttribute('aria-current', String(distance === 0));
-            card.setAttribute('tabindex', visible ? '0' : '-1');
             card.setAttribute('aria-hidden', String(!visible));
+            card.setAttribute('tabindex', visible ? '0' : '-1');
           });
 
-          slider.value = String(activeIndex);
-          counter.textContent =
-            `${String(activeIndex + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`;
+          slider.value = String(active);
+          count.textContent =
+            `${String(active + 1).padStart(2, '0')} / ${String(cards.length).padStart(2, '0')}`;
         }
 
-        function goTo(index: number) {
-          activeIndex = ((index % total) + total) % total;
-          renderCarousel();
+        function goTo(index) {
+          active = wrapAround(index, cards.length);
+          render();
         }
 
-        previousButton.addEventListener('click', () => goTo(activeIndex - 1));
-        nextButton.addEventListener('click', () => goTo(activeIndex + 1));
+        openButtons.forEach((button) => {
+          button.addEventListener('click', () => {
+            const opening = !view.classList.contains('is-open');
+            view.classList.toggle('is-open', opening);
 
-        slider.addEventListener('input', () => {
-          goTo(Number(slider.value));
+            archive.querySelectorAll('.open-archive').forEach((toggle) => {
+              toggle.setAttribute('aria-expanded', String(opening));
+              toggle.textContent = opening ? 'Close ↑' : 'Explore →';
+            });
+
+            if (opening) {
+              render();
+              view.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+          });
         });
+
+        previous?.addEventListener('click', () => goTo(active - 1));
+        next?.addEventListener('click', () => goTo(active + 1));
+        slider.addEventListener('input', () => goTo(Number(slider.value)));
 
         cards.forEach((card, index) => {
           card.addEventListener('click', (event) => {
-            const distance = signedDistance(index, activeIndex);
-
-            if (distance !== 0) {
+            if (distanceFrom(index) !== 0) {
               event.preventDefault();
               goTo(index);
             }
@@ -664,41 +846,33 @@ const posts = [...pinnedPosts, ...otherPosts];
         });
 
         stage.addEventListener('keydown', (event) => {
-          if (event.key === 'ArrowLeft') {
-            event.preventDefault();
-            goTo(activeIndex - 1);
-          } else if (event.key === 'ArrowRight') {
-            event.preventDefault();
-            goTo(activeIndex + 1);
-          }
+          if (event.key === 'ArrowLeft') goTo(active - 1);
+          if (event.key === 'ArrowRight') goTo(active + 1);
         });
 
         stage.addEventListener('pointerdown', (event) => {
-          startX = event.clientX;
-          startY = event.clientY;
-          dragging = true;
+          pointerStart = { x: event.clientX, y: event.clientY };
         });
 
         stage.addEventListener('pointerup', (event) => {
-          if (!dragging) return;
-          dragging = false;
+          if (!pointerStart) return;
 
-          const deltaX = event.clientX - startX;
-          const deltaY = event.clientY - startY;
+          const dx = event.clientX - pointerStart.x;
+          const dy = event.clientY - pointerStart.y;
+          pointerStart = null;
 
-          if (Math.abs(deltaX) > 45 && Math.abs(deltaX) > Math.abs(deltaY)) {
-            goTo(activeIndex + (deltaX < 0 ? 1 : -1));
+          if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) {
+            goTo(active + (dx < 0 ? 1 : -1));
           }
         });
 
         stage.addEventListener('pointercancel', () => {
-          dragging = false;
+          pointerStart = null;
         });
 
-        window.addEventListener('resize', renderCarousel);
-
-        renderCarousel();
-      }
+        render();
+        window.addEventListener('resize', render);
+      });
     </script>
   </body>
 </html>
