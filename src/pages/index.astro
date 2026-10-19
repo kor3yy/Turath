@@ -1,4 +1,3 @@
-
 ---
 import TurathIntro from '../components/TurathIntro.astro';
 import { getCollection } from 'astro:content';
@@ -396,9 +395,10 @@ const sections = [
         font-size: 0.8rem;
       }
 
+      /* Article carousel and full descriptions */
       .article-stage {
         position: relative;
-        height: clamp(350px, 44vw, 440px);
+        height: clamp(460px, 55vw, 560px);
         overflow: hidden;
         isolation: isolate;
         touch-action: pan-y;
@@ -414,9 +414,10 @@ const sections = [
         position: absolute;
         top: 50%;
         left: 50%;
-        display: block;
+        display: flex;
+        flex-direction: column;
         width: clamp(190px, 27vw, 290px);
-        height: 330px;
+        height: 430px;
         overflow: hidden;
         border: 1px solid var(--border-color);
         border-radius: 12px;
@@ -441,7 +442,8 @@ const sections = [
       }
 
       .article-card-image-wrap {
-        height: 62%;
+        flex: 0 0 48%;
+        min-height: 0;
         overflow: hidden;
         background: var(--surface-bg);
       }
@@ -460,23 +462,27 @@ const sections = [
       }
 
       .article-card-copy {
-        padding: 0.8rem 1rem;
+        flex: 1;
+        min-height: 0;
+        padding: 0.9rem 1rem 1rem;
+        overflow-y: auto;
+        overflow-wrap: anywhere;
       }
 
       .article-card-copy h4 {
-        margin: 0 0 0.35rem;
+        margin: 0 0 0.5rem;
         font-size: 1rem;
-        line-height: 1.35;
+        line-height: 1.4;
       }
 
       .article-card-copy p {
-        display: -webkit-box;
+        display: block;
         margin: 0;
-        overflow: hidden;
+        overflow: visible;
         color: var(--muted);
-        font-size: 0.76rem;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
+        font-size: 0.78rem;
+        line-height: 1.55;
+        overflow-wrap: anywhere;
       }
 
       .section-controls {
@@ -557,27 +563,51 @@ const sections = [
       }
 
       @media (max-width: 650px) {
-        body.home .site-logo { width: 50.4px; }
+        body.home .site-logo {
+          width: 50.4px;
+        }
 
         .turath-marquee-track span {
           font-size: 0.7rem;
           letter-spacing: 0.14em;
         }
 
-        .featured-image { height: 205px; }
-        .archive-heading { align-items: start; }
-        .archive-heading p { max-width: 230px; }
-        .category-cover { height: 300px; }
-        .cover-copy { inset: auto 1rem 1rem; }
-        .article-stage { height: 370px; }
+        .featured-image {
+          height: 205px;
+        }
+
+        .archive-heading {
+          align-items: start;
+        }
+
+        .archive-heading p {
+          max-width: 230px;
+        }
+
+        .category-cover {
+          height: 300px;
+        }
+
+        .cover-copy {
+          inset: auto 1rem 1rem;
+        }
+
+        .article-stage {
+          height: 440px;
+        }
 
         .article-card {
           width: min(66vw, 260px);
-          height: 315px;
+          height: 390px;
         }
 
-        .article-card-image-wrap { height: 60%; }
-        .other-list { grid-template-columns: 1fr; }
+        .article-card-image-wrap {
+          flex-basis: 44%;
+        }
+
+        .other-list {
+          grid-template-columns: 1fr;
+        }
       }
 
       @media (prefers-reduced-motion: reduce) {
