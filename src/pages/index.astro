@@ -15,28 +15,44 @@ const acknowledgments = allPosts.find((post) =>
   post.data.title.toLowerCase().includes('acknowledgment')
 );
 
-const photographyNames = ['will', 'ian armata'];
-const musicNames = ['savia', 'razi', 'jenna', 'toren'];
+const findPost = (identity) => {
+  const normalizedIdentity = identity.toLowerCase();
 
-const matchesName = (post, names) =>
-  names.some((name) => post.data.title.toLowerCase().includes(name));
+  return allPosts.find((post) =>
+    post.data.title.toLowerCase().includes(normalizedIdentity) ||
+    post.slug.toLowerCase().includes(normalizedIdentity.replaceAll(' ', '-'))
+  );
+};
 
-const photographyPosts = photographyNames
-  .map((name) =>
-    allPosts.find((post) => post.data.title.toLowerCase().includes(name))
-  )
-  .filter(Boolean);
+const photographyPosts = [
+  findPost('will abbass'),
+  findPost('ian armata'),
+].filter(Boolean);
 
-const musicPosts = musicNames
-  .map((name) =>
-    allPosts.find((post) => post.data.title.toLowerCase().includes(name))
-  )
-  .filter(Boolean);
+const musicPosts = [
+  findPost('savia'),
+  findPost('razi'),
+  findPost('jenna'),
+  findPost('toren'),
+].filter(Boolean);
+
+const uniquePosts = (posts) => {
+  const seen = new Set();
+
+  return posts.filter((post) => {
+    if (!post || seen.has(post.slug)) return false;
+    seen.add(post.slug);
+    return true;
+  });
+};
+
+const uniquePhotographyPosts = uniquePosts(photographyPosts);
+const uniqueMusicPosts = uniquePosts(musicPosts);
 
 const assignedSlugs = new Set([
   acknowledgments?.slug,
-  ...photographyPosts.map((post) => post.slug),
-  ...musicPosts.map((post) => post.slug),
+  ...uniquePhotographyPosts.map((post) => post.slug),
+  ...uniqueMusicPosts.map((post) => post.slug),
 ].filter(Boolean));
 
 const otherPosts = allPosts
@@ -44,8 +60,18 @@ const otherPosts = allPosts
   .sort(newestFirst);
 
 const sections = [
-  { id: 'photography', title: 'Photography', subtitle: 'Images, perspectives & the people behind them', posts: photographyPosts },
-  { id: 'music', title: 'Music', subtitle: 'Sound, artists & creative expression', posts: musicPosts },
+  {
+    id: 'photography',
+    title: 'Photography',
+    subtitle: 'Images, perspectives & the people behind them',
+    posts: uniquePhotographyPosts,
+  },
+  {
+    id: 'music',
+    title: 'Music',
+    subtitle: 'Sound, artists & creative expression',
+    posts: uniqueMusicPosts,
+  },
 ];
 ---
 
@@ -55,7 +81,9 @@ const sections = [
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Turath — culture, art, expression, history, and the people behind them." />
     <title>Turath</title>
+
     <style is:global>
       :root {
         color-scheme: dark;
@@ -530,20 +558,24 @@ const sections = [
 
       @media (max-width: 650px) {
         body.home .site-logo { width: 50.4px; }
+
         .turath-marquee-track span {
           font-size: 0.7rem;
           letter-spacing: 0.14em;
         }
+
         .featured-image { height: 205px; }
         .archive-heading { align-items: start; }
         .archive-heading p { max-width: 230px; }
         .category-cover { height: 300px; }
         .cover-copy { inset: auto 1rem 1rem; }
         .article-stage { height: 370px; }
+
         .article-card {
           width: min(66vw, 260px);
           height: 315px;
         }
+
         .article-card-image-wrap { height: 60%; }
         .other-list { grid-template-columns: 1fr; }
       }
@@ -553,6 +585,7 @@ const sections = [
         .article-card.is-active {
           animation: none !important;
         }
+
         .cover-image,
         .article-card,
         .featured-card {
@@ -575,10 +608,12 @@ const sections = [
             class="site-logo"
           />
         </a>
+
         <div class="nav-links">
           <a href="/">Home</a>
           <a href="/about">About</a>
         </div>
+
         <ThemeToggle />
       </nav>
     </header>
@@ -610,6 +645,7 @@ const sections = [
                 alt=""
               />
             )}
+
             <div class="featured-copy">
               <p class="eyebrow">A personal dedication</p>
               <h2>Acknowledgments</h2>
@@ -626,10 +662,12 @@ const sections = [
               <h2>{section.title}</h2>
               <p>{section.subtitle}</p>
             </div>
+
             <button
               class="open-archive"
               type="button"
               data-open-section={section.id}
+              aria-controls={`${section.id}-view`}
               aria-expanded="false"
             >
               Explore →
@@ -641,9 +679,12 @@ const sections = [
             type="button"
             data-open-section={section.id}
             aria-label={`Explore ${section.title} articles`}
+            aria-controls={`${section.id}-view`}
+            aria-expanded="false"
           >
-            {section.posts.map((post, index) => (
-              post.data.thumbnail && (
+            {section.posts
+              .filter((post) => post.data.thumbnail)
+              .map((post, index) => (
                 <img
                   class:list={['cover-image', index === 0 && 'is-current']}
                   src={post.data.thumbnail}
@@ -651,12 +692,14 @@ const sections = [
                   data-cover-index={index}
                   loading="lazy"
                 />
-              )
-            ))}
+              ))}
+
             <span class="cover-shade"></span>
+
             <span class="cover-index">
               {String(section.posts.length).padStart(2, '0')} ARTICLES
             </span>
+
             <span class="cover-copy">
               <span class="eyebrow">Explore the archive</span>
               <h3>{section.title}</h3>
@@ -664,52 +707,80 @@ const sections = [
             </span>
           </button>
 
-          <div class="section-view" id={`${section.id}-view`}>
+          <div class="section-view" id={`${section.id}-view`} aria-label={`${section.title} collection`}>
             <div class="section-view-top">
               <p>Move through the collection</p>
               <p>{section.posts.length} articles</p>
             </div>
 
-            <div class="article-stage" data-stage={section.id} tabindex="0">
-              {section.posts.map((post, index) => (
-                <a
-                  class="article-card"
-                  href={`/blog/${post.slug}/`}
-                  data-card-index={index}
-                  aria-label={`Open ${post.data.title}`}
-                >
-                  <div class="article-card-image-wrap">
-                    {post.data.thumbnail && (
-                      <img src={post.data.thumbnail} alt={post.data.title} loading="lazy" />
-                    )}
-                  </div>
-                  <div class="article-card-copy">
-                    <h4>{post.data.title}</h4>
-                    <p>{post.data.description}</p>
-                  </div>
-                </a>
-              ))}
-            </div>
+            {section.posts.length > 0 ? (
+              <>
+                <div class="article-stage" data-stage={section.id} tabindex="0" aria-label={`${section.title} article carousel`}>
+                  {section.posts.map((post, index) => (
+                    <a
+                      class="article-card"
+                      href={`/blog/${post.slug}/`}
+                      data-card-index={index}
+                      aria-label={`Open ${post.data.title}`}
+                    >
+                      <div class="article-card-image-wrap">
+                        {post.data.thumbnail && (
+                          <img
+                            src={post.data.thumbnail}
+                            alt={post.data.title}
+                            loading="lazy"
+                          />
+                        )}
+                      </div>
 
-            <div class="section-controls">
-              <button class="section-arrow" type="button" data-prev={section.id} aria-label="Previous article">←</button>
-              <div class="section-slider-wrap">
-                <input
-                  class="section-slider"
-                  type="range"
-                  min="0"
-                  max={Math.max(section.posts.length - 1, 0)}
-                  value="0"
-                  step="1"
-                  data-slider={section.id}
-                  aria-label={`Choose ${section.title} article`}
-                />
-                <div class="section-count" data-count={section.id}>
-                  {section.posts.length ? `01 / ${String(section.posts.length).padStart(2, '0')}` : '00 / 00'}
+                      <div class="article-card-copy">
+                        <h4>{post.data.title}</h4>
+                        <p>{post.data.description}</p>
+                      </div>
+                    </a>
+                  ))}
                 </div>
-              </div>
-              <button class="section-arrow" type="button" data-next={section.id} aria-label="Next article">→</button>
-            </div>
+
+                <div class="section-controls">
+                  <button
+                    class="section-arrow"
+                    type="button"
+                    data-prev={section.id}
+                    aria-label="Previous article"
+                  >
+                    ←
+                  </button>
+
+                  <div class="section-slider-wrap">
+                    <input
+                      class="section-slider"
+                      type="range"
+                      min="0"
+                      max={section.posts.length - 1}
+                      value="0"
+                      step="1"
+                      data-slider={section.id}
+                      aria-label={`Choose ${section.title} article`}
+                    />
+
+                    <div class="section-count" data-count={section.id}>
+                      {`01 / ${String(section.posts.length).padStart(2, '0')}`}
+                    </div>
+                  </div>
+
+                  <button
+                    class="section-arrow"
+                    type="button"
+                    data-next={section.id}
+                    aria-label="Next article"
+                  >
+                    →
+                  </button>
+                </div>
+              </>
+            ) : (
+              <p>No articles have been added to this collection yet.</p>
+            )}
           </div>
         </section>
       ))}
@@ -717,6 +788,7 @@ const sections = [
       {otherPosts.length > 0 && (
         <section class="other-articles">
           <h2>More articles</h2>
+
           <div class="other-list">
             {otherPosts.map((post) => (
               <a class="other-link" href={`/blog/${post.slug}/`}>
@@ -737,37 +809,73 @@ const sections = [
       const wrapAround = (value, length) =>
         length ? ((value % length) + length) % length : 0;
 
-      // Crossfade the posters for each category forever.
+      // Keep the category buttons and Explore button synchronized.
       document.querySelectorAll('.archive').forEach((archive) => {
-        const images = Array.from(archive.querySelectorAll('.cover-image'));
-        if (images.length < 2) return;
+        const view = archive.querySelector('.section-view');
+        const openButtons = Array.from(
+          archive.querySelectorAll('[data-open-section]')
+        );
 
-        let current = 0;
-        window.setInterval(() => {
-          images[current].classList.remove('is-current');
-          current = (current + 1) % images.length;
-          images[current].classList.add('is-current');
-        }, 5000);
-      });
+        const syncOpenState = (isOpen) => {
+          view?.classList.toggle('is-open', isOpen);
 
-      // Each collection gets its own looping article carousel.
-      document.querySelectorAll('.archive').forEach((archive) => {
-        const section = archive.id.replace('-archive', '');
+          openButtons.forEach((button) => {
+            button.setAttribute('aria-expanded', String(isOpen));
+
+            if (button.classList.contains('open-archive')) {
+              button.textContent = isOpen ? 'Close ↑' : 'Explore →';
+            }
+          });
+        };
+
+        openButtons.forEach((button) => {
+          button.addEventListener('click', () => {
+            const opening = !view?.classList.contains('is-open');
+            syncOpenState(opening);
+
+            if (opening) {
+              requestAnimationFrame(() => {
+                view?.scrollIntoView({
+                  behavior: 'smooth',
+                  block: 'nearest',
+                });
+              });
+            }
+          });
+        });
+
+        // Crossfade available poster images forever.
+        const images = Array.from(
+          archive.querySelectorAll('.cover-image')
+        );
+
+        if (images.length > 0) {
+          let current = 0;
+
+          images.forEach((image, index) => {
+            image.classList.toggle('is-current', index === 0);
+          });
+
+          if (images.length > 1) {
+            window.setInterval(() => {
+              images[current].classList.remove('is-current');
+              current = (current + 1) % images.length;
+              images[current].classList.add('is-current');
+            }, 2000);
+          }
+        }
+
+        // Each collection has its own looping carousel.
         const stage = archive.querySelector('.article-stage');
-        const cards = Array.from(archive.querySelectorAll('.article-card'));
+        const cards = Array.from(
+          archive.querySelectorAll('.article-card')
+        );
         const slider = archive.querySelector('.section-slider');
         const count = archive.querySelector('.section-count');
         const previous = archive.querySelector('[data-prev]');
         const next = archive.querySelector('[data-next]');
-        const view = archive.querySelector('.section-view');
-        const openButtons = archive.querySelectorAll('[data-open-section]');
 
-        if (!stage || !slider || !count || !view || cards.length === 0) {
-          openButtons.forEach((button) => {
-            button.addEventListener('click', () => {
-              view?.classList.toggle('is-open');
-            });
-          });
+        if (!stage || !slider || !count || cards.length === 0) {
           return;
         }
 
@@ -776,14 +884,22 @@ const sections = [
 
         function distanceFrom(index) {
           let distance = index - active;
-          if (distance > cards.length / 2) distance -= cards.length;
-          if (distance < -cards.length / 2) distance += cards.length;
+
+          if (distance > cards.length / 2) {
+            distance -= cards.length;
+          }
+
+          if (distance < -cards.length / 2) {
+            distance += cards.length;
+          }
+
           return distance;
         }
 
         function render() {
           const stageWidth = stage.clientWidth;
-          const cardWidth = cards[0].getBoundingClientRect().width || 230;
+          const cardWidth =
+            cards[0].getBoundingClientRect().width || 230;
           const gap = Math.min(cardWidth * 0.82, stageWidth * 0.25);
 
           cards.forEach((card, index) => {
@@ -792,12 +908,31 @@ const sections = [
             const visible = absolute <= 2;
 
             card.style.setProperty('--x', `${distance * gap}px`);
-            card.style.setProperty('--scale', String(
-              absolute === 0 ? 1 : absolute === 1 ? 0.83 : 0.68
-            ));
-            card.style.setProperty('--opacity', String(
-              absolute === 0 ? 1 : absolute === 1 ? 0.78 : absolute === 2 ? 0.3 : 0
-            ));
+
+            card.style.setProperty(
+              '--scale',
+              String(
+                absolute === 0
+                  ? 1
+                  : absolute === 1
+                    ? 0.83
+                    : 0.68
+              )
+            );
+
+            card.style.setProperty(
+              '--opacity',
+              String(
+                absolute === 0
+                  ? 1
+                  : absolute === 1
+                    ? 0.78
+                    : absolute === 2
+                      ? 0.3
+                      : 0
+              )
+            );
+
             card.style.setProperty('--z', String(10 - absolute));
             card.classList.toggle('is-active', distance === 0);
             card.classList.toggle('is-visible', visible);
@@ -806,6 +941,7 @@ const sections = [
           });
 
           slider.value = String(active);
+
           count.textContent =
             `${String(active + 1).padStart(2, '0')} / ${String(cards.length).padStart(2, '0')}`;
         }
@@ -815,26 +951,12 @@ const sections = [
           render();
         }
 
-        openButtons.forEach((button) => {
-          button.addEventListener('click', () => {
-            const opening = !view.classList.contains('is-open');
-            view.classList.toggle('is-open', opening);
-
-            archive.querySelectorAll('.open-archive').forEach((toggle) => {
-              toggle.setAttribute('aria-expanded', String(opening));
-              toggle.textContent = opening ? 'Close ↑' : 'Explore →';
-            });
-
-            if (opening) {
-              render();
-              view.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-          });
-        });
-
         previous?.addEventListener('click', () => goTo(active - 1));
         next?.addEventListener('click', () => goTo(active + 1));
-        slider.addEventListener('input', () => goTo(Number(slider.value)));
+
+        slider.addEventListener('input', () => {
+          goTo(Number(slider.value));
+        });
 
         cards.forEach((card, index) => {
           card.addEventListener('click', (event) => {
@@ -846,12 +968,22 @@ const sections = [
         });
 
         stage.addEventListener('keydown', (event) => {
-          if (event.key === 'ArrowLeft') goTo(active - 1);
-          if (event.key === 'ArrowRight') goTo(active + 1);
+          if (event.key === 'ArrowLeft') {
+            event.preventDefault();
+            goTo(active - 1);
+          }
+
+          if (event.key === 'ArrowRight') {
+            event.preventDefault();
+            goTo(active + 1);
+          }
         });
 
         stage.addEventListener('pointerdown', (event) => {
-          pointerStart = { x: event.clientX, y: event.clientY };
+          pointerStart = {
+            x: event.clientX,
+            y: event.clientY,
+          };
         });
 
         stage.addEventListener('pointerup', (event) => {
@@ -861,7 +993,10 @@ const sections = [
           const dy = event.clientY - pointerStart.y;
           pointerStart = null;
 
-          if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) {
+          if (
+            Math.abs(dx) > 45 &&
+            Math.abs(dx) > Math.abs(dy)
+          ) {
             goTo(active + (dx < 0 ? 1 : -1));
           }
         });
