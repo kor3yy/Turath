@@ -1,3 +1,4 @@
+
 ---
 import TurathIntro from '../components/TurathIntro.astro';
 import { getCollection } from 'astro:content';
@@ -103,9 +104,67 @@ const posts = [...pinnedPosts, ...otherPosts];
         object-fit: contain;
       }
 
+      /* Moving Turath statement */
+      body.home .turath-marquee {
+        width: 100%;
+        overflow: hidden;
+        padding: 1rem 0;
+        margin: 0 0 0.5rem;
+        border-top: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      body.home .turath-marquee-track {
+        display: flex;
+        width: max-content;
+        animation: turath-scroll 32s linear infinite;
+        will-change: transform;
+      }
+
+      body.home .turath-marquee-track span {
+        flex-shrink: 0;
+        white-space: nowrap;
+        padding-right: 1rem;
+        font-size: 0.75rem;
+        letter-spacing: 0.2em;
+        color: var(--page-text);
+        opacity: 0.75;
+      }
+
+      body.home .turath-tagline {
+        margin: 0 auto 2rem;
+        padding: 0.5rem 1rem;
+        text-align: center;
+        font-size: 0.85rem;
+        font-style: italic;
+        letter-spacing: 0.04em;
+        color: var(--page-text);
+        opacity: 0.7;
+      }
+
+      @keyframes turath-scroll {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-50%);
+        }
+      }
+
       @media (max-width: 600px) {
         body.home .site-logo {
           width: 50.4px;
+        }
+
+        body.home .turath-marquee-track span {
+          font-size: 0.7rem;
+          letter-spacing: 0.14em;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        body.home .turath-marquee-track {
+          animation: none;
         }
       }
     </style>
@@ -118,7 +177,11 @@ const posts = [...pinnedPosts, ...otherPosts];
     <header>
       <nav>
         <a href="/" class="logo" aria-label="Turath homepage">
-          <img src="/images/logo-removebg-preview.png" alt="Turath logo" class="site-logo" />
+          <img
+            src="/images/logo-removebg-preview.png"
+            alt="Turath logo"
+            class="site-logo"
+          />
         </a>
 
         <div class="nav-links">
@@ -134,6 +197,20 @@ const posts = [...pinnedPosts, ...otherPosts];
       <section class="hero">
         <h1>Turath</h1>
       </section>
+
+      <div
+        class="turath-marquee"
+        aria-label="Culture. Art. Expression. History."
+      >
+        <div class="turath-marquee-track" aria-hidden="true">
+          <span>CULTURE. ART. EXPRESSION. HISTORY. &nbsp; · &nbsp;</span>
+          <span>CULTURE. ART. EXPRESSION. HISTORY. &nbsp; · &nbsp;</span>
+        </div>
+      </div>
+
+      <p class="turath-tagline">
+        orchestrated through articles &amp; perspectives.
+      </p>
 
       <section class="posts">
         <h2>Latest Posts</h2>
