@@ -6,8 +6,12 @@
   try {
     if (sessionStorage.getItem('turath-intro-seen') === 'yes') {
       document.documentElement.classList.add('turath-intro-seen');
+    } else {
+      document.documentElement.classList.add('turath-intro-playing');
     }
-  } catch (e) {}
+  } catch (e) {
+    document.documentElement.classList.add('turath-intro-playing');
+  }
 </script>
 
 <div class="turath-intro" aria-hidden="true">
@@ -16,20 +20,27 @@
 
 <style is:global>
   .turath-intro {
+    display: none;
     position: fixed;
     inset: 0;
     z-index: 1000000;
-    display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
     background: rgba(128, 128, 128, 0.08);
-    backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  html.turath-intro-playing .turath-intro {
+    display: flex;
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
-    transition: opacity 0.3s ease;
+    animation: turath-intro-failsafe 2s forwards;
   }
 
   .turath-intro__word {
@@ -40,15 +51,22 @@
     color: var(--page-text, #fff);
   }
 
-  .turath-intro.is-leaving {
-    opacity: 0;
-    pointer-events: none;
+  @keyframes turath-intro-failsafe {
+    0%, 75% {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    100% {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
   }
 
   html.turath-intro-seen .turath-intro {
     display: none !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -63,14 +81,10 @@
   const word = intro?.querySelector('.turath-intro__word');
 
   if (intro && word) {
-    let alreadySeen = false;
+    const root = document.documentElement;
+    const alreadySeen = root.classList.contains('turath-intro-seen');
 
-    try {
-      alreadySeen =
-        sessionStorage.getItem('turath-intro-seen') === 'yes';
-    } catch (e) {}
-
-    if (alreadySeen) {
+    if (alreadySeen || !root.classList.contains('turath-intro-playing')) {
       intro.remove();
     } else {
       try {
@@ -117,14 +131,18 @@
 
         if (step >= sequence.length) {
           window.clearInterval(interval);
-          intro.classList.add('is-leaving');
-
-          window.setTimeout(() => {
-            intro.remove();
-            document.documentElement.classList.add('turath-intro-seen');
-          }, 300);
+          root.classList.remove('turath-intro-playing');
+          root.classList.add('turath-intro-seen');
+          intro.remove();
         }
       }, 50);
+
+      window.setTimeout(() => {
+        window.clearInterval(interval);
+        root.classList.remove('turath-intro-playing');
+        root.classList.add('turath-intro-seen');
+        intro.remove();
+      }, 2100);
     }
   }
 </script>
