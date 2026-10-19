@@ -1,0 +1,68 @@
+
+<button
+  class="theme-toggle"
+  type="button"
+  aria-label="Switch to light mode"
+  title="Switch theme"
+>
+  <span class="theme-icon" aria-hidden="true">☼</span>
+</button>
+
+<script>
+  const button = document.querySelector('.theme-toggle');
+  const icon = document.querySelector('.theme-icon');
+
+  function setTheme(theme: string) {
+    document.documentElement.dataset.theme = theme;
+
+    if (button && icon) {
+      const isDark = theme === 'dark';
+
+      icon.textContent = isDark ? '☼' : '☾';
+      button.setAttribute(
+        'aria-label',
+        isDark ? 'Switch to light mode' : 'Switch to dark mode'
+      );
+    }
+  }
+
+  let savedTheme = 'dark';
+
+  try {
+    savedTheme = localStorage.getItem('turath-theme') || 'dark';
+  } catch (e) {}
+
+  setTheme(savedTheme);
+
+  button?.addEventListener('click', () => {
+    const nextTheme =
+      document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+
+    setTheme(nextTheme);
+
+    try {
+      localStorage.setItem('turath-theme', nextTheme);
+    } catch (e) {}
+  });
+</script>
+
+<style>
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--border-color, #333);
+    border-radius: 50%;
+    background: var(--surface-bg, #111);
+    color: var(--page-text, #fff);
+    cursor: pointer;
+    font-size: 21px;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .theme-toggle:hover {
+    opacity: 0.75;
+  }
+</style>
