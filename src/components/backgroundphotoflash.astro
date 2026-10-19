@@ -1,0 +1,172 @@
+---
+import { readdir } from 'node:fs/promises';
+import path from 'node:path';
+
+const publicDirectory = path.resolve(process.cwd(), 'public');
+
+const imageExtensions = new Set([
+  '.jpg',
+  '.jpeg',
+  '.png',
+  '.webp',
+  '.avif',
+  '.gif',
+]);
+
+async function findImages(directory) {
+  const images = [];
+
+  try {
+    const entries = await readdir(directory, { withFileTypes: true });
+
+    for (const entry of entries) {
+      const fullPath = path.join(directory, entry.name);
+
+      if (entry.isDirectory()) {
+        images.push(...await findImages(fullPath));
+      } else if (
+        entry.isFile() &&
+        imageExtensions.has(path.extname(entry.name).toLowerCase())
+      ) {
+        const relativePath = path
+          .relative(publicDirectory, fullPath)
+          .split(path.sep)
+          .map(encodeURIComponent)
+          .join('/');
+
+        images.push(`/${relativePath}`);
+      }
+    }
+  } catch (error) {
+    console.error('Unable to scan public images:', error);
+  }
+
+  return images;
+}
+
+const imagePaths = [...new Set(await findImages(publicDirectory))];
+---
+
+{imagePaths.length > 0 && (
+  <div
+    class="turath-photo-flash"
+    data-images={JSON.stringify(imagePaths)}
+    aria-hidden="true"
+  ></div>
+)}
+
+<style is:global>
+  .turath-photo-flash {
+    position: fixed;
+    inset: -24px;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    filter: blur(18px);
+    transform: scale(1.04);
+    transition: opacity 100ms ease;
+    will-change: opacity, background-image;
+  }
+
+  .turath-photo-flash.is-flashing {
+    opacity: 0.7;
+  }
+
+  body.home > header,
+  body.home > main,
+  body.home > footer {
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .turath-photo-flash {
+      display: none !important;
+    }
+  }
+</style>
+
+<script>
+  const flashLayer = document.querySelector('.turath-photo-flash');
+
+  if (flashLayer instanceof HTMLElement) {
+    const imagePaths = JSON.parse(
+      flashLayer.dataset.images || '[]'
+    );
+
+    const wait = (milliseconds) =>
+      new Promise((resolve) => window.setTimeout(resolve, milliseconds));
+
+    const shuffle = (items) => {
+      const result = [...items];
+
+      for (let i = result.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [result[i], result[j]] = [result[j], result[i]];
+      }
+
+      return result;
+    };
+
+    const reducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    );
+
+    async function flashImage(src) {
+      const image = new Image();
+      image.src = src;
+
+      try {
+        await image.decode();
+      } catch {
+        // Still count this photo in the cycle if loading fails.
+      }
+
+      if (!flashLayer.isConnected || reducedMotion.matches) return;
+
+      flashLayer.style.backgroundImage = `url("${src}")`;
+      flashLayer.classList.add('is-flashing');
+
+      await wait(130);
+
+      flashLayer.classList.remove('is-flashing');
+
+      await wait(250);
+    }
+
+    async function runPhotoFlashes() {
+      if (imagePaths.length === 0) return;
+
+      let previousImage = '';
+
+      while (flashLayer.isConnected && !reducedMotion.matches) {
+        const shuffledImages = shuffle(imagePaths);
+
+        // Avoid repeating the previous cycle's final photo immediately.
+        if (
+          shuffledImages.length > 1 &&
+          shuffledImages[0] === previousImage
+        ) {
+          [shuffledImages[0], shuffledImages[1]] =
+            [shuffledImages[1], shuffledImages[0]];
+        }
+
+        // Every image gets exactly one flash per cycle.
+        for (const src of shuffledImages) {
+          if (!flashLayer.isConnected || reducedMotion.matches) return;
+
+          await flashImage(src);
+          previousImage = src;
+        }
+
+        // Brief pause before the next randomized cycle.
+        await wait(500);
+      }
+    }
+
+    runPhotoFlashes();
+  }
+</script>
