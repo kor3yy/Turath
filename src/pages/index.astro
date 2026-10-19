@@ -34,6 +34,7 @@ const posts = [...pinnedPosts, ...otherPosts];
         --card-bg: #111;
         --card-text: #fff;
         --border-color: #333;
+        --ack-beam-color: #fff;
       }
 
       :root[data-theme="light"] {
@@ -43,6 +44,7 @@ const posts = [...pinnedPosts, ...otherPosts];
         --card-bg: #f5f5f5;
         --card-text: #111;
         --border-color: #ddd;
+        --ack-beam-color: #000;
       }
 
       html,
@@ -80,9 +82,47 @@ const posts = [...pinnedPosts, ...otherPosts];
 
       body.home .post-card a {
         display: block;
+        position: relative;
         background: var(--card-bg);
         color: var(--card-text);
         border: 1px solid var(--border-color);
+      }
+
+      /* Animated border for the Acknowledgments homepage card only */
+      body.home .post-card.acknowledgments-card a {
+        isolation: isolate;
+        overflow: hidden;
+        border-radius: 10px;
+        border-color: var(--border-color);
+      }
+
+      body.home .post-card.acknowledgments-card a::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        padding: 1.5px;
+        border-radius: inherit;
+        background: conic-gradient(
+          from 0deg,
+          transparent 0deg,
+          transparent 300deg,
+          var(--ack-beam-color) 335deg,
+          transparent 360deg
+        );
+        -webkit-mask:
+          linear-gradient(#fff 0 0) content-box,
+          linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+        z-index: 5;
+        animation: acknowledgments-card-beam 4s linear infinite;
+      }
+
+      @keyframes acknowledgments-card-beam {
+        to {
+          transform: rotate(360deg);
+        }
       }
 
       body.home .post-card h3,
@@ -163,7 +203,8 @@ const posts = [...pinnedPosts, ...otherPosts];
       }
 
       @media (prefers-reduced-motion: reduce) {
-        body.home .turath-marquee-track {
+        body.home .turath-marquee-track,
+        body.home .post-card.acknowledgments-card a::after {
           animation: none;
         }
       }
@@ -202,16 +243,16 @@ const posts = [...pinnedPosts, ...otherPosts];
         class="turath-marquee"
         aria-label="Culture. Art. Expression. History."
       >
-       <div class="turath-marquee-track" aria-hidden="true">
-  <span>CULTURE. ART. EXPRESSION. HISTORY. &nbsp; · &nbsp;</span>
-  <span>CULTURE. ART. EXPRESSION. HISTORY. &nbsp; · &nbsp;</span>
-  <span>CULTURE. ART. EXPRESSION. HISTORY. &nbsp; · &nbsp;</span>
-  <span>CULTURE. ART. EXPRESSION. HISTORY. &nbsp; · &nbsp;</span>
-  <span>CULTURE. ART. EXPRESSION. HISTORY. &nbsp; · &nbsp;</span>
-  <span>CULTURE. ART. EXPRESSION. HISTORY. &nbsp; · &nbsp;</span>
-  <span>CULTURE. ART. EXPRESSION. HISTORY. &nbsp; · &nbsp;</span>
-  <span>CULTURE. ART. EXPRESSION. HISTORY. &nbsp; · &nbsp;</span>
-</div>
+        <div class="turath-marquee-track" aria-hidden="true">
+          <span>CULTURE. ART. EXPRESSION. HISTORY. &nbsp; · &nbsp;</span>
+          <span>CULTURE. ART. EXPRESSION. HISTORY. &nbsp; · &nbsp;</span>
+          <span>CULTURE. ART. EXPRESSION. HISTORY. &nbsp; · &nbsp;</span>
+          <span>CULTURE. ART. EXPRESSION. HISTORY. &nbsp; · &nbsp;</span>
+          <span>CULTURE. ART. EXPRESSION. HISTORY. &nbsp; · &nbsp;</span>
+          <span>CULTURE. ART. EXPRESSION. HISTORY. &nbsp; · &nbsp;</span>
+          <span>CULTURE. ART. EXPRESSION. HISTORY. &nbsp; · &nbsp;</span>
+          <span>CULTURE. ART. EXPRESSION. HISTORY. &nbsp; · &nbsp;</span>
+        </div>
       </div>
 
       <p class="turath-tagline">
@@ -223,7 +264,12 @@ const posts = [...pinnedPosts, ...otherPosts];
 
         <ul class="post-list">
           {posts.map((post) => (
-            <li class="post-card">
+            <li
+              class:list={[
+                'post-card',
+                post.data.title === 'Acknowledgments' && 'acknowledgments-card',
+              ]}
+            >
               <a href={`/blog/${post.slug}/`}>
                 <div class="thumbnail-wrap">
                   {post.data.thumbnail && (
