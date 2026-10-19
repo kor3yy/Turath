@@ -274,3 +274,20 @@ footer p {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Force-remove any box around thumbnail title text */
+.thumbnail-wrap .thumbnail-title,
+.post-card .thumbnail-title {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background-clip: border-box !important;
+}
+
+/* Remove any pseudo-element borders around the title */
+.thumbnail-wrap .thumbnail-title::before,
+.thumbnail-wrap .thumbnail-title::after {
+  content: none !important;
+  display: none !important;
+}
+
