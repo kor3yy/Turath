@@ -1,6 +1,7 @@
 
 ---
 import { getCollection } from 'astro:content';
+import LiquidCursor from '../../components/LiquidCursor.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -25,14 +26,23 @@ const { Content } = await post.render();
     <meta property="og:title" content={post.data.title} />
     <meta property="og:description" content={post.data.description} />
     <meta property="og:type" content="article" />
-    <meta property="og:url" content={`https://tturatth.com/blog/${post.slug}/`} />
+    <meta
+      property="og:url"
+      content={`https://tturatth.com/blog/${post.slug}/`}
+    />
     {post.data.thumbnail && (
-      <meta property="og:image" content={`https://tturatth.com${post.data.thumbnail}`} />
+      <meta
+        property="og:image"
+        content={`https://tturatth.com${post.data.thumbnail}`}
+      />
     )}
 
     <link rel="stylesheet" href="/styles/global.css" />
   </head>
+
   <body>
+    <LiquidCursor />
+
     <header>
       <nav>
         <div class="nav-links">
@@ -45,7 +55,9 @@ const { Content } = await post.render();
     <main>
       <article class="post-article">
         <a href="/blog" class="back-link">&larr; Back to posts</a>
+
         <h1>{post.data.title}</h1>
+
         <p class="post-date">
           {post.data.pubDate?.toLocaleDateString('en-US', {
             year: 'numeric',
@@ -53,6 +65,7 @@ const { Content } = await post.render();
             day: 'numeric',
           })}
         </p>
+
         <Content />
       </article>
     </main>
