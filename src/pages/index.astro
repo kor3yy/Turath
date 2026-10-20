@@ -5,6 +5,7 @@ import '../styles/global.css';
 import LiquidCursor from '../components/LiquidCursor.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import BackgroundPhotoFlash from '../components/backgroundphotoflash.astro';
+import MusicPlayer from '../components/MusicPlayer.astro';
 
 const allPosts = await getCollection('blog');
 
@@ -838,6 +839,7 @@ const sections = [
     <footer>
       <p>&copy; {new Date().getFullYear()} Turath. All rights reserved.</p>
     </footer>
+    <MusicPlayer />
 
     <script>
       const wrapAround = (value, length) =>
