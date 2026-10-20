@@ -43,14 +43,16 @@ const { Content } = await post.render();
     <link rel="stylesheet" href="/styles/global.css" />
 
     <style>
+      /* Remove the article card border */
       .post-article {
         border: none !important;
         outline: none !important;
         box-shadow: none !important;
+        position: relative;
+        isolation: isolate;
       }
 
-      /* Cinematic article opening */
-
+      /* Cinematic featured image opening */
       .article-opening-image {
         position: relative;
         width: 100%;
@@ -59,6 +61,7 @@ const { Content } = await post.render();
         border-radius: 12px;
         background: var(--surface-bg, #111);
         animation: image-reveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+        box-shadow: 0 0 65px rgba(255, 255, 255, 0.055);
       }
 
       .article-opening-image img {
@@ -69,6 +72,7 @@ const { Content } = await post.render();
         animation: image-zoom 1.8s cubic-bezier(0.16, 1, 0.3, 1) both;
       }
 
+      /* Title and date reveal */
       .post-article > h1 {
         animation: text-reveal 900ms cubic-bezier(0.16, 1, 0.3, 1) 250ms both;
       }
@@ -82,6 +86,7 @@ const { Content } = await post.render();
         animation: text-reveal 700ms ease 150ms both;
       }
 
+      /* Article body reveal */
       .article-body {
         animation: text-reveal 900ms cubic-bezier(0.16, 1, 0.3, 1) 550ms both;
       }
@@ -91,6 +96,7 @@ const { Content } = await post.render();
         animation-delay: var(--reveal-delay, 650ms);
       }
 
+      /* Cinematic image reveal */
       @keyframes image-reveal {
         from {
           opacity: 0;
@@ -145,17 +151,81 @@ const { Content } = await post.render();
         }
       }
 
+      /* Subtle animated film grain */
+      .post-article::before {
+        content: "";
+        position: fixed;
+        inset: -50%;
+        z-index: 10;
+        pointer-events: none;
+        opacity: 0.045;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
+        animation: film-grain 0.22s steps(2) infinite;
+      }
+
+      @keyframes film-grain {
+        0% {
+          transform: translate(0, 0);
+        }
+
+        25% {
+          transform: translate(-1%, 1%);
+        }
+
+        50% {
+          transform: translate(1%, -1%);
+        }
+
+        75% {
+          transform: translate(-1%, -1%);
+        }
+
+        100% {
+          transform: translate(1%, 1%);
+        }
+      }
+
+      /* Soft vignette around the screen edges */
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 9;
+        pointer-events: none;
+        background: radial-gradient(
+          ellipse at center,
+          transparent 48%,
+          rgba(0, 0, 0, 0.07) 76%,
+          rgba(0, 0, 0, 0.2) 100%
+        );
+      }
+
+      /* Mobile adjustments */
       @media (max-width: 650px) {
         .article-opening-image {
           margin: 1.25rem 0 2rem;
           border-radius: 8px;
+          box-shadow: 0 0 30px rgba(255, 255, 255, 0.04);
         }
 
         .article-opening-image img {
           max-height: 380px;
         }
+
+        .post-article::before {
+          opacity: 0.03;
+        }
+
+        body::after {
+          background: radial-gradient(
+            ellipse at center,
+            transparent 58%,
+            rgba(0, 0, 0, 0.12) 100%
+          );
+        }
       }
 
+      /* Respect reduced-motion preferences */
       @media (prefers-reduced-motion: reduce) {
         .article-opening-image,
         .article-opening-image img,
@@ -169,6 +239,10 @@ const { Content } = await post.render();
           filter: none !important;
           transform: none !important;
           opacity: 1 !important;
+        }
+
+        .post-article::before {
+          animation: none !important;
         }
       }
     </style>
