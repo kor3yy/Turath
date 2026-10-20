@@ -15,8 +15,8 @@ const imageExtensions = new Set([
   '.gif',
 ]);
 
-async function findImages(directory) {
-  const images = [];
+async function findImages(directory: string): Promise<string[]> {
+  const images: string[] = [];
 
   try {
     const entries = await readdir(directory, { withFileTypes: true });
@@ -25,7 +25,7 @@ async function findImages(directory) {
       const fullPath = path.join(directory, entry.name);
 
       if (entry.isDirectory()) {
-        images.push(...await findImages(fullPath));
+        images.push(...(await findImages(fullPath)));
       } else if (
         entry.isFile() &&
         imageExtensions.has(path.extname(entry.name).toLowerCase())
@@ -112,9 +112,11 @@ const imagePaths = [...new Set(await findImages(backgroundDirectory))];
   const background = document.querySelector('.turath-photo-background');
 
   if (background instanceof HTMLElement) {
-    const imagePaths = JSON.parse(background.dataset.images || '[]');
+    const imagePaths: string[] = JSON.parse(
+      background.dataset.images || '[]'
+    );
     const layers = Array.from(
-      background.querySelectorAll('.turath-photo-layer')
+      background.querySelectorAll<HTMLElement>('.turath-photo-layer')
     );
 
     const reducedMotion = window.matchMedia(
@@ -125,10 +127,10 @@ const imagePaths = [...new Set(await findImages(backgroundDirectory))];
     let mode = '';
     let activeLayer = 0;
 
-    const wait = (ms) =>
+    const wait = (ms: number) =>
       new Promise((resolve) => window.setTimeout(resolve, ms));
 
-    const shuffle = (items) => {
+    const shuffle = (items: string[]) => {
       const result = [...items];
 
       for (let i = result.length - 1; i > 0; i--) {
@@ -139,24 +141,22 @@ const imagePaths = [...new Set(await findImages(backgroundDirectory))];
       return result;
     };
 
-    async function loadImage(src) {
+    async function loadImage(src: string) {
       const image = new Image();
       image.src = src;
 
       try {
         await image.decode();
       } catch {
-        // Skip waiting if an image cannot be decoded.
+        // Continue if an image cannot be decoded.
       }
     }
 
-    async function runFlashes(id) {
+    async function runFlashes(id: number) {
       background.classList.add('is-flashing');
       background.classList.remove('is-fading');
 
-      layers.forEach((layer) => {
-        layer.classList.remove('is-visible');
-      });
+      layers.forEach((layer) => layer.classList.remove('is-visible'));
 
       while (
         background.isConnected &&
@@ -172,6 +172,8 @@ const imagePaths = [...new Set(await findImages(backgroundDirectory))];
           if (id !== runId || mode !== 'flash') return;
 
           const layer = layers[0];
+          if (!layer) return;
+
           layer.style.backgroundImage = `url("${src}")`;
           layer.classList.add('is-visible');
 
@@ -185,13 +187,11 @@ const imagePaths = [...new Set(await findImages(backgroundDirectory))];
       }
     }
 
-    async function runFades(id) {
+    async function runFades(id: number) {
       background.classList.remove('is-flashing');
       background.classList.add('is-fading');
 
-      layers.forEach((layer) => {
-        layer.classList.remove('is-visible');
-      });
+      layers.forEach((layer) => layer.classList.remove('is-visible'));
 
       let index = 0;
 
@@ -205,6 +205,8 @@ const imagePaths = [...new Set(await findImages(backgroundDirectory))];
         const nextLayerIndex = activeLayer === 0 ? 1 : 0;
         const nextLayer = layers[nextLayerIndex];
 
+        if (!nextLayer) return;
+
         await loadImage(src);
 
         if (id !== runId || mode !== 'fade') return;
@@ -216,7 +218,7 @@ const imagePaths = [...new Set(await findImages(backgroundDirectory))];
 
         if (id !== runId || mode !== 'fade') return;
 
-        layers[activeLayer].classList.remove('is-visible');
+        layers[activeLayer]?.classList.remove('is-visible');
         activeLayer = nextLayerIndex;
         index++;
 
@@ -224,16 +226,16 @@ const imagePaths = [...new Set(await findImages(backgroundDirectory))];
       }
     }
 
-    function setMode(nextMode) {
+    function setMode(nextMode: string) {
       if (nextMode === mode || reducedMotion.matches) return;
 
       mode = nextMode;
       const id = ++runId;
 
       if (mode === 'flash') {
-        runFlashes(id);
+        void runFlashes(id);
       } else {
-        runFades(id);
+        void runFades(id);
       }
     }
 
@@ -264,7 +266,7 @@ const imagePaths = [...new Set(await findImages(backgroundDirectory))];
         } else {
           runId++;
           mode = '';
-          background.classList.remove('is-visible', 'is-flashing', 'is-fading');
+          background.classList.remove('is-flashing', 'is-fading');
           layers.forEach((layer) => layer.classList.remove('is-visible'));
         }
       });
