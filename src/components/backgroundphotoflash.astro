@@ -39,7 +39,7 @@ async function findImages(directory: string): Promise<string[]> {
       }
     }
   } catch (error) {
-    console.error('Unable to scan background images:', error);
+    console.error('Unable to scan public/background:', error);
   }
 
   return images;
@@ -63,12 +63,12 @@ console.log('Background images found:', imagePaths);
 <style is:global>
   .turath-photo-background {
     position: fixed;
-    inset: -24px;
+    inset: -40px;
     z-index: 0;
     pointer-events: none;
     overflow: hidden;
-    filter: blur(18px);
-    transform: scale(1.04);
+    filter: blur(24px) saturate(1.8) brightness(0.95);
+    transform: scale(1.08);
   }
 
   .turath-photo-layer {
@@ -78,19 +78,20 @@ console.log('Background images found:', imagePaths);
     background-repeat: no-repeat;
     background-size: cover;
     opacity: 0;
-    transition: opacity 1.4s ease;
+    transition: opacity 0.8s ease-in-out;
     will-change: opacity;
   }
 
- .turath-photo-background.is-flashing .turath-photo-layer {
-  transition: opacity 1.5s ease-in-out;
-}
+  .turath-photo-background.is-flashing .turath-photo-layer {
+    transition: opacity 0.8s ease-in-out;
+  }
 
-.turath-photo-background.is-flashing .turath-photo-layer.is-visible {
-  opacity: 0.7;
-}
+  .turath-photo-background.is-flashing .turath-photo-layer.is-visible {
+    opacity: 0.8;
+  }
+
   .turath-photo-background.is-fading .turath-photo-layer.is-visible {
-    opacity: 0.38;
+    opacity: 0.65;
   }
 
   body.home > header,
@@ -114,6 +115,7 @@ console.log('Background images found:', imagePaths);
     const imagePaths: string[] = JSON.parse(
       background.dataset.images || '[]'
     );
+
     const layers = Array.from(
       background.querySelectorAll<HTMLElement>('.turath-photo-layer')
     );
@@ -157,30 +159,39 @@ console.log('Background images found:', imagePaths);
 
       layers.forEach((layer) => layer.classList.remove('is-visible'));
 
+      let index = 0;
+
       while (
         background.isConnected &&
         id === runId &&
         mode === 'flash' &&
         !reducedMotion.matches
       ) {
-        for (const src of shuffle(imagePaths)) {
+        const shuffledImages = shuffle(imagePaths);
+
+        for (const src of shuffledImages) {
           if (id !== runId || mode !== 'flash') return;
+
+          const nextLayerIndex = activeLayer === 0 ? 1 : 0;
+          const nextLayer = layers[nextLayerIndex];
+
+          if (!nextLayer) return;
 
           await loadImage(src);
 
           if (id !== runId || mode !== 'flash') return;
 
-          const layer = layers[0];
-          if (!layer) return;
+          nextLayer.style.backgroundImage = `url("${src}")`;
+          nextLayer.classList.add('is-visible');
 
-          layer.style.backgroundImage = `url("${src}")`;
-          layer.classList.add('is-visible');
-
-          await wait(1800);
+          await wait(900);
 
           if (id !== runId || mode !== 'flash') return;
 
-          layer.classList.remove('is-visible');
+          layers[activeLayer]?.classList.remove('is-visible');
+          activeLayer = nextLayerIndex;
+          index++;
+
           await wait(100);
         }
       }
@@ -189,8 +200,6 @@ console.log('Background images found:', imagePaths);
     async function runFades(id: number) {
       background.classList.remove('is-flashing');
       background.classList.add('is-fading');
-
-      layers.forEach((layer) => layer.classList.remove('is-visible'));
 
       let index = 0;
 
@@ -213,7 +222,7 @@ console.log('Background images found:', imagePaths);
         nextLayer.style.backgroundImage = `url("${src}")`;
         nextLayer.classList.add('is-visible');
 
-        await wait(1800);
+        await wait(1000);
 
         if (id !== runId || mode !== 'fade') return;
 
@@ -221,7 +230,7 @@ console.log('Background images found:', imagePaths);
         activeLayer = nextLayerIndex;
         index++;
 
-        await wait(200);
+        await wait(100);
       }
     }
 
