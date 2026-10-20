@@ -1,12 +1,12 @@
+
 ---
 ---
 
 <div class="turath-music-player" id="turath-music-player">
   <audio
     id="turath-audio"
-    src="/audio/turath-track.mp3"
+    src="/audio/vibesvibinginvibeland.mp3/Blang%20-%20Toren.mp3"
     preload="metadata"
-    loop
   ></audio>
 
   <button
@@ -29,6 +29,21 @@
       <span class="turath-player-name">TURATH RADIO</span>
       <span class="turath-player-status" id="turath-player-status">READY</span>
     </div>
+
+    <select
+      class="turath-playlist-select"
+      id="turath-playlist-select"
+      aria-label="Choose playlist"
+    >
+      <option value="vibeland">Vibeland</option>
+      <option value="amber">Amber-Eyed Angel in a Black Dress</option>
+    </select>
+
+    <select
+      class="turath-track-select"
+      id="turath-track-select"
+      aria-label="Choose song"
+    ></select>
 
     <canvas
       class="turath-waveform"
@@ -81,9 +96,9 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    width: 254px;
-    min-height: 66px;
-    padding: 10px 13px;
+    width: 310px;
+    min-height: 100px;
+    padding: 12px 13px;
     box-sizing: border-box;
     color: inherit;
     background: color-mix(in srgb, Canvas 90%, transparent);
@@ -114,9 +129,7 @@
     height: 34px;
     border: 1px solid color-mix(in srgb, currentColor 23%, transparent);
     border-radius: 50%;
-    transition:
-      background 180ms ease,
-      transform 180ms ease;
+    transition: background 180ms ease, transform 180ms ease;
   }
 
   .turath-play-button:hover {
@@ -173,6 +186,35 @@
     opacity: 0.55;
   }
 
+  .turath-playlist-select,
+  .turath-track-select {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    padding: 3px 5px;
+    color: inherit;
+    background: color-mix(in srgb, Canvas 85%, transparent);
+    border: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 10px;
+    cursor: pointer;
+  }
+
+  .turath-playlist-select {
+    font-weight: 600;
+  }
+
+  .turath-track-select {
+    opacity: 0.8;
+  }
+
+  .turath-playlist-select:focus-visible,
+  .turath-track-select:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+
   .turath-waveform {
     display: block;
     width: 100%;
@@ -215,10 +257,10 @@
     .turath-music-player {
       right: 14px;
       bottom: 14px;
-      width: 226px;
-      min-height: 60px;
+      width: min(290px, calc(100vw - 28px));
+      min-height: 96px;
       gap: 10px;
-      padding: 9px 11px;
+      padding: 10px 11px;
       border-radius: 12px;
     }
 
@@ -243,6 +285,8 @@
   const muteButton = document.querySelector("#turath-mute-button");
   const statusLabel = document.querySelector("#turath-player-status");
   const canvas = document.querySelector("#turath-waveform");
+  const playlistSelect = document.querySelector("#turath-playlist-select");
+  const trackSelect = document.querySelector("#turath-track-select");
 
   if (
     player instanceof HTMLElement &&
@@ -250,20 +294,55 @@
     playButton instanceof HTMLButtonElement &&
     muteButton instanceof HTMLButtonElement &&
     statusLabel instanceof HTMLElement &&
-    canvas instanceof HTMLCanvasElement
+    canvas instanceof HTMLCanvasElement &&
+    playlistSelect instanceof HTMLSelectElement &&
+    trackSelect instanceof HTMLSelectElement
   ) {
+    const playlists = {
+      vibeland: [
+        ["Blang - Toren", "Blang - Toren.mp3"],
+        ["Bliss - Toren", "Bliss - Toren - Topic.mp3"],
+        ["Check My Phone - Toren", "Check My Phone - Toren.mp3"],
+        ["Different Regions - Toren", "Different Regions - Toren.mp3"],
+        ["DrugDealer - Toren", "DrugDealer - Toren.mp3"],
+        ["Dubbies - Toren", "Dubbies - Toren.mp3"],
+        ["GT - Toren", "GT - Toren.mp3"],
+        ["Jungle Odyssey - Toren", "Jungle Odyssey - Toren.mp3"],
+        ["Kirk - Toren", "Kirk - Toren.mp3"],
+        ["Let's Have Fun! - Toren", "Let's Have Fun ! - Toren.mp3"],
+        ["Lookin Up - Toren", "Lookin Up - Toren .mp3"],
+        ["Nameless - Toren", "Nameless - Toren.mp3"],
+        ["New 2 This Life - Toren", "New 2 This Life - Toren.mp3"],
+        ["Omgbrain - Toren", "Omgbrain - Toren.mp3"],
+        ["Rockin 1of1 - Toren", "Rockin 1of1 - Toren.mp3"],
+        ["Stellium - Toren", "Stellium - Toren.mp3"],
+        ["Tom Holland - Toren", "Tom Holland - Toren.mp3"],
+        ["Top Rank - Toren", "Top Rank - Toren.mp3"],
+        ["Vibe With You - Toren", "Vibe With You - Toren.mp3"]
+      ],
+      amber: [
+        ["But I Might - Savia Ashby", "but i might - Savia Ashby.mp3"],
+        ["Juiceboxx - Savia Ashby", "juiceboxx - Savia Ashby.mp3"],
+        ["Tunnelvision - Savia Ashby", "tunnelvision - Savia Ashby.mp3"]
+      ]
+    };
+
+    const playlistFolders = {
+      vibeland: "/audio/vibesvibinginvibeland.mp3/",
+      amber: "/audio/ambereyedangelinablackdress.mp3/"
+    };
+
     const context = canvas.getContext("2d");
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
 
     let audioContext;
     let analyser;
     let source;
-    let animationFrame = 0;
     let samples;
+    let animationFrame = 0;
     let isReady = false;
-
-    const reducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
 
     function resizeCanvas() {
       if (!context) return;
@@ -288,7 +367,6 @@
       context.beginPath();
       context.lineWidth = 1.4;
       context.lineCap = "round";
-      context.lineJoin = "round";
       context.strokeStyle = getComputedStyle(player).color;
       context.globalAlpha = 0.5;
 
@@ -297,11 +375,8 @@
           height / 2 +
           Math.sin((x / Math.max(width, 1)) * Math.PI * 4) * 1.5;
 
-        if (x === 0) {
-          context.moveTo(x, y);
-        } else {
-          context.lineTo(x, y);
-        }
+        if (x === 0) context.moveTo(x, y);
+        else context.lineTo(x, y);
       }
 
       context.stroke();
@@ -314,10 +389,7 @@
       const AudioContextClass =
         window.AudioContext || window.webkitAudioContext;
 
-      if (!AudioContextClass) {
-        statusLabel.textContent = "NO VISUALIZER";
-        return false;
-      }
+      if (!AudioContextClass || !context) return false;
 
       try {
         audioContext = new AudioContextClass();
@@ -326,7 +398,6 @@
         analyser.smoothingTimeConstant = 0.78;
 
         source = audioContext.createMediaElementSource(audio);
-
         source.connect(analyser);
         analyser.connect(audioContext.destination);
 
@@ -335,7 +406,7 @@
 
         return true;
       } catch {
-        statusLabel.textContent = "AUDIO ERROR";
+        statusLabel.textContent = "AUDIO ONLY";
         return false;
       }
     }
@@ -347,7 +418,9 @@
       const height = canvas.clientHeight;
 
       if (!width || !height) {
-        animationFrame = requestAnimationFrame(drawWaveform);
+        if (!reducedMotion) {
+          animationFrame = requestAnimationFrame(drawWaveform);
+        }
         return;
       }
 
@@ -370,11 +443,8 @@
         const normalized = (samples[i] - 128) / 128;
         const y = middle + normalized * amplitude;
 
-        if (i === 0) {
-          context.moveTo(x, y);
-        } else {
-          context.lineTo(x, y);
-        }
+        if (i === 0) context.moveTo(x, y);
+        else context.lineTo(x, y);
       }
 
       context.stroke();
@@ -385,21 +455,58 @@
       }
     }
 
+    function populateTracks() {
+      const playlist = playlists[playlistSelect.value];
+
+      trackSelect.replaceChildren();
+
+      playlist.forEach(([name], index) => {
+        const option = document.createElement("option");
+        option.value = String(index);
+        option.textContent = name;
+        trackSelect.appendChild(option);
+      });
+    }
+
+    function loadTrack(index, autoplay = false) {
+      const playlistKey = playlistSelect.value;
+      const playlist = playlists[playlistKey];
+      const track = playlist[index];
+
+      if (!track) return;
+
+      const wasPlaying = !audio.paused;
+      audio.pause();
+
+      audio.src =
+        playlistFolders[playlistKey] + encodeURIComponent(track[1]);
+
+      audio.load();
+      trackSelect.value = String(index);
+      player.classList.remove("is-playing");
+      playButton.setAttribute("aria-label", "Play music");
+      playButton.title = "Play music";
+      statusLabel.textContent = "READY";
+
+      cancelAnimationFrame(animationFrame);
+      drawIdleWave();
+
+      if (autoplay || wasPlaying) {
+        void playAudio();
+      }
+    }
+
     async function playAudio() {
-      if (!setupAudio()) {
+      if (setupAudio() && audioContext.state === "suspended") {
         try {
-          await audio.play();
+          await audioContext.resume();
         } catch {
-          statusLabel.textContent = "UNAVAILABLE";
+          statusLabel.textContent = "TAP TO RETRY";
+          return;
         }
-        return;
       }
 
       try {
-        if (audioContext.state === "suspended") {
-          await audioContext.resume();
-        }
-
         await audio.play();
 
         player.classList.add("is-playing");
@@ -409,14 +516,10 @@
 
         cancelAnimationFrame(animationFrame);
 
-        if (reducedMotion) {
-          drawWaveform();
-        } else {
-          drawWaveform();
-        }
+        if (isReady) drawWaveform();
       } catch {
-        statusLabel.textContent = "TAP TO RETRY";
         player.classList.remove("is-playing");
+        statusLabel.textContent = "TRACK UNAVAILABLE";
       }
     }
 
@@ -431,26 +534,36 @@
       drawIdleWave();
     }
 
+    playlistSelect.addEventListener("change", () => {
+      populateTracks();
+      loadTrack(0);
+    });
+
+    trackSelect.addEventListener("change", () => {
+      loadTrack(Number(trackSelect.value));
+    });
+
     playButton.addEventListener("click", () => {
-      if (audio.paused) {
-        void playAudio();
-      } else {
-        pauseAudio();
-      }
+      if (audio.paused) void playAudio();
+      else pauseAudio();
     });
 
     muteButton.addEventListener("click", () => {
       audio.muted = !audio.muted;
       player.classList.toggle("is-muted", audio.muted);
+
       muteButton.setAttribute(
         "aria-label",
         audio.muted ? "Unmute music" : "Mute music"
       );
+
       muteButton.title = audio.muted ? "Unmute music" : "Mute music";
     });
 
     audio.addEventListener("playing", () => {
       player.classList.add("is-playing");
+      playButton.setAttribute("aria-label", "Pause music");
+      playButton.title = "Pause music";
       statusLabel.textContent = "PLAYING";
     });
 
@@ -463,10 +576,11 @@
     });
 
     audio.addEventListener("ended", () => {
-      player.classList.remove("is-playing");
-      statusLabel.textContent = "READY";
-      cancelAnimationFrame(animationFrame);
-      drawIdleWave();
+      const nextIndex = Number(trackSelect.value) + 1;
+      const playlist = playlists[playlistSelect.value];
+
+      // Continue to the next song, then restart the playlist.
+      loadTrack(nextIndex < playlist.length ? nextIndex : 0, true);
     });
 
     audio.addEventListener("error", () => {
@@ -475,6 +589,7 @@
 
     window.addEventListener("resize", resizeCanvas);
 
+    populateTracks();
     resizeCanvas();
   }
 </script>
