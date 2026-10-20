@@ -3,7 +3,7 @@ import { readdir } from 'node:fs/promises';
 import path from 'node:path';
 
 const publicDirectory = path.resolve(process.cwd(), 'public');
-const backgroundDirectory = path.join(publicDirectory, 'backgrounds');
+const backgroundDirectory = path.join(publicDirectory, 'background');
 
 const imageExtensions = new Set([
   '.jpg',
