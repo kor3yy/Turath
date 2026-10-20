@@ -1,0 +1,376 @@
+
+<nav class="turath-toc" aria-label="Table of contents" hidden>
+  <details class="toc-panel" open>
+    <summary class="toc-summary">
+      <span class="toc-heading">
+        <span class="toc-eyebrow">READING GUIDE</span>
+        <span class="toc-title">On this page</span>
+      </span>
+      <svg
+        class="toc-chevron"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="m6 9 6 6 6-6" />
+      </svg>
+    </summary>
+
+    <ol class="toc-list"></ol>
+  </details>
+</nav>
+
+<style>
+  .turath-toc {
+    --toc-border: color-mix(in srgb, currentColor 15%, transparent);
+    --toc-muted: color-mix(in srgb, currentColor 60%, transparent);
+    margin: 1.75rem 0 2.25rem;
+    color: inherit;
+    font-family: inherit;
+  }
+
+  .turath-toc[hidden] {
+    display: none;
+  }
+
+  .toc-panel {
+    overflow: hidden;
+    border: 1px solid var(--toc-border);
+    border-radius: 10px;
+    background: color-mix(in srgb, currentColor 2.5%, transparent);
+  }
+
+  .toc-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.1rem;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+  }
+
+  .toc-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .toc-summary:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: -4px;
+    border-radius: 10px;
+  }
+
+  .toc-heading {
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .toc-eyebrow {
+    font-family: inherit;
+    font-size: 0.62rem;
+    font-weight: 650;
+    letter-spacing: 0.14em;
+    opacity: 0.6;
+  }
+
+  .toc-title {
+    font-size: 0.98rem;
+    font-weight: 550;
+    letter-spacing: -0.015em;
+  }
+
+  .toc-chevron {
+    flex: 0 0 auto;
+    opacity: 0.65;
+    transition: transform 200ms ease;
+  }
+
+  .toc-panel[open] .toc-chevron {
+    transform: rotate(180deg);
+  }
+
+  .toc-list {
+    display: grid;
+    gap: 0;
+    margin: 0;
+    padding: 0.25rem 1.1rem 1rem;
+    list-style: none;
+    border-top: 1px solid var(--toc-border);
+  }
+
+  .toc-item {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  .toc-item.level-3 {
+    padding-left: 1rem;
+  }
+
+  .toc-item.level-4 {
+    padding-left: 2rem;
+  }
+
+  .toc-link {
+    position: relative;
+    display: block;
+    padding: 0.55rem 0 0.55rem 0.85rem;
+    border-left: 1px solid var(--toc-border);
+    color: inherit;
+    font-size: 0.86rem;
+    line-height: 1.55;
+    text-decoration: none;
+    opacity: 0.72;
+    overflow-wrap: anywhere;
+    transition: opacity 180ms ease, border-color 180ms ease;
+  }
+
+  .toc-link:hover {
+    opacity: 1;
+  }
+
+  .toc-link[aria-current="location"] {
+    border-left: 2px solid currentColor;
+    opacity: 1;
+    font-weight: 600;
+  }
+
+  .toc-link:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+    border-radius: 2px;
+    opacity: 1;
+  }
+
+  .article-body :is(h2, h3, h4) {
+    scroll-margin-top: 2rem;
+  }
+
+  @media (max-width: 650px) {
+    .turath-toc {
+      margin: 1.25rem 0 1.75rem;
+    }
+
+    .toc-summary {
+      padding: 0.9rem 1rem;
+    }
+
+    .toc-list {
+      padding: 0.2rem 1rem 0.8rem;
+    }
+
+    .toc-link {
+      padding-top: 0.6rem;
+      padding-bottom: 0.6rem;
+      font-size: 0.84rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .toc-chevron,
+    .toc-link {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  function initializeTableOfContents() {
+    const toc = document.querySelector(".turath-toc");
+    const articleBody = document.querySelector(".article-body");
+
+    if (!(toc instanceof HTMLElement) || !(articleBody instanceof HTMLElement)) {
+      return;
+    }
+
+    const list = toc.querySelector(".toc-list");
+
+    if (!(list instanceof HTMLOListElement)) {
+      return;
+    }
+
+    const headings = Array.from(
+      articleBody.querySelectorAll("h2, h3, h4")
+    ).filter((heading) => {
+      return (
+        heading.textContent?.trim() &&
+        !heading.closest("[hidden]") &&
+        heading.getAttribute("aria-hidden") !== "true"
+      );
+    });
+
+    // A contents menu is only useful when an article has multiple sections.
+    if (headings.length < 2) {
+      toc.hidden = true;
+      return;
+    }
+
+    const usedIds = new Set(
+      Array.from(document.querySelectorAll("[id]"))
+        .map((element) => element.id)
+        .filter(Boolean)
+    );
+
+    function makeSlug(text: string) {
+      return text
+        .normalize("NFKD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim()
+        .replace(/[^\p{L}\p{N}\s-]/gu, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-");
+    }
+
+    function ensureHeadingId(heading: Element, index: number) {
+      if (heading.id) return heading.id;
+
+      const base = makeSlug(heading.textContent || "") || `section-${index + 1}`;
+      let candidate = base;
+      let suffix = 2;
+
+      while (usedIds.has(candidate)) {
+        candidate = `${base}-${suffix}`;
+        suffix += 1;
+      }
+
+      heading.id = candidate;
+      usedIds.add(candidate);
+
+      return candidate;
+    }
+
+    list.replaceChildren();
+
+    const links: HTMLAnchorElement[] = [];
+
+    headings.forEach((heading, index) => {
+      const id = ensureHeadingId(heading, index);
+      const label = heading.textContent?.trim();
+
+      if (!label) return;
+
+      const item = document.createElement("li");
+      const level = Number(heading.tagName.substring(1));
+      item.className = `toc-item level-${level}`;
+
+      const link = document.createElement("a");
+      link.className = "toc-link";
+      link.href = `#${encodeURIComponent(id)}`;
+      link.textContent = label;
+
+      link.addEventListener("click", (event) => {
+        // Keep native anchor behavior, including the URL hash and keyboard support.
+        const target = document.getElementById(id);
+
+        if (!target) return;
+
+        event.preventDefault();
+
+        target.scrollIntoView({
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+            ? "auto"
+            : "smooth",
+          block: "start",
+        });
+
+        history.replaceState(null, "", `#${encodeURIComponent(id)}`);
+
+        setActiveHeading(id);
+
+        // Collapse the menu after a selection on smaller screens.
+        if (window.matchMedia("(max-width: 650px)").matches) {
+          const panel = toc.querySelector("details");
+          if (panel instanceof HTMLDetailsElement) {
+            panel.open = false;
+          }
+        }
+      });
+
+      item.append(link);
+      list.append(item);
+      links.push(link);
+    });
+
+    if (links.length < 2) {
+      toc.hidden = true;
+      return;
+    }
+
+    toc.hidden = false;
+
+    function setActiveHeading(id: string) {
+      links.forEach((link) => {
+        if (link.hash === `#${encodeURIComponent(id)}`) {
+          link.setAttribute("aria-current", "location");
+        } else {
+          link.removeAttribute("aria-current");
+        }
+      });
+    }
+
+    // If the page opens directly at a section, highlight that section.
+    const initialHash = decodeURIComponent(window.location.hash.slice(1));
+
+    if (initialHash && headings.some((heading) => heading.id === initialHash)) {
+      setActiveHeading(initialHash);
+    } else {
+      setActiveHeading(headings[0].id);
+    }
+
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const visible = entries
+            .filter((entry) => entry.isIntersecting)
+            .sort(
+              (a, b) =>
+                a.boundingClientRect.top - b.boundingClientRect.top
+            );
+
+          if (visible.length) {
+            setActiveHeading(visible[0].target.id);
+          }
+        },
+        {
+          rootMargin: "-12% 0px -72% 0px",
+          threshold: 0,
+        }
+      );
+
+      headings.forEach((heading) => observer.observe(heading));
+    } else {
+      const updateActiveOnScroll = () => {
+        let current = headings[0];
+
+        for (const heading of headings) {
+          if (heading.getBoundingClientRect().top <= window.innerHeight * 0.25) {
+            current = heading;
+          } else {
+            break;
+          }
+        }
+
+        setActiveHeading(current.id);
+      };
+
+      window.addEventListener("scroll", updateActiveOnScroll, { passive: true });
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializeTableOfContents, {
+      once: true,
+    });
+  } else {
+    initializeTableOfContents();
+  }
+</script>
