@@ -298,3 +298,47 @@ article:has(h1) {
   outline: none !important;
   box-shadow: none !important;
 }
+
+/* TURATH — cinematic page transitions */
+
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root) {
+  animation: turath-page-out 220ms ease-in both;
+}
+
+::view-transition-new(root) {
+  animation: turath-page-in 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes turath-page-out {
+  to {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.995);
+    filter: blur(3px);
+  }
+}
+
+@keyframes turath-page-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.99);
+    filter: blur(3px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
+
