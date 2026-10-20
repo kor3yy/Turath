@@ -18,18 +18,17 @@ export const photoAnnotationsBySlug: Record<string, AnnotatedPhoto[]> = {
   "ian-armata-proof-of-existence": [
     {
       image: "/images/1DC793DA-8D65-467B-AC83-1AB4D2BC77E9-modified.jpeg",
-      alt: "Photograph featured in Armata Visuals: Proof of Existence",
+      alt: "Photograph featured in Ian Armata's article",
       annotations: [
         {
-          id: "your-first-hotspot",
+          id: "behind-the-photograph",
           x: 50,
           y: 40,
           title: "Behind the photograph",
-          detail: "Add a verified note about this photograph here.",
+          detail: "Add your own verified note about this photograph here.",
           category: "Photographer's notes"
         }
       ]
     }
   ]
 };
-
