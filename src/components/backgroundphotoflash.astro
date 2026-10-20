@@ -82,14 +82,13 @@ console.log('Background images found:', imagePaths);
     will-change: opacity;
   }
 
-  .turath-photo-background.is-flashing .turath-photo-layer {
-    transition: opacity 80ms linear;
-  }
+ .turath-photo-background.is-flashing .turath-photo-layer {
+  transition: opacity 1.5s ease-in-out;
+}
 
-  .turath-photo-background.is-flashing .turath-photo-layer.is-visible {
-    opacity: 0.7;
-  }
-
+.turath-photo-background.is-flashing .turath-photo-layer.is-visible {
+  opacity: 0.7;
+}
   .turath-photo-background.is-fading .turath-photo-layer.is-visible {
     opacity: 0.38;
   }
@@ -177,7 +176,7 @@ console.log('Background images found:', imagePaths);
           layer.style.backgroundImage = `url("${src}")`;
           layer.classList.add('is-visible');
 
-          await wait(150);
+          await wait(1800);
 
           if (id !== runId || mode !== 'flash') return;
 
