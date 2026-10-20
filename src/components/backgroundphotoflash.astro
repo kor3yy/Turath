@@ -1,3 +1,4 @@
+
 ---
 import { readdir } from 'node:fs/promises';
 import path from 'node:path';
@@ -39,7 +40,7 @@ async function findImages(directory: string): Promise<string[]> {
       }
     }
   } catch (error) {
-    console.error('Unable to scan public/background:', error);
+    console.error('Unable to scan background images:', error);
   }
 
   return images;
@@ -50,24 +51,56 @@ console.log('Background images found:', imagePaths);
 ---
 
 {imagePaths.length > 0 && (
-  <div
-    class="turath-photo-background"
-    data-images={JSON.stringify(imagePaths)}
-    aria-hidden="true"
-  >
-    <div class="turath-photo-layer"></div>
-    <div class="turath-photo-layer"></div>
-  </div>
+  <>
+    <div class="turath-ambient-glow" aria-hidden="true"></div>
+
+    <div
+      class="turath-photo-background"
+      data-images={JSON.stringify(imagePaths)}
+      aria-hidden="true"
+    >
+      <div class="turath-photo-layer"></div>
+      <div class="turath-photo-layer"></div>
+    </div>
+  </>
 )}
 
 <style is:global>
+  @property --ambient-color {
+    syntax: '<color>';
+    inherits: false;
+    initial-value: rgba(0, 0, 0, 0.28);
+  }
+
+  .turath-ambient-glow {
+    position: fixed;
+    inset: -12%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.9;
+    --ambient-color: rgba(0, 0, 0, 0.28);
+    background:
+      radial-gradient(
+        ellipse at 15% 28%,
+        var(--ambient-color),
+        transparent 58%
+      ),
+      radial-gradient(
+        ellipse at 85% 72%,
+        var(--ambient-color),
+        transparent 62%
+      );
+    transition: --ambient-color 1.5s ease;
+    will-change: background;
+  }
+
   .turath-photo-background {
     position: fixed;
     inset: -40px;
     z-index: 0;
     pointer-events: none;
     overflow: hidden;
-    filter: blur(24px) saturate(1.8) brightness(0.95);
+    filter: blur(24px) saturate(1.65) brightness(0.9);
     transform: scale(1.08);
   }
 
@@ -78,7 +111,7 @@ console.log('Background images found:', imagePaths);
     background-repeat: no-repeat;
     background-size: cover;
     opacity: 0;
-    transition: opacity 0.8s ease-in-out;
+    transition: opacity 0.9s ease-in-out;
     will-change: opacity;
   }
 
@@ -86,12 +119,14 @@ console.log('Background images found:', imagePaths);
     transition: opacity 0.8s ease-in-out;
   }
 
-  .turath-photo-background.is-flashing .turath-photo-layer.is-visible {
-    opacity: 0.8;
+  .turath-photo-background.is-flashing
+    .turath-photo-layer.is-visible {
+    opacity: 0.65;
   }
 
-  .turath-photo-background.is-fading .turath-photo-layer.is-visible {
-    opacity: 0.65;
+  .turath-photo-background.is-fading
+    .turath-photo-layer.is-visible {
+    opacity: 0.45;
   }
 
   body.home > header,
@@ -102,7 +137,8 @@ console.log('Background images found:', imagePaths);
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .turath-photo-background {
+    .turath-photo-background,
+    .turath-ambient-glow {
       display: none !important;
     }
   }
@@ -110,8 +146,12 @@ console.log('Background images found:', imagePaths);
 
 <script>
   const background = document.querySelector('.turath-photo-background');
+  const ambientGlow = document.querySelector('.turath-ambient-glow');
 
-  if (background instanceof HTMLElement) {
+  if (
+    background instanceof HTMLElement &&
+    ambientGlow instanceof HTMLElement
+  ) {
     const imagePaths: string[] = JSON.parse(
       background.dataset.images || '[]'
     );
@@ -129,7 +169,7 @@ console.log('Background images found:', imagePaths);
     let activeLayer = 0;
 
     const wait = (ms: number) =>
-      new Promise((resolve) => window.setTimeout(resolve, ms));
+      new Promise<void>((resolve) => window.setTimeout(resolve, ms));
 
     const shuffle = (items: string[]) => {
       const result = [...items];
@@ -142,14 +182,132 @@ console.log('Background images found:', imagePaths);
       return result;
     };
 
-    async function loadImage(src: string) {
+    async function loadImage(src: string): Promise<HTMLImageElement | null> {
       const image = new Image();
       image.src = src;
 
       try {
         await image.decode();
+        return image;
       } catch {
-        // Continue if an image cannot be decoded.
+        console.warn('Unable to load background image:', src);
+        return null;
+      }
+    }
+
+    function updateAmbientColor(image: HTMLImageElement) {
+      try {
+        const canvas = document.createElement('canvas');
+        const size = 32;
+
+        canvas.width = size;
+        canvas.height = size;
+
+        const context = canvas.getContext('2d', {
+          willReadFrequently: true,
+        });
+
+        if (!context) return;
+
+        context.drawImage(image, 0, 0, size, size);
+
+        const pixels = context.getImageData(
+          0,
+          0,
+          size,
+          size
+        ).data;
+
+        // Group vivid pixels by hue to find the photo's dominant colour.
+        const bins = Array.from({ length: 24 }, () => ({
+          weight: 0,
+          r: 0,
+          g: 0,
+          b: 0,
+        }));
+
+        let fallbackR = 0;
+        let fallbackG = 0;
+        let fallbackB = 0;
+        let pixelCount = 0;
+
+        for (let i = 0; i < pixels.length; i += 4) {
+          const r = pixels[i];
+          const g = pixels[i + 1];
+          const b = pixels[i + 2];
+          const alpha = pixels[i + 3] / 255;
+
+          if (alpha < 0.5) continue;
+
+          fallbackR += r;
+          fallbackG += g;
+          fallbackB += b;
+          pixelCount++;
+
+          const red = r / 255;
+          const green = g / 255;
+          const blue = b / 255;
+
+          const max = Math.max(red, green, blue);
+          const min = Math.min(red, green, blue);
+          const delta = max - min;
+
+          if (delta < 0.08 || max < 0.12) continue;
+
+          let hue = 0;
+
+          if (max === red) {
+            hue = ((green - blue) / delta) % 6;
+          } else if (max === green) {
+            hue = (blue - red) / delta + 2;
+          } else {
+            hue = (red - green) / delta + 4;
+          }
+
+          hue = (hue * 60 + 360) % 360;
+
+          const saturation = delta / max;
+          const brightness = max;
+
+          const weight =
+            saturation * (0.35 + brightness * 0.65) * alpha;
+
+          const bin = bins[Math.floor(hue / 15) % 24];
+
+          bin.weight += weight;
+          bin.r += r * weight;
+          bin.g += g * weight;
+          bin.b += b * weight;
+        }
+
+        const dominant = bins.reduce((best, bin) =>
+          bin.weight > best.weight ? bin : best
+        );
+
+        let r: number;
+        let g: number;
+        let b: number;
+
+        if (dominant.weight > 0) {
+          r = Math.round(dominant.r / dominant.weight);
+          g = Math.round(dominant.g / dominant.weight);
+          b = Math.round(dominant.b / dominant.weight);
+        } else if (pixelCount > 0) {
+          r = Math.round(fallbackR / pixelCount);
+          g = Math.round(fallbackG / pixelCount);
+          b = Math.round(fallbackB / pixelCount);
+        } else {
+          return;
+        }
+
+        // The same sampled colour drives both ambient glows.
+        ambientGlow.style.setProperty(
+          '--ambient-color',
+          `rgba(${r}, ${g}, ${b}, 0.38)`
+        );
+      } catch (error) {
+        // The photo can still display if colour sampling fails.
+        console.warn('Unable to sample ambient colour:', error);
       }
     }
 
@@ -159,39 +317,32 @@ console.log('Background images found:', imagePaths);
 
       layers.forEach((layer) => layer.classList.remove('is-visible'));
 
-      let index = 0;
-
       while (
         background.isConnected &&
         id === runId &&
         mode === 'flash' &&
         !reducedMotion.matches
       ) {
-        const shuffledImages = shuffle(imagePaths);
-
-        for (const src of shuffledImages) {
+        for (const src of shuffle(imagePaths)) {
           if (id !== runId || mode !== 'flash') return;
 
-          const nextLayerIndex = activeLayer === 0 ? 1 : 0;
-          const nextLayer = layers[nextLayerIndex];
+          const image = await loadImage(src);
 
-          if (!nextLayer) return;
+          if (!image || id !== runId || mode !== 'flash') continue;
 
-          await loadImage(src);
+          updateAmbientColor(image);
+
+          const layer = layers[0];
+          if (!layer) return;
+
+          layer.style.backgroundImage = `url("${src}")`;
+          layer.classList.add('is-visible');
+
+          await wait(1800);
 
           if (id !== runId || mode !== 'flash') return;
 
-          nextLayer.style.backgroundImage = `url("${src}")`;
-          nextLayer.classList.add('is-visible');
-
-          await wait(900);
-
-          if (id !== runId || mode !== 'flash') return;
-
-          layers[activeLayer]?.classList.remove('is-visible');
-          activeLayer = nextLayerIndex;
-          index++;
-
+          layer.classList.remove('is-visible');
           await wait(100);
         }
       }
@@ -200,6 +351,8 @@ console.log('Background images found:', imagePaths);
     async function runFades(id: number) {
       background.classList.remove('is-flashing');
       background.classList.add('is-fading');
+
+      layers.forEach((layer) => layer.classList.remove('is-visible'));
 
       let index = 0;
 
@@ -215,14 +368,16 @@ console.log('Background images found:', imagePaths);
 
         if (!nextLayer) return;
 
-        await loadImage(src);
+        const image = await loadImage(src);
 
-        if (id !== runId || mode !== 'fade') return;
+        if (!image || id !== runId || mode !== 'fade') continue;
+
+        updateAmbientColor(image);
 
         nextLayer.style.backgroundImage = `url("${src}")`;
         nextLayer.classList.add('is-visible');
 
-        await wait(1000);
+        await wait(1800);
 
         if (id !== runId || mode !== 'fade') return;
 
@@ -230,7 +385,7 @@ console.log('Background images found:', imagePaths);
         activeLayer = nextLayerIndex;
         index++;
 
-        await wait(100);
+        await wait(200);
       }
     }
 
@@ -274,8 +429,11 @@ console.log('Background images found:', imagePaths);
         } else {
           runId++;
           mode = '';
+
           background.classList.remove('is-flashing', 'is-fading');
           layers.forEach((layer) => layer.classList.remove('is-visible'));
+
+          ambientGlow.style.removeProperty('--ambient-color');
         }
       });
 
