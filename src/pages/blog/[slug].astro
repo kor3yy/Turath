@@ -48,6 +48,129 @@ const { Content } = await post.render();
         outline: none !important;
         box-shadow: none !important;
       }
+
+      /* Cinematic article opening */
+
+      .article-opening-image {
+        position: relative;
+        width: 100%;
+        margin: 1.5rem 0 2.5rem;
+        overflow: hidden;
+        border-radius: 12px;
+        background: var(--surface-bg, #111);
+        animation: image-reveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+      }
+
+      .article-opening-image img {
+        display: block;
+        width: 100%;
+        max-height: 580px;
+        object-fit: cover;
+        animation: image-zoom 1.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+      }
+
+      .post-article > h1 {
+        animation: text-reveal 900ms cubic-bezier(0.16, 1, 0.3, 1) 250ms both;
+      }
+
+      .post-article > .post-date {
+        animation: text-reveal 800ms ease 450ms both;
+      }
+
+      .post-article > .back-link {
+        display: inline-block;
+        animation: text-reveal 700ms ease 150ms both;
+      }
+
+      .article-body {
+        animation: text-reveal 900ms cubic-bezier(0.16, 1, 0.3, 1) 550ms both;
+      }
+
+      .article-body > * {
+        animation: paragraph-reveal 800ms cubic-bezier(0.16, 1, 0.3, 1) both;
+        animation-delay: var(--reveal-delay, 650ms);
+      }
+
+      @keyframes image-reveal {
+        from {
+          opacity: 0;
+          clip-path: inset(8% 0 8% 0 round 12px);
+          transform: translateY(24px);
+        }
+
+        to {
+          opacity: 1;
+          clip-path: inset(0 0 0 0 round 12px);
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes image-zoom {
+        from {
+          transform: scale(1.09);
+          filter: brightness(0.65);
+        }
+
+        to {
+          transform: scale(1);
+          filter: brightness(1);
+        }
+      }
+
+      @keyframes text-reveal {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+          filter: blur(5px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+          filter: blur(0);
+        }
+      }
+
+      @keyframes paragraph-reveal {
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+          filter: blur(3px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+          filter: blur(0);
+        }
+      }
+
+      @media (max-width: 650px) {
+        .article-opening-image {
+          margin: 1.25rem 0 2rem;
+          border-radius: 8px;
+        }
+
+        .article-opening-image img {
+          max-height: 380px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .article-opening-image,
+        .article-opening-image img,
+        .post-article > h1,
+        .post-article > .post-date,
+        .post-article > .back-link,
+        .article-body,
+        .article-body > * {
+          animation: none !important;
+          clip-path: none !important;
+          filter: none !important;
+          transform: none !important;
+          opacity: 1 !important;
+        }
+      }
     </style>
   </head>
 
@@ -67,6 +190,16 @@ const { Content } = await post.render();
       <article class="post-article">
         <a href="/blog" class="back-link">&larr; Back to posts</a>
 
+        {post.data.thumbnail && (
+          <div class="article-opening-image">
+            <img
+              src={post.data.thumbnail}
+              alt={post.data.title}
+              fetchpriority="high"
+            />
+          </div>
+        )}
+
         <h1>{post.data.title}</h1>
 
         <p class="post-date">
@@ -77,12 +210,30 @@ const { Content } = await post.render();
           })}
         </p>
 
-        <Content />
+        <div class="article-body">
+          <Content />
+        </div>
       </article>
     </main>
 
     <footer>
       <p>&copy; {new Date().getFullYear()} Turath. All rights reserved.</p>
     </footer>
+
+    <script>
+      const articleBody = document.querySelector('.article-body');
+
+      if (
+        articleBody &&
+        !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      ) {
+        Array.from(articleBody.children).forEach((element, index) => {
+          element.style.setProperty(
+            '--reveal-delay',
+            `${650 + Math.min(index, 8) * 100}ms`
+          );
+        });
+      }
+    </script>
   </body>
 </html>
