@@ -46,6 +46,7 @@ async function findImages(directory: string): Promise<string[]> {
 }
 
 const imagePaths = [...new Set(await findImages(backgroundDirectory))];
+console.log('Background images found:', imagePaths);
 ---
 
 {imagePaths.length > 0 && (
