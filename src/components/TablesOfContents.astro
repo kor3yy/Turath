@@ -6,30 +6,14 @@
         <span class="toc-eyebrow">READING GUIDE</span>
         <span class="toc-title">On this page</span>
       </span>
-      <svg
-        class="toc-chevron"
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.7"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        aria-hidden="true"
-      >
-        <path d="m6 9 6 6 6-6" />
-      </svg>
+      <span class="toc-chevron" aria-hidden="true">⌄</span>
     </summary>
-
     <ol class="toc-list"></ol>
   </details>
 </nav>
 
 <style>
   .turath-toc {
-    --toc-border: color-mix(in srgb, currentColor 15%, transparent);
-    --toc-muted: color-mix(in srgb, currentColor 60%, transparent);
     margin: 1.75rem 0 2.25rem;
     color: inherit;
     font-family: inherit;
@@ -41,7 +25,7 @@
 
   .toc-panel {
     overflow: hidden;
-    border: 1px solid var(--toc-border);
+    border: 1px solid color-mix(in srgb, currentColor 15%, transparent);
     border-radius: 10px;
     background: color-mix(in srgb, currentColor 2.5%, transparent);
   }
@@ -61,10 +45,10 @@
     display: none;
   }
 
-  .toc-summary:focus-visible {
+  .toc-summary:focus-visible,
+  .toc-link:focus-visible {
     outline: 2px solid currentColor;
-    outline-offset: -4px;
-    border-radius: 10px;
+    outline-offset: 3px;
   }
 
   .toc-heading {
@@ -73,7 +57,6 @@
   }
 
   .toc-eyebrow {
-    font-family: inherit;
     font-size: 0.62rem;
     font-weight: 650;
     letter-spacing: 0.14em;
@@ -87,9 +70,9 @@
   }
 
   .toc-chevron {
-    flex: 0 0 auto;
+    font-size: 1.25rem;
     opacity: 0.65;
-    transition: transform 200ms ease;
+    transition: transform 180ms ease;
   }
 
   .toc-panel[open] .toc-chevron {
@@ -100,13 +83,12 @@
     display: grid;
     gap: 0;
     margin: 0;
-    padding: 0.25rem 1.1rem 1rem;
+    padding: 0.4rem 1.1rem 1rem;
+    border-top: 1px solid color-mix(in srgb, currentColor 15%, transparent);
     list-style: none;
-    border-top: 1px solid var(--toc-border);
   }
 
   .toc-item {
-    min-width: 0;
     margin: 0;
     padding: 0;
   }
@@ -120,16 +102,15 @@
   }
 
   .toc-link {
-    position: relative;
     display: block;
     padding: 0.55rem 0 0.55rem 0.85rem;
-    border-left: 1px solid var(--toc-border);
+    border-left: 1px solid color-mix(in srgb, currentColor 15%, transparent);
     color: inherit;
     font-size: 0.86rem;
     line-height: 1.55;
     text-decoration: none;
-    opacity: 0.72;
     overflow-wrap: anywhere;
+    opacity: 0.72;
     transition: opacity 180ms ease, border-color 180ms ease;
   }
 
@@ -139,18 +120,13 @@
 
   .toc-link[aria-current="location"] {
     border-left: 2px solid currentColor;
-    opacity: 1;
     font-weight: 600;
-  }
-
-  .toc-link:focus-visible {
-    outline: 2px solid currentColor;
-    outline-offset: 3px;
-    border-radius: 2px;
     opacity: 1;
   }
 
-  .article-body :is(h2, h3, h4) {
+  .article-body h2,
+  .article-body h3,
+  .article-body h4 {
     scroll-margin-top: 2rem;
   }
 
@@ -164,7 +140,7 @@
     }
 
     .toc-list {
-      padding: 0.2rem 1rem 0.8rem;
+      padding: 0.3rem 1rem 0.8rem;
     }
 
     .toc-link {
@@ -183,194 +159,123 @@
 </style>
 
 <script>
-  function initializeTableOfContents() {
-    const toc = document.querySelector(".turath-toc");
-    const articleBody = document.querySelector(".article-body");
+  const toc = document.querySelector(".turath-toc");
+  const articleBody = document.querySelector(".article-body");
 
-    if (!(toc instanceof HTMLElement) || !(articleBody instanceof HTMLElement)) {
-      return;
-    }
-
+  if (toc && articleBody) {
     const list = toc.querySelector(".toc-list");
 
-    if (!(list instanceof HTMLOListElement)) {
-      return;
-    }
+    if (list) {
+      const headings = Array.from(
+        articleBody.querySelectorAll("h2, h3, h4")
+      ).filter((heading) => heading.textContent.trim());
 
-    const headings = Array.from(
-      articleBody.querySelectorAll("h2, h3, h4")
-    ).filter((heading) => {
-      return (
-        heading.textContent?.trim() &&
-        !heading.closest("[hidden]") &&
-        heading.getAttribute("aria-hidden") !== "true"
-      );
-    });
+      if (headings.length >= 2) {
+        const usedIds = new Set(
+          Array.from(document.querySelectorAll("[id]"))
+            .map((element) => element.id)
+            .filter(Boolean)
+        );
 
-    // A contents menu is only useful when an article has multiple sections.
-    if (headings.length < 2) {
-      toc.hidden = true;
-      return;
-    }
+        const links = [];
 
-    const usedIds = new Set(
-      Array.from(document.querySelectorAll("[id]"))
-        .map((element) => element.id)
-        .filter(Boolean)
-    );
+        headings.forEach((heading, index) => {
+          if (!heading.id) {
+            const base =
+              heading.textContent
+                .normalize("NFKD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .toLowerCase()
+                .trim()
+                .replace(/[^\p{L}\p{N}\s-]/gu, "")
+                .replace(/\s+/g, "-")
+                .replace(/-+/g, "-") || `section-${index + 1}`;
 
-    function makeSlug(text: string) {
-      return text
-        .normalize("NFKD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .toLowerCase()
-        .trim()
-        .replace(/[^\p{L}\p{N}\s-]/gu, "")
-        .replace(/\s+/g, "-")
-        .replace(/-+/g, "-");
-    }
+            let id = base;
+            let suffix = 2;
 
-    function ensureHeadingId(heading: Element, index: number) {
-      if (heading.id) return heading.id;
+            while (usedIds.has(id)) {
+              id = `${base}-${suffix++}`;
+            }
 
-      const base = makeSlug(heading.textContent || "") || `section-${index + 1}`;
-      let candidate = base;
-      let suffix = 2;
-
-      while (usedIds.has(candidate)) {
-        candidate = `${base}-${suffix}`;
-        suffix += 1;
-      }
-
-      heading.id = candidate;
-      usedIds.add(candidate);
-
-      return candidate;
-    }
-
-    list.replaceChildren();
-
-    const links: HTMLAnchorElement[] = [];
-
-    headings.forEach((heading, index) => {
-      const id = ensureHeadingId(heading, index);
-      const label = heading.textContent?.trim();
-
-      if (!label) return;
-
-      const item = document.createElement("li");
-      const level = Number(heading.tagName.substring(1));
-      item.className = `toc-item level-${level}`;
-
-      const link = document.createElement("a");
-      link.className = "toc-link";
-      link.href = `#${encodeURIComponent(id)}`;
-      link.textContent = label;
-
-      link.addEventListener("click", (event) => {
-        // Keep native anchor behavior, including the URL hash and keyboard support.
-        const target = document.getElementById(id);
-
-        if (!target) return;
-
-        event.preventDefault();
-
-        target.scrollIntoView({
-          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-            ? "auto"
-            : "smooth",
-          block: "start",
-        });
-
-        history.replaceState(null, "", `#${encodeURIComponent(id)}`);
-
-        setActiveHeading(id);
-
-        // Collapse the menu after a selection on smaller screens.
-        if (window.matchMedia("(max-width: 650px)").matches) {
-          const panel = toc.querySelector("details");
-          if (panel instanceof HTMLDetailsElement) {
-            panel.open = false;
+            heading.id = id;
+            usedIds.add(id);
           }
-        }
-      });
 
-      item.append(link);
-      list.append(item);
-      links.push(link);
-    });
+          const item = document.createElement("li");
+          item.className = `toc-item level-${heading.tagName.substring(1)}`;
 
-    if (links.length < 2) {
-      toc.hidden = true;
-      return;
-    }
+          const link = document.createElement("a");
+          link.className = "toc-link";
+          link.href = `#${encodeURIComponent(heading.id)}`;
+          link.textContent = heading.textContent.trim();
 
-    toc.hidden = false;
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
 
-    function setActiveHeading(id: string) {
-      links.forEach((link) => {
-        if (link.hash === `#${encodeURIComponent(id)}`) {
-          link.setAttribute("aria-current", "location");
-        } else {
-          link.removeAttribute("aria-current");
-        }
-      });
-    }
+            heading.scrollIntoView({
+              behavior: window.matchMedia(
+                "(prefers-reduced-motion: reduce)"
+              ).matches
+                ? "auto"
+                : "smooth",
+              block: "start",
+            });
 
-    // If the page opens directly at a section, highlight that section.
-    const initialHash = decodeURIComponent(window.location.hash.slice(1));
-
-    if (initialHash && headings.some((heading) => heading.id === initialHash)) {
-      setActiveHeading(initialHash);
-    } else {
-      setActiveHeading(headings[0].id);
-    }
-
-    if ("IntersectionObserver" in window) {
-      const observer = new IntersectionObserver(
-        (entries) => {
-          const visible = entries
-            .filter((entry) => entry.isIntersecting)
-            .sort(
-              (a, b) =>
-                a.boundingClientRect.top - b.boundingClientRect.top
+            history.replaceState(
+              null,
+              "",
+              `#${encodeURIComponent(heading.id)}`
             );
 
-          if (visible.length) {
-            setActiveHeading(visible[0].target.id);
-          }
-        },
-        {
-          rootMargin: "-12% 0px -72% 0px",
-          threshold: 0,
+            setActive(heading.id);
+
+            if (window.innerWidth <= 650) {
+              toc.querySelector("details").open = false;
+            }
+          });
+
+          item.appendChild(link);
+          list.appendChild(item);
+          links.push(link);
+        });
+
+        function setActive(id) {
+          links.forEach((link) => {
+            if (link.getAttribute("href") === `#${encodeURIComponent(id)}`) {
+              link.setAttribute("aria-current", "location");
+            } else {
+              link.removeAttribute("aria-current");
+            }
+          });
         }
-      );
 
-      headings.forEach((heading) => observer.observe(heading));
-    } else {
-      const updateActiveOnScroll = () => {
-        let current = headings[0];
+        setActive(headings[0].id);
+        toc.hidden = false;
 
-        for (const heading of headings) {
-          if (heading.getBoundingClientRect().top <= window.innerHeight * 0.25) {
-            current = heading;
-          } else {
-            break;
-          }
+        if ("IntersectionObserver" in window) {
+          const observer = new IntersectionObserver(
+            (entries) => {
+              const visible = entries
+                .filter((entry) => entry.isIntersecting)
+                .sort(
+                  (a, b) =>
+                    a.boundingClientRect.top - b.boundingClientRect.top
+                );
+
+              if (visible.length) {
+                setActive(visible[0].target.id);
+              }
+            },
+            {
+              rootMargin: "-12% 0px -72% 0px",
+              threshold: 0,
+            }
+          );
+
+          headings.forEach((heading) => observer.observe(heading));
         }
-
-        setActiveHeading(current.id);
-      };
-
-      window.addEventListener("scroll", updateActiveOnScroll, { passive: true });
+      }
     }
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initializeTableOfContents, {
-      once: true,
-    });
-  } else {
-    initializeTableOfContents();
   }
 </script>
