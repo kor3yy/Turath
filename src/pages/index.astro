@@ -5,6 +5,7 @@ import '../styles/global.css';
 import LiquidCursor from '../components/LiquidCursor.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import BackgroundPhotoFlash from '../components/backgroundphotoflash.astro';
+import { ClientRouter } from 'astro:transitions';
 
 const allPosts = await getCollection('blog');
 
@@ -83,7 +84,9 @@ const sections = [
     <meta name="theme-color" content="#000000" />
     <meta name="description" content="Turath — culture, art, expression, history, and the people behind them." />
     <link rel="icon" type="image/png" href="/images/logo-removebg-preview.png" />
+
     <title>Turath</title>
+    <ClientRouter />
 
     <style is:global>
       :root {
