@@ -1,8 +1,10 @@
+```astro
 ---
 import { readdir } from 'node:fs/promises';
 import path from 'node:path';
 
 const publicDirectory = path.resolve(process.cwd(), 'public');
+const backgroundDirectory = path.join(publicDirectory, 'backgrounds');
 
 const imageExtensions = new Set([
   '.jpg',
@@ -38,13 +40,13 @@ async function findImages(directory) {
       }
     }
   } catch (error) {
-    console.error('Unable to scan public images:', error);
+    console.error('Unable to scan background images:', error);
   }
 
-  return [...images];
+  return images;
 }
 
-const imagePaths = [...new Set(await findImages(publicDirectory))];
+const imagePaths = [...new Set(await findImages(backgroundDirectory))];
 ---
 
 {imagePaths.length > 0 && (
@@ -63,8 +65,8 @@ const imagePaths = [...new Set(await findImages(publicDirectory))];
     position: fixed;
     inset: -24px;
     z-index: 0;
-    overflow: hidden;
     pointer-events: none;
+    overflow: hidden;
     filter: blur(18px);
     transform: scale(1.04);
   }
@@ -72,22 +74,20 @@ const imagePaths = [...new Set(await findImages(publicDirectory))];
   .turath-photo-layer {
     position: absolute;
     inset: 0;
-    opacity: 0;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    transition: opacity 100ms ease;
+    opacity: 0;
+    transition: opacity 1.4s ease;
     will-change: opacity;
   }
 
-  /* Quick flashes during the intro */
-  .turath-photo-background.is-intro .turath-photo-layer.is-flashing {
-    opacity: 0.7;
+  .turath-photo-background.is-flashing .turath-photo-layer {
+    transition: opacity 80ms linear;
   }
 
-  /* Smooth crossfades after the intro */
-  .turath-photo-background.is-fading .turath-photo-layer {
-    transition: opacity 1600ms ease-in-out;
+  .turath-photo-background.is-flashing .turath-photo-layer.is-visible {
+    opacity: 0.7;
   }
 
   .turath-photo-background.is-fading .turath-photo-layer.is-visible {
@@ -109,24 +109,24 @@ const imagePaths = [...new Set(await findImages(publicDirectory))];
 </style>
 
 <script>
-  const photoBackground = document.querySelector('.turath-photo-background');
+  const background = document.querySelector('.turath-photo-background');
 
-  if (photoBackground instanceof HTMLElement) {
-    const imagePaths = JSON.parse(
-      photoBackground.dataset.images || '[]'
-    );
-
+  if (background instanceof HTMLElement) {
+    const imagePaths = JSON.parse(background.dataset.images || '[]');
     const layers = Array.from(
-      photoBackground.querySelectorAll('.turath-photo-layer')
+      background.querySelectorAll('.turath-photo-layer')
     );
 
-    const root = document.documentElement;
     const reducedMotion = window.matchMedia(
       '(prefers-reduced-motion: reduce)'
     );
 
-    const wait = (milliseconds) =>
-      new Promise((resolve) => window.setTimeout(resolve, milliseconds));
+    let runId = 0;
+    let mode = '';
+    let activeLayer = 0;
+
+    const wait = (ms) =>
+      new Promise((resolve) => window.setTimeout(resolve, ms));
 
     const shuffle = (items) => {
       const result = [...items];
@@ -139,36 +139,6 @@ const imagePaths = [...new Set(await findImages(publicDirectory))];
       return result;
     };
 
-    let mode = root.classList.contains('turath-intro-playing')
-      ? 'flash'
-      : 'fade';
-
-    let runId = 0;
-    let currentLayer = 0;
-    let previousImage = '';
-
-    function setMode(nextMode) {
-      if (mode === nextMode) return;
-
-      mode = nextMode;
-      runId++;
-
-      photoBackground.classList.toggle('is-intro', mode === 'flash');
-      photoBackground.classList.toggle('is-fading', mode === 'fade');
-
-      layers.forEach((layer) => {
-        layer.classList.remove('is-flashing');
-      });
-
-      if (mode === 'fade') {
-        layers.forEach((layer) => {
-          layer.classList.remove('is-visible');
-        });
-      }
-
-      runAnimation(runId);
-    }
-
     async function loadImage(src) {
       const image = new Image();
       image.src = src;
@@ -176,156 +146,131 @@ const imagePaths = [...new Set(await findImages(publicDirectory))];
       try {
         await image.decode();
       } catch {
-        // Keep the animation running even if an image cannot load.
+        // Skip waiting if an image cannot be decoded.
       }
-
-      return src;
     }
 
-    function nextCycle() {
-      const images = shuffle(imagePaths);
+    async function runFlashes(id) {
+      background.classList.add('is-flashing');
+      background.classList.remove('is-fading');
 
-      if (
-        images.length > 1 &&
-        images[0] === previousImage
+      layers.forEach((layer) => {
+        layer.classList.remove('is-visible');
+      });
+
+      while (
+        background.isConnected &&
+        id === runId &&
+        mode === 'flash' &&
+        !reducedMotion.matches
       ) {
-        [images[0], images[1]] = [images[1], images[0]];
-      }
+        for (const src of shuffle(imagePaths)) {
+          if (id !== runId || mode !== 'flash') return;
 
-      return images;
-    }
-
-    async function runAnimation(id) {
-      if (
-        imagePaths.length === 0 ||
-        reducedMotion.matches ||
-        !photoBackground.isConnected
-      ) {
-        return;
-      }
-
-      if (mode === 'flash') {
-        photoBackground.classList.add('is-intro');
-        photoBackground.classList.remove('is-fading');
-
-        let images = nextCycle();
-        let index = 0;
-
-        while (
-          id === runId &&
-          mode === 'flash' &&
-          photoBackground.isConnected
-        ) {
-          if (index >= images.length) {
-            await wait(180);
-
-            if (id !== runId || mode !== 'flash') return;
-
-            images = nextCycle();
-            index = 0;
-          }
-
-          const src = await loadImage(images[index++]);
+          await loadImage(src);
 
           if (id !== runId || mode !== 'flash') return;
 
           const layer = layers[0];
           layer.style.backgroundImage = `url("${src}")`;
-          layer.classList.add('is-flashing');
+          layer.classList.add('is-visible');
 
-          previousImage = src;
-
-          await wait(130);
+          await wait(150);
 
           if (id !== runId || mode !== 'flash') return;
 
-          layer.classList.remove('is-flashing');
-
-          await wait(250);
+          layer.classList.remove('is-visible');
+          await wait(100);
         }
-
-        return;
       }
+    }
 
-      photoBackground.classList.remove('is-intro');
-      photoBackground.classList.add('is-fading');
+    async function runFades(id) {
+      background.classList.remove('is-flashing');
+      background.classList.add('is-fading');
 
-      let images = nextCycle();
+      layers.forEach((layer) => {
+        layer.classList.remove('is-visible');
+      });
+
       let index = 0;
 
-      // Start with one photo visible, then crossfade to the next.
-      const firstSrc = await loadImage(images[index++]);
-
-      if (id !== runId || mode !== 'fade') return;
-
-      currentLayer = 0;
-      layers[0].style.backgroundImage = `url("${firstSrc}")`;
-      layers[0].classList.add('is-visible');
-      previousImage = firstSrc;
-
-      await wait(2200);
-
       while (
+        background.isConnected &&
         id === runId &&
         mode === 'fade' &&
-        photoBackground.isConnected
+        !reducedMotion.matches
       ) {
-        if (index >= images.length) {
-          images = nextCycle();
-          index = 0;
-        }
+        const src = imagePaths[index % imagePaths.length];
+        const nextLayerIndex = activeLayer === 0 ? 1 : 0;
+        const nextLayer = layers[nextLayerIndex];
 
-        const src = await loadImage(images[index++]);
+        await loadImage(src);
 
         if (id !== runId || mode !== 'fade') return;
 
-        const nextLayer = 1 - currentLayer;
+        nextLayer.style.backgroundImage = `url("${src}")`;
+        nextLayer.classList.add('is-visible');
 
-        layers[nextLayer].style.backgroundImage = `url("${src}")`;
+        await wait(1800);
 
-        // Ensure the incoming layer starts transparent before fading in.
-        layers[nextLayer].classList.remove('is-visible');
-        void layers[nextLayer].offsetWidth;
-        layers[nextLayer].classList.add('is-visible');
+        if (id !== runId || mode !== 'fade') return;
 
-        layers[currentLayer].classList.remove('is-visible');
+        layers[activeLayer].classList.remove('is-visible');
+        activeLayer = nextLayerIndex;
+        index++;
 
-        currentLayer = nextLayer;
-        previousImage = src;
-
-        await wait(2200);
+        await wait(200);
       }
     }
 
-    photoBackground.classList.add(
-      mode === 'flash' ? 'is-intro' : 'is-fading'
-    );
+    function setMode(nextMode) {
+      if (nextMode === mode || reducedMotion.matches) return;
 
-    const introObserver = new MutationObserver(() => {
-      if (!root.classList.contains('turath-intro-playing')) {
-        setMode('fade');
-        introObserver.disconnect();
+      mode = nextMode;
+      const id = ++runId;
+
+      if (mode === 'flash') {
+        runFlashes(id);
+      } else {
+        runFades(id);
       }
-    });
+    }
 
-    if (mode === 'flash') {
-      introObserver.observe(root, {
+    if (imagePaths.length > 0) {
+      const root = document.documentElement;
+
+      const updateMode = () => {
+        if (reducedMotion.matches) return;
+
+        if (root.classList.contains('turath-intro-playing')) {
+          setMode('flash');
+        } else {
+          setMode('fade');
+        }
+      };
+
+      const observer = new MutationObserver(updateMode);
+
+      observer.observe(root, {
         attributes: true,
         attributeFilter: ['class'],
       });
+
+      reducedMotion.addEventListener('change', () => {
+        if (!reducedMotion.matches) {
+          mode = '';
+          updateMode();
+        } else {
+          runId++;
+          mode = '';
+          background.classList.remove('is-visible', 'is-flashing', 'is-fading');
+          layers.forEach((layer) => layer.classList.remove('is-visible'));
+        }
+      });
+
+      updateMode();
     }
-
-    runAnimation(runId);
-
-    reducedMotion.addEventListener('change', () => {
-      if (reducedMotion.matches) {
-        runId++;
-        photoBackground.style.display = 'none';
-      } else {
-        photoBackground.style.display = '';
-        runId++;
-        runAnimation(runId);
-      }
-    });
   }
 </script>
+```
