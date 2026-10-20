@@ -2,6 +2,7 @@
 ---
 import { getCollection } from 'astro:content';
 import LiquidCursor from '../../components/LiquidCursor.astro';
+import TableOfContents from '../../components/TableOfContents.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -349,15 +350,17 @@ const readingTime = Math.max(1, Math.ceil(wordCount / 200));
           })}
         </p>
 
-        <div class="reading-meta">
-          <span>{readingTime} min read</span>
-          <span class="meta-dot" aria-hidden="true">·</span>
-          <span>Scroll to explore</span>
-        </div>
+       <div class="reading-meta">
+  <span>{readingTime} min read</span>
+  <span class="meta-dot" aria-hidden="true">·</span>
+  <span>Scroll to explore</span>
+</div>
 
-        <div class="article-body">
-          <Content />
-        </div>
+<TableOfContents />
+
+<div class="article-body">
+  <Content />
+</div>
       </article>
 
       {relatedPosts.length > 0 && (
