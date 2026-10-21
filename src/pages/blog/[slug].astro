@@ -5,6 +5,7 @@ import LiquidCursor from '../../components/LiquidCursor.astro';
 import MusicPlayer from '../../components/MusicPlayer.astro';
 import { ClientRouter } from 'astro:transitions';
 import TableOfContents from '../../components/TablesOfContents.astro';
+import ThemeToggle from '../../components/ThemeToggle.astro';
 
 
 export async function getStaticPaths() {
@@ -207,18 +208,18 @@ const readingTime = Math.max(1, Math.ceil(wordCount / 200));
 
       /* Cinematic atmosphere */
 
-      body::after {
-        content: "";
-        position: fixed;
-        inset: 0;
-        z-index: 999;
-        pointer-events: none;
-        background: radial-gradient(
-          ellipse at center,
-          transparent 45%,
-          rgba(0, 0, 0, 0.12) 100%
-        );
-      }
+     body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 45%,
+    color-mix(in srgb, var(--page-text) 5%, transparent) 100%
+  );
+}
 
       .post-article::before {
         content: "";
@@ -326,13 +327,15 @@ const readingTime = Math.max(1, Math.ceil(wordCount / 200));
     <MusicPlayer />
 
     <header>
-      <nav>
-        <div class="nav-links">
-          <a href="/">Home</a>
-          <a href="/about">About</a>
-        </div>
-      </nav>
-    </header>
+  <nav>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/about">About</a>
+    </div>
+
+    <ThemeToggle />
+  </nav>
+</header>
 
     <main>
       <article class="post-article">
