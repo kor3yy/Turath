@@ -1,6 +1,8 @@
 
 ---
 import LiquidCursor from '../components/LiquidCursor.astro';
+import MusicPlayer from '../components/MusicPlayer.astro';
+import { ClientRouter } from 'astro:transitions';
 ---
 
 <!doctype html>
@@ -8,6 +10,7 @@ import LiquidCursor from '../components/LiquidCursor.astro';
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <ClientRouter />
     <title>About — Turath</title>
     <link rel="stylesheet" href="/styles/global.css" />
 
@@ -36,6 +39,7 @@ import LiquidCursor from '../components/LiquidCursor.astro';
 
   <body>
     <LiquidCursor />
+    <MusicPlayer />
 
     <header>
       <nav>
