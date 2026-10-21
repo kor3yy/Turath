@@ -30,13 +30,13 @@
       <span class="turath-player-status" id="turath-player-status">READY</span>
     </div>
 
-    <select
+        <select
       class="turath-playlist-select"
       id="turath-playlist-select"
       aria-label="Choose playlist"
     >
-      <option value="vibeland">Vibeland</option>
-      <option value="amber">Amber-Eyed Angel in a Black Dress</option>
+      <option value="vibesvibinginvibeland.mp3">vibesvibinginvibeland.mp3</option>
+      <option value="ambereyedangelinablackdress.mp3">ambereyedangelinablackdress.mp3</option>
     </select>
 
     <select
@@ -299,7 +299,7 @@
     trackSelect instanceof HTMLSelectElement
   ) {
     const playlists = {
-      vibeland: [
+      "vibesvibinginvibeland.mp3": [
         ["Blang - Toren", "Blang - Toren.mp3"],
         ["Bliss - Toren", "Bliss - Toren - Topic.mp3"],
         ["Check My Phone - Toren", "Check My Phone - Toren.mp3"],
@@ -320,16 +320,16 @@
         ["Top Rank - Toren", "Top Rank - Toren.mp3"],
         ["Vibe With You - Toren", "Vibe With You - Toren.mp3"]
       ],
-      amber: [
+           "ambereyedangelinablackdress.mp3": [
         ["But I Might - Savia Ashby", "but i might - Savia Ashby.mp3"],
         ["Juiceboxx - Savia Ashby", "juiceboxx - Savia Ashby.mp3"],
         ["Tunnelvision - Savia Ashby", "tunnelvision - Savia Ashby.mp3"]
       ]
     };
 
-    const playlistFolders = {
-      vibeland: "/audio/vibesvibinginvibeland.mp3/",
-      amber: "/audio/ambereyedangelinablackdress.mp3/"
+       const playlistFolders = {
+      "vibesvibinginvibeland.mp3": "/audio/vibesvibinginvibeland.mp3/",
+      "ambereyedangelinablackdress.mp3": "/audio/ambereyedangelinablackdress.mp3/"
     };
 
     const context = canvas.getContext("2d");
