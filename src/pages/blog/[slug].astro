@@ -1,9 +1,11 @@
 
+---
 import { getCollection } from 'astro:content';
 import LiquidCursor from '../../components/LiquidCursor.astro';
 import MusicPlayer from '../../components/MusicPlayer.astro';
 import { ClientRouter } from 'astro:transitions';
 import TableOfContents from '../../components/TablesOfContents.astro';
+
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
