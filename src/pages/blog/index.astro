@@ -1,5 +1,9 @@
+
 ---
 import { getCollection } from 'astro:content';
+import MusicPlayer from '../../components/MusicPlayer.astro';
+import LiquidCursor from '../../components/LiquidCursor.astro';
+import { ClientRouter } from 'astro:transitions';
 
 const allPosts = await getCollection('blog');
 
@@ -25,10 +29,14 @@ const postsWithThumbs = posts.map((post) => {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <ClientRouter />
     <title>Blog — Turath</title>
     <link rel="stylesheet" href="/styles/global.css" />
   </head>
   <body>
+    <LiquidCursor />
+    <MusicPlayer />
+
     <header>
       <nav>
         <a href="/" class="logo">Turath</a>
