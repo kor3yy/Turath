@@ -1,6 +1,8 @@
----
+
 import { getCollection } from 'astro:content';
 import LiquidCursor from '../../components/LiquidCursor.astro';
+import MusicPlayer from '../../components/MusicPlayer.astro';
+import { ClientRouter } from 'astro:transitions';
 import TableOfContents from '../../components/TablesOfContents.astro';
 
 export async function getStaticPaths() {
@@ -39,6 +41,7 @@ const readingTime = Math.max(1, Math.ceil(wordCount / 200));
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <ClientRouter />
 
     <title>{post.data.title} — Turath</title>
     <meta name="description" content={post.data.description} />
@@ -318,6 +321,7 @@ const readingTime = Math.max(1, Math.ceil(wordCount / 200));
     </div>
 
     <LiquidCursor />
+    <MusicPlayer />
 
     <header>
       <nav>
