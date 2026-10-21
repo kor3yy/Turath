@@ -10,21 +10,7 @@
 
 <script>
   function initializeTheme() {
-    const button = document.querySelector<HTMLButtonElement>('.theme-toggle');
-    const icon = document.querySelector<HTMLElement>('.theme-icon');
-
-    function setTheme(theme: 'dark' | 'light') {
-      document.documentElement.setAttribute('data-theme', theme);
-
-      if (icon) {
-        icon.textContent = theme === 'dark' ? '☼' : '☾';
-      }
-
-      button?.setAttribute(
-        'aria-label',
-        theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
-      );
-    }
+    const root = document.documentElement;
 
     let savedTheme: 'dark' | 'light' = 'dark';
 
@@ -33,27 +19,55 @@
         localStorage.getItem('turath-theme') === 'light' ? 'light' : 'dark';
     } catch {}
 
+    function setTheme(theme: 'dark' | 'light', save = false) {
+      root.setAttribute('data-theme', theme);
+
+      if (save) {
+        try {
+          localStorage.setItem('turath-theme', theme);
+        } catch {}
+      }
+
+      document.querySelectorAll<HTMLButtonElement>('.theme-toggle').forEach((button) => {
+        const icon = button.querySelector<HTMLElement>('.theme-icon');
+
+        if (icon) {
+          icon.textContent = theme === 'dark' ? '☼' : '☾';
+        }
+
+        button.setAttribute(
+          'aria-label',
+          theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
+        );
+      });
+    }
+
     setTheme(savedTheme);
 
-    button?.addEventListener('click', () => {
-      const nextTheme =
-        document.documentElement.getAttribute('data-theme') === 'dark'
-          ? 'light'
-          : 'dark';
+    // Register only once, even when Astro navigates between pages.
+    if (!document.documentElement.dataset.themeToggleInitialized) {
+      document.documentElement.dataset.themeToggleInitialized = 'true';
 
-      setTheme(nextTheme);
+      document.addEventListener('click', (event) => {
+        const target = event.target;
 
-      try {
-        localStorage.setItem('turath-theme', nextTheme);
-      } catch {}
-    });
+        if (!(target instanceof Element)) return;
+
+        const button = target.closest<HTMLButtonElement>('.theme-toggle');
+
+        if (!button) return;
+
+        const nextTheme =
+          root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+
+        setTheme(nextTheme, true);
+      });
+    }
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeTheme, { once: true });
-  } else {
-    initializeTheme();
-  }
+  initializeTheme();
+
+  document.addEventListener('astro:page-load', initializeTheme);
 </script>
 
 <style>
