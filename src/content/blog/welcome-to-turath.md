@@ -32,7 +32,7 @@ Toren Berios. For the creative mind, and the humour we share. That studio in Mis
 
 Bianca Morelli. For being one of my biggest inspirations. I love you. You're great and utterly divine. For reminding me that beauty exists both within a person and in the way they make others feel. Your influence will always live within me and mean the world to me.
 
-Hashim. Omar Aljokhadar. Gassan AlKurdi. Meher Mirza. Nabulsi. Azooz. Eissa Rehan. Persian Boy. Idris. Kenshi & Rocky. Waleed Musa. Sabir Hirsi. Baby Draco. Sophia-Anne Cross.
+Hashim. Omar Aljokhadar. Gassan AlKurdi. M.M. Nabulsi. Azooz. Eissa Rehan. Persian Boy. Idris. Kenshi & Rocky. Waleed Musa. Sabir Hirsi. Baby Draco.
 
 Influenced by the works and artistry of: Madonna Ciccone, Christopher Breaux, Aubrey Graham, Rakim Mayers, Solána Imani Rowe, Bill Kapri. Sami Hamed, Jacques Webber II, Jahron Brathwaite, Rakim Allen, Josiah Ramel, Calvin Scruby, Toren Berios, Killaxbeats, Mohamed Salama, Ibrahim Skaik, Abel Tesfaye, Nayvadius Cash, Tyler-Justin Sharpe, Laith Hasan, Miles McCollum, Razi Derrick, and Tione Merritt.
 
