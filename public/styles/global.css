@@ -219,3 +219,42 @@ footer {
   border-radius: 4px;
   object-fit: cover;
 }
+
+/* Turath site-wide theme fix */
+html,
+body {
+  background-color: var(--page-bg) !important;
+  color: var(--page-text) !important;
+}
+
+body,
+header,
+nav,
+main,
+article,
+section,
+footer,
+.post-article,
+.article-body {
+  background-color: var(--page-bg);
+  color: var(--page-text);
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+li,
+label,
+.post-article a,
+.article-body a {
+  color: var(--page-text);
+}
+
+.theme-toggle {
+  background-color: var(--surface-bg);
+  color: var(--page-text);
+  border-color: var(--border-color);
+}
+
