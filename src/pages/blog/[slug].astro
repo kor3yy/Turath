@@ -6,8 +6,7 @@ import MusicPlayer from '../../components/MusicPlayer.astro';
 import { ClientRouter } from 'astro:transitions';
 import TableOfContents from '../../components/TablesOfContents.astro';
 import ThemeToggle from '../../components/ThemeToggle.astro';
-import BackgroundPhotoFlash from '../../components/BackgroundPhotoFlash.astro';
-
+import BackgroundPhotoFlash from '../../components/backgroundphotoflash.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
