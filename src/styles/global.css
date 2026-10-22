@@ -482,3 +482,74 @@ video {
     transition: none !important;
   }
 }
+
+
+/* TURATH — final sitewide theme overrides */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page-bg: #000000;
+  --page-text: #f5f5f5;
+  --surface-bg: #111111;
+  --border-color: #333333;
+  --color-text-light: #aaaaaa;
+  --article-bg: #000000;
+  --article-text: #f5f5f5;
+  --heading-text: #f5f5f5;
+  --muted-text: #aaaaaa;
+  --link-color: #f5f5f5;
+  --input-bg: #111111;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --page-bg: #f5f2eb;
+  --page-text: #171717;
+  --surface-bg: #ffffff;
+  --border-color: #d5d0c7;
+  --color-text-light: #625f58;
+  --article-bg: #f5f2eb;
+  --article-text: #171717;
+  --heading-text: #171717;
+  --muted-text: #625f58;
+  --link-color: #171717;
+  --input-bg: #ffffff;
+}
+
+html,
+body {
+  background-color: var(--page-bg);
+  color: var(--page-text);
+}
+
+body:not(.home) header,
+body:not(.home) main,
+body:not(.home) footer,
+body:not(.home) article,
+body:not(.home) .post-card,
+body:not(.home) .other-link {
+  color: var(--page-text);
+  border-color: var(--border-color);
+}
+
+body:not(.home) header,
+body:not(.home) footer,
+body:not(.home) .post-card,
+body:not(.home) .other-link {
+  background-color: var(--surface-bg);
+}
+
+body:not(.home) h1,
+body:not(.home) h2,
+body:not(.home) h3,
+body:not(.home) h4,
+body:not(.home) p,
+body:not(.home) li,
+body:not(.home) a {
+  color: inherit;
+}
+
+.theme-toggle {
+  background-color: var(--surface-bg);
+  color: var(--page-text);
+  border-color: var(--border-color);
+}
