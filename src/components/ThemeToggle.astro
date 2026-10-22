@@ -9,87 +9,71 @@
 </button>
 
 <script>
-  const initializeThemeToggle = () => {
-    const root = document.documentElement;
+  const root = document.documentElement;
+  const storageKey = 'turath-theme';
 
-    let savedTheme: 'dark' | 'light' = 'dark';
+  function applyTheme(theme: 'dark' | 'light', save = false) {
+    root.setAttribute('data-theme', theme);
 
-    try {
-      savedTheme =
-        localStorage.getItem('turath-theme') === 'light'
-          ? 'light'
-          : 'dark';
-    } catch {}
+    if (save) {
+      try {
+        localStorage.setItem(storageKey, theme);
+      } catch {}
+    }
 
-    const setTheme = (theme: 'dark' | 'light', save = false) => {
-      root.setAttribute('data-theme', theme);
+    document.querySelectorAll<HTMLButtonElement>('.theme-toggle').forEach((button) => {
+      const icon = button.querySelector<HTMLElement>('.theme-icon');
 
-      if (save) {
-        try {
-          localStorage.setItem('turath-theme', theme);
-        } catch {}
+      if (icon) {
+        icon.textContent = theme === 'dark' ? '☼' : '☾';
       }
 
-      document.querySelectorAll<HTMLButtonElement>('.theme-toggle').forEach((button) => {
-        const icon = button.querySelector<HTMLElement>('.theme-icon');
+      button.setAttribute(
+        'aria-label',
+        theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
+      );
 
-        if (icon) {
-          icon.textContent = theme === 'dark' ? '☼' : '☾';
-        }
-
-        button.setAttribute(
-          'aria-label',
-          theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
-        );
-      });
-    };
-
-    setTheme(savedTheme);
-  };
-
-  // Use one delegated listener so buttons work after page navigation.
-  if (!document.documentElement.dataset.themeToggleListener) {
-    document.documentElement.dataset.themeToggleListener = 'true';
-
-    document.addEventListener('click', (event) => {
-      const target = event.target;
-
-      if (!(target instanceof Element)) return;
-
-      const button = target.closest<HTMLButtonElement>('.theme-toggle');
-
-      if (!button) return;
-
-      const nextTheme =
-        document.documentElement.getAttribute('data-theme') === 'dark'
-          ? 'light'
-          : 'dark';
-
-      initializeThemeToggle();
-
-      document.documentElement.setAttribute('data-theme', nextTheme);
-
-      try {
-        localStorage.setItem('turath-theme', nextTheme);
-      } catch {}
-
-      document.querySelectorAll<HTMLButtonElement>('.theme-toggle').forEach((toggle) => {
-        const icon = toggle.querySelector<HTMLElement>('.theme-icon');
-
-        if (icon) {
-          icon.textContent = nextTheme === 'dark' ? '☼' : '☾';
-        }
-
-        toggle.setAttribute(
-          'aria-label',
-          nextTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
-        );
-      });
+      button.setAttribute(
+        'title',
+        theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
+      );
     });
   }
 
-  initializeThemeToggle();
-  document.addEventListener('astro:page-load', initializeThemeToggle);
+  function initializeTheme() {
+    let theme: 'dark' | 'light' = 'dark';
+
+    try {
+      const saved = localStorage.getItem(storageKey);
+
+      if (saved === 'light' || saved === 'dark') {
+        theme = saved;
+      }
+    } catch {}
+
+    applyTheme(theme);
+  }
+
+  if (!root.dataset.themeToggleListener) {
+    root.dataset.themeToggleListener = 'true';
+
+    document.addEventListener('click', (event) => {
+      if (!(event.target instanceof Element)) return;
+
+      const button = event.target.closest('.theme-toggle');
+
+      if (!button) return;
+
+      const current = root.getAttribute('data-theme');
+      const next = current === 'light' ? 'dark' : 'light';
+
+      applyTheme(next, true);
+    });
+  }
+
+  initializeTheme();
+
+  document.addEventListener('astro:page-load', initializeTheme);
 </script>
 
 <style>
@@ -99,11 +83,20 @@
     justify-content: center;
     width: 38px;
     height: 38px;
+    flex-shrink: 0;
     border: 1px solid var(--border-color, #333);
     border-radius: 50%;
     background: var(--surface-bg, #111);
     color: var(--page-text, #fff);
     cursor: pointer;
     font-size: 21px;
+    transition:
+      background-color 0.25s ease,
+      color 0.25s ease,
+      border-color 0.25s ease;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--page-text, #fff);
   }
 </style>
