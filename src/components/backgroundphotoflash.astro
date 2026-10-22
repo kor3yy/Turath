@@ -142,6 +142,36 @@ console.log('Background images found:', imagePaths);
       display: none !important;
     }
   }
+
+/* Softer, darker photo backgrounds on every non-homepage */
+body:not(.home) {
+  background: transparent !important;
+  isolation: isolate;
+}
+
+body:not(.home) .turath-photo-background,
+body:not(.home) .turath-ambient-glow {
+  z-index: -1;
+}
+
+body:not(.home) .turath-photo-background {
+  filter: blur(36px) saturate(1.4) brightness(0.5);
+}
+
+body:not(.home) .turath-ambient-glow {
+  opacity: 0.35;
+}
+
+body:not(.home) .turath-photo-background.is-flashing
+.turath-photo-layer.is-visible {
+  opacity: 0.4;
+}
+
+body:not(.home) .turath-photo-background.is-fading
+.turath-photo-layer.is-visible {
+  opacity: 0.3;
+}
+
 </style>
 
 <script>
