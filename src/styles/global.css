@@ -1,3 +1,10 @@
+@font-face {
+  font-family: 'Bickham Script One';
+  src: url('/fonts/bickham-script-one_%5Ballfont.net%5D.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 
 /* TURATH — main layout and themes */
 
