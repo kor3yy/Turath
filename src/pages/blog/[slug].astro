@@ -318,24 +318,25 @@ const readingTime = Math.max(1, Math.ceil(wordCount / 200));
     </style>
   </head>
 
-  <body>
-    <div class="reading-progress-track" aria-hidden="true">
-      <div class="reading-progress-bar"></div>
-    </div>
+<body>
+  <BackgroundPhotoFlash />
 
-    <LiquidCursor />
-    <MusicPlayer />
+  <div class="reading-progress-track" aria-hidden="true">
+    <div class="reading-progress-bar"></div>
+  </div>
 
-    <header>
-  <nav>
-    <div class="nav-links">
-      <a href="/">Home</a>
-      <a href="/about">About</a>
-    </div>
+  <LiquidCursor />
+  <MusicPlayer />
 
-    <ThemeToggle />
-  </nav>
-</header>
+  <header>
+    <nav>
+      <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+      </div>
+      <ThemeToggle />
+    </nav>
+  </header>
 
     <main>
       <article class="post-article">
