@@ -9,17 +9,19 @@
 </button>
 
 <script>
-  function initializeTheme() {
+  const initializeThemeToggle = () => {
     const root = document.documentElement;
 
     let savedTheme: 'dark' | 'light' = 'dark';
 
     try {
       savedTheme =
-        localStorage.getItem('turath-theme') === 'light' ? 'light' : 'dark';
+        localStorage.getItem('turath-theme') === 'light'
+          ? 'light'
+          : 'dark';
     } catch {}
 
-    function setTheme(theme: 'dark' | 'light', save = false) {
+    const setTheme = (theme: 'dark' | 'light', save = false) => {
       root.setAttribute('data-theme', theme);
 
       if (save) {
@@ -40,34 +42,54 @@
           theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
         );
       });
-    }
+    };
 
     setTheme(savedTheme);
+  };
 
-    // Register only once, even when Astro navigates between pages.
-    if (!document.documentElement.dataset.themeToggleInitialized) {
-      document.documentElement.dataset.themeToggleInitialized = 'true';
+  // Use one delegated listener so buttons work after page navigation.
+  if (!document.documentElement.dataset.themeToggleListener) {
+    document.documentElement.dataset.themeToggleListener = 'true';
 
-      document.addEventListener('click', (event) => {
-        const target = event.target;
+    document.addEventListener('click', (event) => {
+      const target = event.target;
 
-        if (!(target instanceof Element)) return;
+      if (!(target instanceof Element)) return;
 
-        const button = target.closest<HTMLButtonElement>('.theme-toggle');
+      const button = target.closest<HTMLButtonElement>('.theme-toggle');
 
-        if (!button) return;
+      if (!button) return;
 
-        const nextTheme =
-          root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      const nextTheme =
+        document.documentElement.getAttribute('data-theme') === 'dark'
+          ? 'light'
+          : 'dark';
 
-        setTheme(nextTheme, true);
+      initializeThemeToggle();
+
+      document.documentElement.setAttribute('data-theme', nextTheme);
+
+      try {
+        localStorage.setItem('turath-theme', nextTheme);
+      } catch {}
+
+      document.querySelectorAll<HTMLButtonElement>('.theme-toggle').forEach((toggle) => {
+        const icon = toggle.querySelector<HTMLElement>('.theme-icon');
+
+        if (icon) {
+          icon.textContent = nextTheme === 'dark' ? '☼' : '☾';
+        }
+
+        toggle.setAttribute(
+          'aria-label',
+          nextTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
+        );
       });
-    }
+    });
   }
 
-  initializeTheme();
-
-  document.addEventListener('astro:page-load', initializeTheme);
+  initializeThemeToggle();
+  document.addEventListener('astro:page-load', initializeThemeToggle);
 </script>
 
 <style>
