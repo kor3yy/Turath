@@ -44,7 +44,7 @@ That distinction matters to him. The underground can be heavily influenced by tr
 Released on April 13, 2026, *Sunkist* marked a turning point in Onyx's development. Although he had already been making music for years, the EP represented his first serious commitment to a complete project, one that reflected a specific period of his life rather than simply a collection of individual songs.
 
 <figure>
-  <img src="/images/sunkist.jpg"/>
+  <img src="/images/sunkit.jpg"/>
   <figcaption>Sunkist, Onyx's first EP, published April 13th, 2026.</figcaption>
 </figure>
 
