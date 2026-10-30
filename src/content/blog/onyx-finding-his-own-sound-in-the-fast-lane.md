@@ -2,7 +2,7 @@
 title: "Onyx: Finding His Own Sound in the Fast Lane"
 pubDate: 2026-10-29
 description: "From Trinidad to New Jersey, the 18-year-old artist is building a world of his own through melodic rap, experimental production, and music rooted in the emotions and experiences that shape him."
-thumbnail: "/images/1onyx.JPG"
+thumbnail: "/images/1onyxx.JPG"
 ---
 
 At 18, Onyx is moving with the urgency of someone who knows exactly what he wants, even if he is still discovering what that vision will become. Also known as Juggbaby77, Onyx77, the North Plainfield, New Jersey-based artist has spent the past year turning years of experimentation into something more intentional. Between *Sunkist*, his debut EP released in April, *Sunset*, his debut album released in July, and his upcoming second album, *Red Moon*, he is beginning to establish an identity that stretches beyond any single sound or scene.
@@ -29,6 +29,10 @@ He has been making music since around sixth grade, but the distance between maki
 
 One of the people who helped him recognize what was possible was Vax, an artist he watched develop and someone he credits with helping him find his footing. Seeing that progression gave Onyx a reference point for his own ambitions. Rather than treating music as a distant possibility, he began to see a future he could actively work toward.
 
+<figure>
+  <img src="/images/10onyx.JPG" alt="" />
+</figure>
+
 His influences also reflect the evolution of the internet's underground music scene. Artists such as Lil Uzi Vert, XXXTentacion, and Smokepurpp helped shape his appreciation for the melodic, unpredictable energy associated with the SoundCloud era. More contemporary artists have expanded his perspective in different directions. He admires Glo's emotional resonance and storytelling, Osamason's experimental approach to vocals and production, and Che's willingness to bring punk, rock, rage, and other sounds together.
 
 What connects these influences is not a single genre but the feeling they create. Onyx pays attention to the way a voice moves across a beat, how production changes the atmosphere of a song, and how an artist can make something immediately recognizable without following an established formula.
@@ -38,6 +42,11 @@ That distinction matters to him. The underground can be heavily influenced by tr
 ## *Sunkist*: A year captured in music
 
 Released on April 13, 2026, *Sunkist* marked a turning point in Onyx's development. Although he had already been making music for years, the EP represented his first serious commitment to a complete project, one that reflected a specific period of his life rather than simply a collection of individual songs.
+
+<figure>
+  <img src="/images/sunkist.jpg"/>
+  <figcaption>Sunkist, Onyx's first EP, published April 13th, 2026.</figcaption>
+</figure>
 
 The timing made it particularly meaningful. He finished the project around his high school graduation and even played it at prom, bringing the music into the same environment that had helped shape its themes. The EP became a record of his senior year, capturing a period of change, uncertainty, excitement, and personal growth.
 
@@ -56,6 +65,11 @@ It also established a foundation for what came next.
 ## Turning momentum into *Sunset*
 
 Released on July 31, 2026, *Sunset* arrived only a few months after *Sunkist*, but the two projects represent different stages of Onyx's development.
+
+<figure>
+  <img src="/images/sunset.jpg"/>
+  <figcaption>Sunset, Onyx's debut album, published July 31st, 2026.</figcaption>
+</figure>
 
 Where the EP captured a concentrated period of his life, the album gave him more room to experiment. He began working on it after *Sunkist* came out, encouraged by the positive feedback and motivated to keep creating. Produced throughout the summer, *Sunset* became a more considered body of work, balancing melodic vocals, energetic production, and a warmer, nostalgic atmosphere.
 
