@@ -154,6 +154,8 @@ The structure reflects the versatility he has been developing across his recent 
 
 He considers *Red Moon* among his strongest work to date, placing it alongside *Sunkist* as a personal contender for his best released project. Yet he is careful not to treat any album as a final statement about what he can do.
 
+Red Moon features production from different producers and pioneers, Venexxi, Lucid740, KV, Nxaho, usr, packsxo, xi, 406ahmadx, 1budmud, 7k, vax, fc, digital, nvy, viva0k, & enviel.
+
 <figure>
   <img src="/images/11onyx.JPG"/>
 </figure>
