@@ -16,6 +16,8 @@ export async function getStaticPaths() {
   }));
 }
 
+const { post } = Astro.props;
+
 const isAcknowledgments = `${post.slug} ${post.data.title}`
   .toLowerCase()
   .includes('acknowledg');
