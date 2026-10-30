@@ -15,7 +15,7 @@ His music moves between melodic vocals, aggressive rage production, nostalgic me
 
 “I like to see the art in everything,” he says, extending that perspective beyond music to video games, films, friendships, and the people around him. It is a philosophy that helps explain why his creative identity is inseparable from the experiences and relationships that have shaped him.
 
-## Finding His footing
+## Finding His Footing
 
 Onyx's story begins between two cultures. With Trinidadian and Cuban roots, he spent some of his early years in Trinidad before eventually settling in New Jersey. Growing up around Carnival bands, music, and dancing introduced him to the energy of performance, although music did not immediately become his primary focus. Soccer occupied much of his attention, and his relationship with music developed more naturally over time.
 
@@ -39,7 +39,7 @@ What connects these influences is not a single genre but the feeling they create
 
 That distinction matters to him. The underground can be heavily influenced by trends, but he does not want his music to become an imitation of whoever is popular at a given moment. Even when working with a familiar sound like rage, he approaches it by asking what he can bring to it rather than what another artist would do.
 
-## *Sunkist*: A year captured in music
+## *Sunkist*: A Year Captured In Music
 
 Released on April 13, 2026, *Sunkist* marked a turning point in Onyx's development. Although he had already been making music for years, the EP represented his first serious commitment to a complete project, one that reflected a specific period of his life rather than simply a collection of individual songs.
 
@@ -66,7 +66,7 @@ The rollout required a level of promotion and commitment that went beyond making
 
 It also established a foundation for what came next.
 
-## Turning momentum into *Sunset*
+## Turning Momentum Into *Sunset*
 
 Released on July 31, 2026, *Sunset* arrived only a few months after *Sunkist*, but the two projects represent different stages of Onyx's development.
 
@@ -99,7 +99,7 @@ The song became a way to capture the emotional significance of that experience. 
 
 For Onyx, that is the point. A song can have an infectious melody or an exciting beat, but its meaning comes from the experiences behind it. The listener may arrive for the sound and discover the story later.
 
-## The people behind the sound
+## The People Behind The Sound
 
 Although Onyx's creative identity is deeply personal, his journey has never been entirely solitary. His circle of friends, collaborators, and producers has become an important part of the world he is building. For him, the people around him are more than collaborators; they're part of the reason he continues to create.
 
@@ -139,7 +139,7 @@ He believes that when people are genuinely invested in one another, the possibil
 
 Ultimately, Onyx wants to build more than a career. He wants to be part of a community where creativity is shared, opportunities are created together, and nobody has to figure everything out alone.
 
-## *Red Moon*: Three sides of the same artist
+## *Red Moon*: Three Sides Of The Same Artist
 
 On October 31, 2026, Onyx is set to release *Red Moon*, his second album and the next step in a year that has already seen him evolve considerably.
 
@@ -170,7 +170,7 @@ Financial success matters to him, too. He wants to make a living from his art, i
 
 Still, he does not see his future as a departure from where he started. New Jersey remains important to him because of the people who have supported him and the relationships he has built there. Becoming a hometown hero would mean something precisely because it would connect his growth to the community that helped shape him.
 
-## Making something that lasts
+## Making Art That Lasts
 
 In an underground scene where new sounds and trends can emerge almost overnight, Onyx believes patience is one of the most important qualities an artist can develop.
 
