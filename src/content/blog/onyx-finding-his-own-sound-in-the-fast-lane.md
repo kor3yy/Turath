@@ -104,7 +104,7 @@ For Onyx, that is the point. A song can have an infectious melody or an exciting
 Although Onyx's creative identity is deeply personal, his journey has never been entirely solitary. His circle of friends, collaborators, and producers has become an important part of the world he is building. For him, the people around him are more than collaborators; they're part of the reason he continues to create.
 
 <figure>
-  <img src="/images/8onyx.JPG"/>
+  <img src="/images/7onyx.JPG"/>
 </figure>
 
 One of the most significant figures in his journey is Vax, someone Onyx credits with helping shape the artist he is today. He speaks about him with genuine appreciation, describing him as someone who helped put him on to new sounds, showed him different approaches to music, and encouraged him to recognize his own potential. More than anything, Vax is someone he considers a real friend. Onyx doesn't separate that personal connection from the influence he's had on his development.
@@ -114,7 +114,7 @@ His appreciation extends to the wider circle of artists and producers he has con
 One collaboration that stands out is his connection with Shishastopsippin, a Russian producer he discovered through YouTube. After coming across one of his beats, Onyx was immediately drawn to the production. He eventually found Shisha's Telegram and reached out, impressed by the distinct quality of his work. The connection developed into something much bigger, with Onyx eventually putting together an entire EP using his beats.
 
 <figure>
-  <img src="/images/2onyx.JPG"/>
+  <img src="/images/5onyx.JPG"/>
 </figure>
 
 His relationships outside the studio have been just as influential. Kiki, in particular, has played a significant role in his personal and creative development. He credits her as one of the major reasons *Sunkist* came together, but her influence extends beyond the music itself. Their conversations helped him connect with someone on a deeper level, encouraging him to become more appreciative, open, and intentional about the way he approaches life.
