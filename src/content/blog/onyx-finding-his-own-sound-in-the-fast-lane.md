@@ -54,6 +54,10 @@ Sonically, *Sunkist* allowed him to explore a more melodic direction while worki
 
 That shift helped inspire songs such as “Wuhu,” “Peace,” and “Chopstick.” Some of the music came together remarkably quickly, including songs he made shortly before leaving for work. Rather than treating that spontaneity as a limitation, he leaned into it. The immediacy of those sessions helped him capture ideas before overthinking them, allowing the energy of the moment to shape the final result.
 
+<figure>
+  <img src="/images/4onyx.JPG"/>
+</figure>
+
 His creative process still relies heavily on freestyling. He rarely writes lyrics beforehand, preferring to let the beat guide his flow and the words emerge naturally. He does not want to recycle the same lyrics or recreate the exact energy of an earlier song. For him, every session offers an opportunity to discover something new.
 
 But *Sunkist* was not only about finding a sound. It was also about learning what it meant to release something personal into the world.
@@ -81,6 +85,10 @@ That balance between spontaneity and intention is central to his growth. He want
 
 His personal life also played a significant role in reaching this point. Onyx describes spending roughly two years in a difficult relationship that affected his confidence and motivation. During that period, he felt disconnected from himself and was not putting the same amount of work into music. He was around other people creating, but he struggled to find the drive to develop his own craft.
 
+<figure>
+  <img src="/images/16onyx.JPG"/>
+</figure>
+
 When that chapter ended, his relationship with music changed.
 
 He began dedicating himself to it with a renewed sense of purpose, spending more time learning, experimenting, and developing his sound. The shift was not simply about having more time to make songs. It was about rediscovering a part of himself he felt he had lost.
@@ -95,13 +103,25 @@ For Onyx, that is the point. A song can have an infectious melody or an exciting
 
 Although Onyx's creative identity is deeply personal, his journey has never been entirely solitary. His circle of friends, collaborators, and producers has become an important part of the world he is building. For him, the people around him are more than collaborators; they're part of the reason he continues to create.
 
+<figure>
+  <img src="/images/8onyx.JPG"/>
+</figure>
+
 One of the most significant figures in his journey is Vax, someone Onyx credits with helping shape the artist he is today. He speaks about him with genuine appreciation, describing him as someone who helped put him on to new sounds, showed him different approaches to music, and encouraged him to recognize his own potential. More than anything, Vax is someone he considers a real friend. Onyx doesn't separate that personal connection from the influence he's had on his development.
 
 His appreciation extends to the wider circle of artists and producers he has connected with along the way. Artists including Twilijht, Acceee, Ainhunna, Dr4co, and 7k, alongside producers such as kvma, Lucid740, Vax, Chrisxo, Viva, FC, BMUD, and Shishastopsippin, have all contributed to the creative environment surrounding him.
 
-One collaboration that stands out is his connection with Shishastopsippin, a Russian producer he discovered through YouTube. After coming across one of his beats, Onyx was immediately drawn to the production. He eventually found Shishastopsippin's Telegram and reached out, impressed by the distinct quality of his work. The connection developed into something much bigger, with Onyx eventually putting together an entire EP using his beats.
+One collaboration that stands out is his connection with Shishastopsippin, a Russian producer he discovered through YouTube. After coming across one of his beats, Onyx was immediately drawn to the production. He eventually found Shisha's Telegram and reached out, impressed by the distinct quality of his work. The connection developed into something much bigger, with Onyx eventually putting together an entire EP using his beats.
+
+<figure>
+  <img src="/images/2onyx.JPG"/>
+</figure>
 
 His relationships outside the studio have been just as influential. Kiki, in particular, has played a significant role in his personal and creative development. He credits her as one of the major reasons *Sunkist* came together, but her influence extends beyond the music itself. Their conversations helped him connect with someone on a deeper level, encouraging him to become more appreciative, open, and intentional about the way he approaches life.
+
+<figure>
+  <img src="/images/3onyx.JPG"/>
+</figure>
 
 For Onyx, the right people don't simply add to your life; they change the way you experience it. He sees love, support, and genuine connection as things that can give someone a different perspective on themselves and the world around them.
 
@@ -111,6 +131,10 @@ Kiki has also become a mentor to Dior Zack, sharing her knowledge and helping hi
 
 Through Onelife and the friendships surrounding it, he has found an environment where everyone has something to contribute. Whether it's producing, engineering, sharing ideas, or simply listening to a new song together, the collective energy keeps everyone moving.
 
+<figure>
+  <img src="/images/14onyx.JPG"/>
+</figure>
+
 He believes that when people are genuinely invested in one another, the possibilities become much greater. If one person struggles, the others are there to help them back up. Everyone has a role to play, and everyone benefits from seeing the people around them succeed.
 
 Ultimately, Onyx wants to build more than a career. He wants to be part of a community where creativity is shared, opportunities are created together, and nobody has to figure everything out alone.
@@ -119,17 +143,30 @@ Ultimately, Onyx wants to build more than a career. He wants to be part of a com
 
 On October 31, 2026, Onyx is set to release *Red Moon*, his second album and the next step in a year that has already seen him evolve considerably.
 
+<figure>
+  <img src="/images/redmoon.jpg"/>
+  <figcaption>Sunkist, Onyx's second album, to be published on October 31st, 2026.</figcaption>
+</figure>
+
 He describes the project as unfolding across three distinct phases. The beginning is aggressive, designed to immediately capture the listener's attention. The middle shifts into melodic territory, with a more romantic feel. By the end, the different energies come together, creating a conclusion that brings the project's contrasting moods into the same space.
 
 The structure reflects the versatility he has been developing across his recent releases. Rather than choosing between aggressive production and melodic expression, he wants to demonstrate how both can exist within the same artistic identity.
 
 He considers *Red Moon* among his strongest work to date, placing it alongside *Sunkist* as a personal contender for his best released project. Yet he is careful not to treat any album as a final statement about what he can do.
 
+<figure>
+  <img src="/images/11onyx.JPG"/>
+</figure>
+
 There are too many experiences left to have and too many sounds left to explore. Every project represents a particular point in his life, and there is always the possibility of creating something that reflects a different version of himself.
 
 That perspective also shapes his ambitions. He wants to build a dedicated fanbase, perform for larger audiences, and eventually establish himself as a hometown hero in New Jersey. He hopes to travel, experience different environments, and allow those experiences to influence his music as he grows.
 
 Financial success matters to him, too. He wants to make a living from his art, invest in quality equipment, work with a strong team, and enjoy a life in which he can create without constantly worrying about money. His ambition is not limited to recognition; it includes the freedom to live comfortably and make music on his own terms.
+
+<figure>
+  <img src="/images/15onyx.JPG"/>
+</figure>
 
 Still, he does not see his future as a departure from where he started. New Jersey remains important to him because of the people who have supported him and the relationships he has built there. Becoming a hometown hero would mean something precisely because it would connect his growth to the community that helped shape him.
 
@@ -141,6 +178,10 @@ He sees too many people rushing toward recognition before they have fully establ
 
 He applies the same philosophy to the way he thinks about authenticity. Music should not feel forced or disconnected from the person making it. He wants to preserve the emotional honesty that first drew him to creating, especially in a landscape where he feels some music has become more about following formulas than expressing something genuine.
 
+<figure>
+  <img src="/images/8onyx.JPG"/>
+</figure>
+
 His advice extends beyond music. He believes people need to recognize their own value, discover what makes them feel passionate, and stop allowing the expectations of others to determine the boundaries of their lives.
 
 There will always be moments of insecurity, he acknowledges, but those moments should not become reasons to abandon what makes someone different. Learning to appreciate yourself, remaining open to new experiences, and showing love to the people around you are all part of building a life that feels meaningful.
@@ -148,6 +189,10 @@ There will always be moments of insecurity, he acknowledges, but those moments s
 That philosophy comes back to the way he sees art. Music is one expression of it, but so are the relationships that sustain him, the friends who celebrate his accomplishments, and the experiences that change how he understands himself.
 
 For Onyx, the ambition is to become a legend, but the work is much more immediate: keep creating, keep learning, and keep finding new ways to turn his experiences into something other people can feel.
+
+<figure>
+  <img src="/images/9onyx.JPG"/>
+</figure>
 
 His music is still developing, and he knows there is much more ahead of him. *Sunkist* captured a chapter of his life. *Sunset* showed him what he could do with the momentum that followed. *Red Moon* represents another opportunity to explore the space between the sounds he loves and the person he continues to become.
 
