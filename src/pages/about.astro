@@ -1,8 +1,6 @@
 
 ---
 import LiquidCursor from '../components/LiquidCursor.astro';
-import MusicPlayer from '../components/MusicPlayer.astro';
-import ThemeToggle from '../components/ThemeToggle.astro';
 import { ClientRouter } from 'astro:transitions';
 import BackgroundPhotoFlash from '../components/backgroundphotoflash.astro';
 ---
@@ -41,8 +39,7 @@ import BackgroundPhotoFlash from '../components/backgroundphotoflash.astro';
 
   <body>
     <LiquidCursor />
-    <MusicPlayer />
-<BackgroundPhotoFlash />
+    <BackgroundPhotoFlash />
 
     <header>
       <nav>
@@ -55,10 +52,9 @@ import BackgroundPhotoFlash from '../components/backgroundphotoflash.astro';
         </a>
 
         <div class="nav-links">
-  <a href="/">Home</a>
-  <a href="/about">About</a>
-  <ThemeToggle />
-</div>
+          <a href="/">Home</a>
+          <a href="/about">About</a>
+        </div>
       </nav>
     </header>
 
