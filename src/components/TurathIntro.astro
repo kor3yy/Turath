@@ -1,5 +1,4 @@
 ---
----
 
 <script is:inline>
   try {
@@ -18,6 +17,14 @@
 </div>
 
 <style is:global>
+ @font-face {
+  font-family: 'Queen Sheila Free';
+  src: url('/fonts/queen-sheila-free.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
   .turath-intro {
     display: none;
     position: fixed;
@@ -27,8 +34,6 @@
     justify-content: center;
     overflow: hidden;
     background: rgba(128, 128, 128, 0.08);
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
@@ -36,36 +41,77 @@
 
   html.turath-intro-playing .turath-intro {
     display: flex;
-    opacity: 1;
     visibility: visible;
     pointer-events: auto;
-    animation: turath-intro-failsafe 4s forwards;
+    animation: turath-intro-background 3.6s ease-in-out forwards;
   }
 
   .turath-intro__word {
-    font-family: serif;
-    font-size: clamp(4rem, 13vw, 11rem);
+    font-family: 'Queen Sheila Free', serif;
+    font-size: clamp(5rem, 17vw, 15rem);
     font-weight: 400;
-    line-height: 1.3;
+    line-height: 1.2;
     color: #fff;
+    opacity: 0;
+    filter: blur(18px);
+    transform: scale(0.97);
+    animation: turath-intro-word 3.6s ease-in-out forwards;
   }
 
-  html[data-theme="light"] .turath-intro__word,
-  html[data-theme="light"] .turath-intro__word[style] {
-    color: #000 !important;
+  html[data-theme="light"] .turath-intro__word {
+    color: #000;
   }
 
-  @keyframes turath-intro-failsafe {
-    0%, 75% {
+  @keyframes turath-intro-background {
+    0% {
+      opacity: 0;
+      backdrop-filter: blur(0);
+      -webkit-backdrop-filter: blur(0);
+    }
+
+    15% {
       opacity: 1;
-      visibility: visible;
-      pointer-events: auto;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    72% {
+      opacity: 1;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
 
     100% {
       opacity: 0;
+      backdrop-filter: blur(0);
+      -webkit-backdrop-filter: blur(0);
       visibility: hidden;
-      pointer-events: none;
+    }
+  }
+
+  @keyframes turath-intro-word {
+    0% {
+      opacity: 0;
+      filter: blur(18px);
+      transform: scale(0.97);
+    }
+
+    20% {
+      opacity: 1;
+      filter: blur(0);
+      transform: scale(1);
+    }
+
+    72% {
+      opacity: 1;
+      filter: blur(0);
+      transform: scale(1);
+    }
+
+    100% {
+      opacity: 0;
+      filter: blur(18px);
+      transform: scale(1.03);
     }
   }
 
@@ -82,9 +128,8 @@
 
 <script>
   const intro = document.querySelector('.turath-intro');
-  const word = intro?.querySelector('.turath-intro__word');
 
-  if (intro && word) {
+  if (intro) {
     const root = document.documentElement;
     const alreadySeen = root.classList.contains('turath-intro-seen');
 
@@ -95,75 +140,11 @@
         sessionStorage.setItem('turath-intro-seen', 'yes');
       } catch (e) {}
 
-      const sequence = [
-        ['turath', 'en'],
-        ['تراث', 'ar'],
-        ['turath', 'en'],
-        ['تراث', 'ar'],
-        ['turath', 'en'],
-        ['تراث', 'ar'],
-        ['turath', 'en'],
-        ['تراث', 'ar'],
-        ['turath', 'en'],
-        ['تراث', 'ar'],
-        ['turath', 'en'],
-        ['تراث', 'ar'],
-        ['turath', 'en'],
-        ['تراث', 'ar'],
-        ['turath', 'en'],
-        ['تراث', 'ar'],
-        ['turath', 'en'],
-        ['تراث', 'ar']
-      ];
-
-      const updateTextColor = () => {
-        const isLight = root.getAttribute('data-theme') === 'light';
-        word.style.color = isLight ? '#000' : '#fff';
-      };
-
-      let step = 0;
-
-      updateTextColor();
-
-      const themeObserver = new MutationObserver(updateTextColor);
-      themeObserver.observe(root, {
-        attributes: true,
-        attributeFilter: ['data-theme']
-      });
-
-      const interval = window.setInterval(() => {
-        if (!intro.isConnected) {
-          window.clearInterval(interval);
-          themeObserver.disconnect();
-          return;
-        }
-
-        const [text, language] = sequence[step];
-
-        word.textContent = text;
-        word.setAttribute('lang', language);
-        word.setAttribute('dir', language === 'ar' ? 'rtl' : 'ltr');
-
-        updateTextColor();
-
-        step++;
-
-        if (step >= sequence.length) {
-          window.clearInterval(interval);
-          themeObserver.disconnect();
-          root.classList.remove('turath-intro-playing');
-          root.classList.add('turath-intro-seen');
-          intro.remove();
-        }
-      }, 100);
-
       window.setTimeout(() => {
-        window.clearInterval(interval);
-        themeObserver.disconnect();
         root.classList.remove('turath-intro-playing');
         root.classList.add('turath-intro-seen');
         intro.remove();
-      }, 4200);
+      }, 3600);
     }
   }
 </script>
