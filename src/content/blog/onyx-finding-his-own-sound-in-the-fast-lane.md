@@ -2,12 +2,16 @@
 title: "Onyx: Finding His Own Sound in the Fast Lane"
 pubDate: 2026-10-29
 description: "From Trinidad to New Jersey, the 18-year-old artist is building a world of his own through melodic rap, experimental production, and music rooted in the emotions and experiences that shape him."
-thumbnail: "/images/1onyx.jpg"
+thumbnail: "/images/1onyx.JPG"
 ---
 
 At 18, Onyx is moving with the urgency of someone who knows exactly what he wants, even if he is still discovering what that vision will become. Also known as Juggbaby77, Onyx77, the North Plainfield, New Jersey-based artist has spent the past year turning years of experimentation into something more intentional. Between *Sunkist*, his debut EP released in April, *Sunset*, his debut album released in July, and his upcoming second album, *Red Moon*, he is beginning to establish an identity that stretches beyond any single sound or scene.
 
 His music moves between melodic vocals, aggressive rage production, nostalgic melodies, and experimental sounds that resist easy categorization. Yet beneath the energy and constantly shifting production is something more personal. For Onyx, music is an outlet, a reflection of his emotions, and a way to communicate parts of himself that might otherwise remain unspoken.
+
+<figure>
+  <img src="/images/2onyx.JPG" alt="2" />
+</figure>
 
 “I like to see the art in everything,” he says, extending that perspective beyond music to video games, films, friendships, and the people around him. It is a philosophy that helps explain why his creative identity is inseparable from the experiences and relationships that have shaped him.
 
@@ -16,6 +20,10 @@ His music moves between melodic vocals, aggressive rage production, nostalgic me
 Onyx's story begins between two cultures. With Trinidadian and Cuban roots, he spent some of his early years in Trinidad before eventually settling in New Jersey. Growing up around Carnival bands, music, and dancing introduced him to the energy of performance, although music did not immediately become his primary focus. Soccer occupied much of his attention, and his relationship with music developed more naturally over time.
 
 His upbringing in Trinidad also gave him a different perspective on the world. He believes being there helped soften some of the negativity he might otherwise have encountered growing up in the United States. That early exposure to different environments became part of the foundation he would eventually draw from creatively. With the support of his parents, music gradually became more than an interest, developing into something he wanted to pursue seriously.
+
+<figure>
+  <img src="/images/6onyx.JPG" alt="" />
+</figure>
 
 He has been making music since around sixth grade, but the distance between making songs and building an artistic identity took time to close. Like many young artists finding their footing online, he spent years exploring sounds, experimenting with different approaches, and figuring out what felt natural to him.
 
