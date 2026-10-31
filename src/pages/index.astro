@@ -86,32 +86,26 @@ const sections = [
 
 <!doctype html>
 <html lang="en">
-   <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#000000" />
-  <meta name="description" content="Turath — culture, art, expression, history, and the people behind them." />
-  <link rel="icon" type="image/png" href="/images/logo-removebg-preview.png" />
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Turath — culture, art, expression, history, and the people behind them." />
+    <link rel="icon" type="image/png" href="/images/logo-removebg-preview.png" />
 
-  <title>Turath</title>
+    <title>Turath</title>
 
-  <ClientRouter />
+    <ClientRouter />
 
-  <style is:global>
-@font-face {
-  font-family: 'Queen Sheila Free';
-  src: url('/fonts/queen-sheila-free.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Queen Sheila Free';
-  src: url('/fonts/queen-sheila-free.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
+    <style is:global>
+      @font-face {
+        font-family: 'Queen Sheila Free';
+        src: url('/fonts/queen-sheila-free.ttf') format('truetype');
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
+
       html,
       body {
         min-height: 100%;
@@ -140,13 +134,13 @@ const sections = [
       }
 
       body.home .hero h1 {
-  margin: 0;
-  font-family: 'Queen Sheila Free', cursive;
-  font-size: clamp(4rem, 10vw, 7rem);
-  font-weight: normal;
-  letter-spacing: normal;
-  line-height: 1.3;
-}
+        margin: 0;
+        font-family: 'Queen Sheila Free', cursive;
+        font-size: clamp(4rem, 10vw, 7rem);
+        font-weight: normal;
+        letter-spacing: normal;
+        line-height: 1.3;
+      }
 
       body.home .nav-links a {
         color: var(--page-text);
@@ -989,207 +983,266 @@ const sections = [
     <TurathInteractions />
 
     <script>
+      let cleanupArchives = () => {};
+
       const wrapAround = (value, length) =>
         length ? ((value % length) + length) % length : 0;
 
-      // Keep the category buttons and Explore button synchronized.
-      document.querySelectorAll('.archive').forEach((archive) => {
-        const view = archive.querySelector('.section-view');
-        const openButtons = Array.from(
-          archive.querySelectorAll('[data-open-section]')
-        );
+      function initializeArchives() {
+        // Clean up anything left from the previous page.
+        cleanupArchives();
 
-        const syncOpenState = (isOpen) => {
-          view?.classList.toggle('is-open', isOpen);
+        const controller = new AbortController();
+        const { signal } = controller;
+        const intervals = [];
+        const observers = [];
+
+        document.querySelectorAll('.archive').forEach((archive) => {
+          const view = archive.querySelector('.section-view');
+          const openButtons = Array.from(
+            archive.querySelectorAll('[data-open-section]')
+          );
+
+          const syncOpenState = (isOpen) => {
+            view?.classList.toggle('is-open', isOpen);
+
+            openButtons.forEach((button) => {
+              button.setAttribute('aria-expanded', String(isOpen));
+
+              if (button.classList.contains('open-archive')) {
+                button.textContent = isOpen ? 'Close ↑' : 'Explore →';
+              }
+            });
+          };
 
           openButtons.forEach((button) => {
-            button.setAttribute('aria-expanded', String(isOpen));
+            button.addEventListener('click', () => {
+              const opening = !view?.classList.contains('is-open');
 
-            if (button.classList.contains('open-archive')) {
-              button.textContent = isOpen ? 'Close ↑' : 'Explore →';
-            }
-          });
-        };
+              syncOpenState(opening);
 
-        openButtons.forEach((button) => {
-          button.addEventListener('click', () => {
-            const opening = !view?.classList.contains('is-open');
-            syncOpenState(opening);
-
-            if (opening) {
-              requestAnimationFrame(() => {
-                view?.scrollIntoView({
-                  behavior: 'smooth',
-                  block: 'nearest',
+              if (opening) {
+                requestAnimationFrame(() => {
+                  view?.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest',
+                  });
                 });
-              });
+              }
+            }, { signal });
+          });
+
+          // Rotate the category cover images.
+          const images = Array.from(
+            archive.querySelectorAll('.cover-image')
+          );
+
+          if (images.length > 0) {
+            let current = 0;
+
+            images.forEach((image, index) => {
+              image.classList.toggle('is-current', index === 0);
+            });
+
+            if (images.length > 1) {
+              const interval = window.setInterval(() => {
+                images[current].classList.remove('is-current');
+                current = (current + 1) % images.length;
+                images[current].classList.add('is-current');
+              }, 2000);
+
+              intervals.push(interval);
             }
-          });
-        });
-
-        // Crossfade available poster images forever.
-        const images = Array.from(
-          archive.querySelectorAll('.cover-image')
-        );
-
-        if (images.length > 0) {
-          let current = 0;
-
-          images.forEach((image, index) => {
-            image.classList.toggle('is-current', index === 0);
-          });
-
-          if (images.length > 1) {
-            window.setInterval(() => {
-              images[current].classList.remove('is-current');
-              current = (current + 1) % images.length;
-              images[current].classList.add('is-current');
-            }, 2000);
-          }
-        }
-
-        // Each collection has its own looping carousel.
-        const stage = archive.querySelector('.article-stage');
-        const cards = Array.from(
-          archive.querySelectorAll('.article-card')
-        );
-        const slider = archive.querySelector('.section-slider');
-        const count = archive.querySelector('.section-count');
-        const previous = archive.querySelector('[data-prev]');
-        const next = archive.querySelector('[data-next]');
-
-        if (!stage || !slider || !count || cards.length === 0) {
-          return;
-        }
-
-        let active = 0;
-        let pointerStart = null;
-
-        function distanceFrom(index) {
-          let distance = index - active;
-
-          if (distance > cards.length / 2) {
-            distance -= cards.length;
           }
 
-          if (distance < -cards.length / 2) {
-            distance += cards.length;
+          // Initialize the article carousel.
+          const stage = archive.querySelector('.article-stage');
+          const cards = Array.from(
+            archive.querySelectorAll('.article-card')
+          );
+          const slider = archive.querySelector('.section-slider');
+          const count = archive.querySelector('.section-count');
+          const previous = archive.querySelector('[data-prev]');
+          const next = archive.querySelector('[data-next]');
+
+          if (!stage || !slider || !count || cards.length === 0) {
+            return;
           }
 
-          return distance;
-        }
+          let active = 0;
+          let pointerStart = null;
 
-        function render() {
-          const stageWidth = stage.clientWidth;
-          const cardWidth =
-            cards[0].getBoundingClientRect().width || 230;
-          const gap = Math.min(cardWidth * 0.82, stageWidth * 0.25);
+          function distanceFrom(index) {
+            let distance = index - active;
+
+            if (distance > cards.length / 2) {
+              distance -= cards.length;
+            }
+
+            if (distance < -cards.length / 2) {
+              distance += cards.length;
+            }
+
+            return distance;
+          }
+
+          function render() {
+            const stageWidth = stage.clientWidth;
+            const cardWidth =
+              cards[0].getBoundingClientRect().width || 230;
+
+            const gap = Math.min(cardWidth * 0.82, stageWidth * 0.25);
+
+            cards.forEach((card, index) => {
+              const distance = distanceFrom(index);
+              const absolute = Math.abs(distance);
+              const visible = absolute <= 2;
+
+              card.style.setProperty('--x', `${distance * gap}px`);
+
+              card.style.setProperty(
+                '--scale',
+                String(
+                  absolute === 0
+                    ? 1
+                    : absolute === 1
+                      ? 0.83
+                      : 0.68
+                )
+              );
+
+              card.style.setProperty(
+                '--opacity',
+                String(
+                  absolute === 0
+                    ? 1
+                    : absolute === 1
+                      ? 0.78
+                      : absolute === 2
+                        ? 0.3
+                        : 0
+                )
+              );
+
+              card.style.setProperty('--z', String(10 - absolute));
+
+              card.classList.toggle('is-active', distance === 0);
+              card.classList.toggle('is-visible', visible);
+
+              card.setAttribute('aria-hidden', String(!visible));
+              card.setAttribute('tabindex', visible ? '0' : '-1');
+            });
+
+            slider.value = String(active);
+
+            count.textContent =
+              `${String(active + 1).padStart(2, '0')} / ${String(cards.length).padStart(2, '0')}`;
+          }
+
+          function goTo(index) {
+            active = wrapAround(index, cards.length);
+            render();
+          }
+
+          previous?.addEventListener(
+            'click',
+            () => goTo(active - 1),
+            { signal }
+          );
+
+          next?.addEventListener(
+            'click',
+            () => goTo(active + 1),
+            { signal }
+          );
+
+          slider.addEventListener(
+            'input',
+            () => goTo(Number(slider.value)),
+            { signal }
+          );
 
           cards.forEach((card, index) => {
-            const distance = distanceFrom(index);
-            const absolute = Math.abs(distance);
-            const visible = absolute <= 2;
-
-            card.style.setProperty('--x', `${distance * gap}px`);
-
-            card.style.setProperty(
-              '--scale',
-              String(
-                absolute === 0
-                  ? 1
-                  : absolute === 1
-                    ? 0.83
-                    : 0.68
-              )
-            );
-
-            card.style.setProperty(
-              '--opacity',
-              String(
-                absolute === 0
-                  ? 1
-                  : absolute === 1
-                    ? 0.78
-                    : absolute === 2
-                      ? 0.3
-                      : 0
-              )
-            );
-
-            card.style.setProperty('--z', String(10 - absolute));
-            card.classList.toggle('is-active', distance === 0);
-            card.classList.toggle('is-visible', visible);
-            card.setAttribute('aria-hidden', String(!visible));
-            card.setAttribute('tabindex', visible ? '0' : '-1');
+            card.addEventListener('click', (event) => {
+              if (distanceFrom(index) !== 0) {
+                event.preventDefault();
+                goTo(index);
+              }
+            }, { signal });
           });
 
-          slider.value = String(active);
-
-          count.textContent =
-            `${String(active + 1).padStart(2, '0')} / ${String(cards.length).padStart(2, '0')}`;
-        }
-
-        function goTo(index) {
-          active = wrapAround(index, cards.length);
-          render();
-        }
-
-        previous?.addEventListener('click', () => goTo(active - 1));
-        next?.addEventListener('click', () => goTo(active + 1));
-
-        slider.addEventListener('input', () => {
-          goTo(Number(slider.value));
-        });
-
-        cards.forEach((card, index) => {
-          card.addEventListener('click', (event) => {
-            if (distanceFrom(index) !== 0) {
+          stage.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowLeft') {
               event.preventDefault();
-              goTo(index);
+              goTo(active - 1);
             }
+
+            if (event.key === 'ArrowRight') {
+              event.preventDefault();
+              goTo(active + 1);
+            }
+          }, { signal });
+
+          stage.addEventListener('pointerdown', (event) => {
+            pointerStart = {
+              x: event.clientX,
+              y: event.clientY,
+            };
+          }, { signal });
+
+          stage.addEventListener('pointerup', (event) => {
+            if (!pointerStart) return;
+
+            const dx = event.clientX - pointerStart.x;
+            const dy = event.clientY - pointerStart.y;
+
+            pointerStart = null;
+
+            if (
+              Math.abs(dx) > 45 &&
+              Math.abs(dx) > Math.abs(dy)
+            ) {
+              goTo(active + (dx < 0 ? 1 : -1));
+            }
+          }, { signal });
+
+          stage.addEventListener('pointercancel', () => {
+            pointerStart = null;
+          }, { signal });
+
+          render();
+
+          if ('ResizeObserver' in window) {
+            const observer = new ResizeObserver(render);
+            observer.observe(stage);
+            observers.push(observer);
+          } else {
+            window.addEventListener('resize', render, { signal });
+          }
+        });
+
+        cleanupArchives = () => {
+          controller.abort();
+
+          intervals.forEach((interval) => {
+            window.clearInterval(interval);
           });
-        });
 
-        stage.addEventListener('keydown', (event) => {
-          if (event.key === 'ArrowLeft') {
-            event.preventDefault();
-            goTo(active - 1);
-          }
+          observers.forEach((observer) => {
+            observer.disconnect();
+          });
+        };
+      }
 
-          if (event.key === 'ArrowRight') {
-            event.preventDefault();
-            goTo(active + 1);
-          }
-        });
+      // Initialize the homepage.
+      initializeArchives();
 
-        stage.addEventListener('pointerdown', (event) => {
-          pointerStart = {
-            x: event.clientX,
-            y: event.clientY,
-          };
-        });
+      // Reinitialize after Astro navigation.
+      document.addEventListener('astro:page-load', initializeArchives);
 
-        stage.addEventListener('pointerup', (event) => {
-          if (!pointerStart) return;
-
-          const dx = event.clientX - pointerStart.x;
-          const dy = event.clientY - pointerStart.y;
-          pointerStart = null;
-
-          if (
-            Math.abs(dx) > 45 &&
-            Math.abs(dx) > Math.abs(dy)
-          ) {
-            goTo(active + (dx < 0 ? 1 : -1));
-          }
-        });
-
-        stage.addEventListener('pointercancel', () => {
-          pointerStart = null;
-        });
-
-        render();
-        window.addEventListener('resize', render);
+      // Clean up before leaving the current page.
+      document.addEventListener('astro:before-swap', () => {
+        cleanupArchives();
       });
     </script>
   </body>
