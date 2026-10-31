@@ -2,7 +2,7 @@
 title: "Onyx: Finding His Own Sound in the Fast Lane"
 pubDate: 2026-10-29
 description: "From Trinidad to New Jersey, the 18-year-old artist is building a world of his own through melodic rap, experimental production, and music rooted in the emotions and experiences that shape him."
-thumbnail: "/images/15onyx.JPG"
+thumbnail: "/images/15onyx-modified.JPG"
 ---
 
 At 18, Onyx is moving with the urgency of someone who knows exactly what he wants, even if he is still discovering what that vision will become. Also known as Juggbaby77, Onyx77, the North Plainfield, New Jersey-based artist has spent the past year turning years of experimentation into something more intentional. Between *Sunkist*, his debut EP released in April, *Sunset*, his debut album released in July, and his upcoming second album, *Red Moon*, he is beginning to establish an identity that stretches beyond any single sound or scene.
