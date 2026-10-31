@@ -1,5 +1,3 @@
-
-
 ---
 ---
 
@@ -14,131 +12,507 @@
     preload="metadata"
   ></audio>
 
-  <button
-    class="turath-play-button"
-    id="turath-play-button"
-    type="button"
-    aria-label="Play music"
-    title="Play music"
-  >
-    <svg class="play-icon" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M8 5.5v13l10-6.5z" fill="currentColor" />
-    </svg>
-    <svg class="pause-icon" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M7.5 5.5h3.5v13H7.5zM13 5.5h3.5v13H13z" fill="currentColor" />
-    </svg>
-  </button>
-
-  <div class="turath-player-content">
-    <div class="turath-player-label">
+  <div class="turath-player-topline">
+    <div class="turath-player-brand">
+      <span class="turath-radio-mark" aria-hidden="true">T</span>
       <span class="turath-player-name">TURATH RADIO</span>
       <span class="turath-player-status" id="turath-player-status">READY</span>
     </div>
 
-        <select
+    <button
+      class="turath-expand-button"
+      id="turath-expand-button"
+      type="button"
+      aria-label="Expand radio player"
+      aria-expanded="false"
+      title="Expand player"
+    >
+      <svg class="expand-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M8 4H4v4M16 4h4v4M4 16v4h4M20 16v4h-4" />
+      </svg>
+      <svg class="collapse-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" />
+      </svg>
+    </button>
+  </div>
+
+  <div class="turath-player-main">
+    <div class="turath-artwork" id="turath-artwork" data-playlist="vibeland">
+      <div class="turath-artwork-orbit"></div>
+      <div class="turath-artwork-inner">
+        <span class="turath-artwork-overline" id="turath-artwork-overline">TURATH SOUND SYSTEM</span>
+        <span class="turath-artwork-title" id="turath-artwork-title">VIBELAND</span>
+        <span class="turath-artwork-edition" id="turath-artwork-edition">VOL. 001</span>
+      </div>
+      <span class="turath-artwork-stamp">TR</span>
+    </div>
+
+    <div class="turath-player-details">
+      <div class="turath-track-heading">
+        <span class="turath-now-playing">NOW PLAYING</span>
+        <span class="turath-live-indicator" aria-hidden="true"></span>
+      </div>
+      <div class="turath-current-track" id="turath-current-track">Blang</div>
+      <div class="turath-current-artist" id="turath-current-artist">Toren</div>
+
+      <canvas
+        class="turath-waveform"
+        id="turath-waveform"
+        aria-hidden="true"
+      ></canvas>
+
+      <div class="turath-progress-area">
+        <input
+          class="turath-progress"
+          id="turath-progress"
+          type="range"
+          min="0"
+          max="100"
+          value="0"
+          step="0.1"
+          aria-label="Seek through track"
+        />
+        <div class="turath-time-row">
+          <span id="turath-current-time">0:00</span>
+          <span id="turath-duration">0:00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="turath-player-controls">
+    <button
+      class="turath-secondary-button"
+      id="turath-previous-button"
+      type="button"
+      aria-label="Previous track"
+      title="Previous track"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M6 5v14M19 6 8 12l11 6V6Z" />
+      </svg>
+    </button>
+
+    <button
+      class="turath-play-button"
+      id="turath-play-button"
+      type="button"
+      aria-label="Play music"
+      title="Play music"
+    >
+      <svg class="play-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M8 5.5v13l10-6.5z" fill="currentColor" />
+      </svg>
+      <svg class="pause-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M7.5 5.5h3.5v13H7.5zM13 5.5h3.5v13H13z" fill="currentColor" />
+      </svg>
+    </button>
+
+    <button
+      class="turath-secondary-button"
+      id="turath-next-button"
+      type="button"
+      aria-label="Next track"
+      title="Next track"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M18 5v14M5 6l11 6-11 6V6Z" />
+      </svg>
+    </button>
+
+    <div class="turath-control-spacer"></div>
+
+    <button
+      class="turath-mute-button"
+      id="turath-mute-button"
+      type="button"
+      aria-label="Mute music"
+      title="Mute music"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M11 5 6 9H3v6h3l5 4V5Z" />
+        <path class="volume-waves" d="M15 9a5 5 0 0 1 0 6m2.5-8.5a8.5 8.5 0 0 1 0 11" />
+        <path class="volume-muted" d="m15 9 5 6m0-6-5 6" />
+      </svg>
+    </button>
+  </div>
+
+  <div class="turath-player-library">
+    <label class="turath-select-label" for="turath-playlist-select">STATION</label>
+    <select
       class="turath-playlist-select"
       id="turath-playlist-select"
       aria-label="Choose playlist"
     >
-      <option value="vibesvibinginvibeland.mp3">vibesvibinginvibeland.mp3</option>
-      <option value="ambereyedangelinablackdress.mp3">ambereyedangelinablackdress.mp3</option>
+      <option value="vibesvibinginvibeland.mp3">Vibeland</option>
+      <option value="ambereyedangelinablackdress.mp3">Amber-Eyed Angel in a Black Dress</option>
     </select>
 
+    <label class="turath-select-label" for="turath-track-select">TRACK LIST</label>
     <select
       class="turath-track-select"
       id="turath-track-select"
       aria-label="Choose song"
     ></select>
-
-    <canvas
-      class="turath-waveform"
-      id="turath-waveform"
-      aria-hidden="true"
-    ></canvas>
   </div>
 
-  <button
-    class="turath-mute-button"
-    id="turath-mute-button"
-    type="button"
-    aria-label="Mute music"
-    title="Mute music"
-  >
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path
-        d="M11 5 6 9H3v6h3l5 4V5Z"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.6"
-        stroke-linejoin="round"
-      />
-      <path
-        class="volume-waves"
-        d="M15 9a5 5 0 0 1 0 6m2.5-8.5a8.5 8.5 0 0 1 0 11"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.6"
-        stroke-linecap="round"
-      />
-      <path
-        class="volume-muted"
-        d="m15 9 5 6m0-6-5 6"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.6"
-        stroke-linecap="round"
-      />
-    </svg>
-  </button>
+  <div class="turath-player-footer">
+    <span>INDEPENDENT SOUNDS. SHARED CULTURE.</span>
+    <span id="turath-track-count">01 / 19</span>
+  </div>
 </div>
 
 <style>
   .turath-music-player {
+    --radio-ink: #eee8dc;
+    --radio-muted: #a69d8e;
+    --radio-line: rgba(238, 232, 220, 0.16);
+    --radio-accent: #c7ad7d;
     position: fixed;
     right: 24px;
     bottom: 24px;
     z-index: 10001;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 310px;
-    min-height: 100px;
-    padding: 12px 13px;
+    width: 330px;
+    padding: 15px;
     box-sizing: border-box;
-    color: inherit;
-    background: color-mix(in srgb, Canvas 90%, transparent);
-    border: 1px solid color-mix(in srgb, currentColor 17%, transparent);
-    border-radius: 14px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.09);
-    -webkit-backdrop-filter: blur(18px);
-    backdrop-filter: blur(18px);
+    color: var(--radio-ink);
+    background:
+      radial-gradient(ellipse at 85% 0%, rgba(157, 123, 75, 0.13), transparent 45%),
+      rgba(20, 19, 17, 0.94);
+    border: 1px solid var(--radio-line);
+    border-radius: 15px;
+    box-shadow: 0 12px 44px rgba(0, 0, 0, 0.22);
+    -webkit-backdrop-filter: blur(22px);
+    backdrop-filter: blur(22px);
     font-family: inherit;
     isolation: isolate;
+    transition: width 280ms ease, padding 280ms ease, border-radius 280ms ease;
   }
 
-  .turath-play-button,
+  .turath-player-topline,
+  .turath-player-brand,
+  .turath-player-controls,
+  .turath-player-footer,
+  .turath-time-row {
+    display: flex;
+    align-items: center;
+  }
+
+  .turath-player-topline,
+  .turath-player-footer,
+  .turath-time-row {
+    justify-content: space-between;
+  }
+
+  .turath-player-brand {
+    min-width: 0;
+    gap: 8px;
+  }
+
+  .turath-radio-mark {
+    display: grid;
+    width: 20px;
+    height: 20px;
+    place-items: center;
+    border: 1px solid rgba(199, 173, 125, 0.65);
+    border-radius: 50%;
+    color: var(--radio-accent);
+    font-family: Georgia, serif;
+    font-size: 12px;
+    font-style: italic;
+  }
+
+  .turath-player-name {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.17em;
+    white-space: nowrap;
+  }
+
+  .turath-player-status {
+    color: var(--radio-muted);
+    font-size: 8px;
+    letter-spacing: 0.12em;
+  }
+
+  .turath-expand-button,
+  .turath-secondary-button,
   .turath-mute-button {
     display: grid;
     flex: 0 0 auto;
     place-items: center;
     padding: 0;
-    color: inherit;
+    color: var(--radio-ink);
     background: transparent;
     border: 0;
     cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
+    opacity: 0.72;
+    transition: opacity 180ms ease, transform 180ms ease;
+  }
+
+  .turath-expand-button:hover,
+  .turath-secondary-button:hover,
+  .turath-mute-button:hover {
+    opacity: 1;
+  }
+
+  .turath-expand-button {
+    width: 25px;
+    height: 25px;
+  }
+
+  .turath-expand-button svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .collapse-icon,
+  .turath-music-player.is-expanded .expand-icon {
+    display: none;
+  }
+
+  .turath-music-player.is-expanded .collapse-icon {
+    display: block;
+  }
+
+  .turath-player-main {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    margin-top: 14px;
+  }
+
+  .turath-artwork {
+    position: relative;
+    display: grid;
+    flex: 0 0 88px;
+    width: 88px;
+    height: 88px;
+    overflow: hidden;
+    place-items: center;
+    isolation: isolate;
+    color: #eee4d1;
+    background:
+      radial-gradient(circle at 70% 28%, rgba(218, 180, 119, 0.65), transparent 22%),
+      radial-gradient(circle at 25% 78%, rgba(111, 79, 61, 0.9), transparent 42%),
+      linear-gradient(140deg, #3c3028, #171817 68%);
+    border: 1px solid rgba(238, 232, 220, 0.19);
+    box-shadow: inset 0 0 28px rgba(0, 0, 0, 0.32);
+  }
+
+  .turath-artwork::before,
+  .turath-artwork::after {
+    position: absolute;
+    z-index: -1;
+    content: "";
+    border: 1px solid rgba(231, 207, 166, 0.36);
+    border-radius: 50%;
+  }
+
+  .turath-artwork::before {
+    width: 72px;
+    height: 72px;
+  }
+
+  .turath-artwork::after {
+    width: 48px;
+    height: 48px;
+    border-style: dashed;
+    opacity: 0.65;
+  }
+
+  .turath-artwork[data-playlist="amber"] {
+    background:
+      radial-gradient(ellipse at 65% 35%, rgba(194, 142, 96, 0.68), transparent 26%),
+      linear-gradient(145deg, #48312e, #171313 70%);
+  }
+
+  .turath-artwork-orbit {
+    position: absolute;
+    width: 110px;
+    height: 30px;
+    border: 1px solid rgba(230, 202, 157, 0.48);
+    border-radius: 50%;
+    transform: rotate(-38deg);
+  }
+
+  .turath-artwork-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    text-align: center;
+    transition: transform 300ms ease;
+  }
+
+  .turath-artwork-overline {
+    font-size: 5px;
+    letter-spacing: 0.16em;
+  }
+
+  .turath-artwork-title {
+    max-width: 78px;
+    font-family: Georgia, serif;
+    font-size: 12px;
+    font-style: italic;
+    letter-spacing: 0.04em;
+  }
+
+  .turath-artwork-edition {
+    font-size: 6px;
+    letter-spacing: 0.2em;
+  }
+
+  .turath-artwork-stamp {
+    position: absolute;
+    right: 6px;
+    bottom: 5px;
+    font-family: Georgia, serif;
+    font-size: 7px;
+    letter-spacing: 0.1em;
+    opacity: 0.65;
+  }
+
+  .turath-music-player.is-playing .turath-artwork {
+    animation: turath-artwork-turn 18s linear infinite;
+  }
+
+  @keyframes turath-artwork-turn {
+    to { transform: rotate(360deg); }
+  }
+
+  .turath-player-details {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .turath-track-heading {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 5px;
+  }
+
+  .turath-now-playing {
+    color: var(--radio-muted);
+    font-size: 7px;
+    letter-spacing: 0.16em;
+  }
+
+  .turath-live-indicator {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #8caa83;
+    opacity: 0.45;
+  }
+
+  .turath-music-player.is-playing .turath-live-indicator {
+    opacity: 1;
+    box-shadow: 0 0 9px rgba(140, 170, 131, 0.9);
+    animation: turath-live-pulse 1.4s ease-in-out infinite;
+  }
+
+  @keyframes turath-live-pulse {
+    50% { opacity: 0.35; }
+  }
+
+  .turath-current-track {
+    overflow: hidden;
+    color: var(--radio-ink);
+    font-family: Georgia, serif;
+    font-size: 16px;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .turath-current-artist {
+    overflow: hidden;
+    margin-top: 3px;
+    color: var(--radio-muted);
+    font-size: 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .turath-waveform {
+    display: block;
+    width: 100%;
+    height: 27px;
+    margin-top: 5px;
+  }
+
+  .turath-progress-area {
+    margin-top: 1px;
+  }
+
+  .turath-progress {
+    display: block;
+    width: 100%;
+    height: 3px;
+    margin: 0;
+    appearance: none;
+    -webkit-appearance: none;
+    background: rgba(238, 232, 220, 0.2);
+    border-radius: 20px;
+    cursor: pointer;
+  }
+
+  .turath-progress::-webkit-slider-thumb {
+    width: 8px;
+    height: 8px;
+    appearance: none;
+    -webkit-appearance: none;
+    background: var(--radio-accent);
+    border: 0;
+    border-radius: 50%;
+  }
+
+  .turath-progress::-moz-range-thumb {
+    width: 8px;
+    height: 8px;
+    background: var(--radio-accent);
+    border: 0;
+    border-radius: 50%;
+  }
+
+  .turath-time-row {
+    margin-top: 5px;
+    color: var(--radio-muted);
+    font-size: 8px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .turath-player-controls {
+    gap: 17px;
+    justify-content: center;
+    margin-top: 13px;
   }
 
   .turath-play-button {
-    width: 34px;
-    height: 34px;
-    border: 1px solid color-mix(in srgb, currentColor 23%, transparent);
+    display: grid;
+    width: 36px;
+    height: 36px;
+    flex: 0 0 auto;
+    place-items: center;
+    padding: 0;
+    color: #211d17;
+    background: var(--radio-ink);
+    border: 0;
     border-radius: 50%;
-    transition: background 180ms ease, transform 180ms ease;
+    cursor: pointer;
+    transition: transform 180ms ease, background 180ms ease;
   }
 
   .turath-play-button:hover {
-    background: color-mix(in srgb, currentColor 8%, transparent);
+    background: #d9c9aa;
+    transform: scale(1.06);
   }
 
   .turath-play-button:active {
@@ -159,88 +533,38 @@
     display: block;
   }
 
-  .turath-player-content {
+  .turath-secondary-button {
+    width: 22px;
+    height: 28px;
+  }
+
+  .turath-secondary-button svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .turath-control-spacer {
     flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 5px;
-  }
-
-  .turath-player-label {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 6px;
-  }
-
-  .turath-player-name {
-    overflow: hidden;
-    font-size: 9px;
-    font-weight: 650;
-    letter-spacing: 0.13em;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-
-  .turath-player-status {
-    flex: 0 0 auto;
-    font-size: 8px;
-    letter-spacing: 0.1em;
-    opacity: 0.55;
-  }
-
-  .turath-playlist-select,
-  .turath-track-select {
-    display: block;
-    width: 100%;
-    min-width: 0;
-    padding: 3px 5px;
-    color: inherit;
-    background: color-mix(in srgb, Canvas 85%, transparent);
-    border: 1px solid color-mix(in srgb, currentColor 15%, transparent);
-    border-radius: 5px;
-    font-family: inherit;
-    font-size: 10px;
-    cursor: pointer;
-  }
-
-  .turath-playlist-select {
-    font-weight: 600;
-  }
-
-  .turath-track-select {
-    opacity: 0.8;
-  }
-
-  .turath-playlist-select:focus-visible,
-  .turath-track-select:focus-visible {
-    outline: 2px solid currentColor;
-    outline-offset: 2px;
-  }
-
-  .turath-waveform {
-    display: block;
-    width: 100%;
-    height: 22px;
-    overflow: hidden;
   }
 
   .turath-mute-button {
-    width: 22px;
-    height: 30px;
-    opacity: 0.7;
-    transition: opacity 180ms ease;
-  }
-
-  .turath-mute-button:hover {
-    opacity: 1;
+    width: 25px;
+    height: 28px;
   }
 
   .turath-mute-button svg {
-    width: 18px;
-    height: 18px;
+    width: 17px;
+    height: 17px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 
   .volume-muted,
@@ -252,33 +576,161 @@
     display: block;
   }
 
+  .turath-player-library {
+    display: none;
+    grid-template-columns: 1fr;
+    gap: 6px;
+    margin-top: 15px;
+    padding-top: 13px;
+    border-top: 1px solid var(--radio-line);
+  }
+
+  .turath-music-player.is-expanded .turath-player-library {
+    display: grid;
+    animation: turath-reveal 260ms ease both;
+  }
+
+  .turath-select-label {
+    margin-top: 4px;
+    color: var(--radio-muted);
+    font-size: 7px;
+    letter-spacing: 0.16em;
+  }
+
+  .turath-playlist-select,
+  .turath-track-select {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    padding: 8px 9px;
+    color: var(--radio-ink);
+    background: rgba(255, 255, 255, 0.045);
+    border: 1px solid var(--radio-line);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 10px;
+    cursor: pointer;
+  }
+
+  .turath-playlist-select option,
+  .turath-track-select option {
+    color: #eee8dc;
+    background: #201e1a;
+  }
+
+  .turath-player-footer {
+    margin-top: 12px;
+    padding-top: 9px;
+    border-top: 1px solid var(--radio-line);
+    color: var(--radio-muted);
+    font-size: 6px;
+    letter-spacing: 0.12em;
+  }
+
+  .turath-music-player:not(.is-expanded) .turath-player-footer {
+    display: none;
+  }
+
+  .turath-music-player.is-expanded {
+    width: 365px;
+    padding: 17px;
+    border-radius: 17px;
+  }
+
+  .turath-music-player.is-expanded .turath-player-main {
+    align-items: flex-start;
+    gap: 15px;
+    margin-top: 17px;
+  }
+
+  .turath-music-player.is-expanded .turath-artwork {
+    flex-basis: 116px;
+    width: 116px;
+    height: 116px;
+  }
+
+  .turath-music-player.is-expanded .turath-artwork::before {
+    width: 94px;
+    height: 94px;
+  }
+
+  .turath-music-player.is-expanded .turath-artwork::after {
+    width: 64px;
+    height: 64px;
+  }
+
+  .turath-music-player.is-expanded .turath-artwork-title {
+    max-width: 100px;
+    font-size: 15px;
+  }
+
+  .turath-music-player.is-expanded .turath-waveform {
+    height: 38px;
+    margin-top: 9px;
+  }
+
+  .turath-music-player.is-expanded .turath-current-track {
+    font-size: 19px;
+  }
+
+  .turath-music-player.is-expanded .turath-player-controls {
+    margin-top: 16px;
+  }
+
   .turath-play-button:focus-visible,
-  .turath-mute-button:focus-visible {
-    outline: 2px solid currentColor;
-    outline-offset: 4px;
+  .turath-expand-button:focus-visible,
+  .turath-secondary-button:focus-visible,
+  .turath-mute-button:focus-visible,
+  .turath-playlist-select:focus-visible,
+  .turath-track-select:focus-visible,
+  .turath-progress:focus-visible {
+    outline: 2px solid var(--radio-accent);
+    outline-offset: 3px;
+  }
+
+  @keyframes turath-reveal {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
   @media (max-width: 600px) {
     .turath-music-player {
       right: 14px;
       bottom: 14px;
-      width: min(290px, calc(100vw - 28px));
-      min-height: 96px;
-      gap: 10px;
-      padding: 10px 11px;
-      border-radius: 12px;
+      width: min(330px, calc(100vw - 28px));
+      padding: 12px;
     }
 
-    .turath-play-button {
-      width: 32px;
-      height: 32px;
+    .turath-music-player.is-expanded {
+      width: min(365px, calc(100vw - 28px));
+      padding: 14px;
+    }
+
+    .turath-artwork {
+      flex-basis: 78px;
+      width: 78px;
+      height: 78px;
+    }
+
+    .turath-music-player.is-expanded .turath-artwork {
+      flex-basis: 98px;
+      width: 98px;
+      height: 98px;
+    }
+
+    .turath-music-player.is-expanded .turath-artwork::before {
+      width: 80px;
+      height: 80px;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .turath-play-button,
-    .turath-mute-button {
-      transition: none;
+    .turath-music-player *,
+    .turath-music-player *::before,
+    .turath-music-player *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
     }
   }
 </style>
@@ -288,20 +740,46 @@
   const audio = document.querySelector("#turath-audio");
   const playButton = document.querySelector("#turath-play-button");
   const muteButton = document.querySelector("#turath-mute-button");
+  const expandButton = document.querySelector("#turath-expand-button");
+  const previousButton = document.querySelector("#turath-previous-button");
+  const nextButton = document.querySelector("#turath-next-button");
   const statusLabel = document.querySelector("#turath-player-status");
   const canvas = document.querySelector("#turath-waveform");
   const playlistSelect = document.querySelector("#turath-playlist-select");
   const trackSelect = document.querySelector("#turath-track-select");
+  const progress = document.querySelector("#turath-progress");
+  const currentTimeLabel = document.querySelector("#turath-current-time");
+  const durationLabel = document.querySelector("#turath-duration");
+  const currentTrackLabel = document.querySelector("#turath-current-track");
+  const currentArtistLabel = document.querySelector("#turath-current-artist");
+  const artwork = document.querySelector("#turath-artwork");
+  const artworkTitle = document.querySelector("#turath-artwork-title");
+  const artworkOverline = document.querySelector("#turath-artwork-overline");
+  const artworkEdition = document.querySelector("#turath-artwork-edition");
+  const trackCount = document.querySelector("#turath-track-count");
 
   if (
     player instanceof HTMLElement &&
     audio instanceof HTMLAudioElement &&
     playButton instanceof HTMLButtonElement &&
     muteButton instanceof HTMLButtonElement &&
+    expandButton instanceof HTMLButtonElement &&
+    previousButton instanceof HTMLButtonElement &&
+    nextButton instanceof HTMLButtonElement &&
     statusLabel instanceof HTMLElement &&
     canvas instanceof HTMLCanvasElement &&
     playlistSelect instanceof HTMLSelectElement &&
-    trackSelect instanceof HTMLSelectElement
+    trackSelect instanceof HTMLSelectElement &&
+    progress instanceof HTMLInputElement &&
+    currentTimeLabel instanceof HTMLElement &&
+    durationLabel instanceof HTMLElement &&
+    currentTrackLabel instanceof HTMLElement &&
+    currentArtistLabel instanceof HTMLElement &&
+    artwork instanceof HTMLElement &&
+    artworkTitle instanceof HTMLElement &&
+    artworkOverline instanceof HTMLElement &&
+    artworkEdition instanceof HTMLElement &&
+    trackCount instanceof HTMLElement
   ) {
     const playlists = {
       "vibesvibinginvibeland.mp3": [
@@ -325,90 +803,98 @@
         ["Top Rank - Toren", "Top Rank - Toren.mp3"],
         ["Vibe With You - Toren", "Vibe With You - Toren.mp3"]
       ],
-           "ambereyedangelinablackdress.mp3": [
+      "ambereyedangelinablackdress.mp3": [
         ["But I Might - Savia Ashby", "but i might - Savia Ashby.mp3"],
         ["Juiceboxx - Savia Ashby", "juiceboxx - Savia Ashby.mp3"],
         ["Tunnelvision - Savia Ashby", "tunnelvision - Savia Ashby.mp3"]
       ]
     };
 
-       const playlistFolders = {
+    const playlistFolders = {
       "vibesvibinginvibeland.mp3": "/audio/vibesvibinginvibeland.mp3/",
       "ambereyedangelinablackdress.mp3": "/audio/ambereyedangelinablackdress.mp3/"
     };
 
+    const playlistDetails = {
+      "vibesvibinginvibeland.mp3": {
+        key: "vibeland",
+        title: "VIBELAND",
+        overline: "TURATH SOUND SYSTEM",
+        edition: "VOL. 001"
+      },
+      "ambereyedangelinablackdress.mp3": {
+        key: "amber",
+        title: "AMBER-EYED",
+        overline: "SAVIA ASHBY",
+        edition: "VOL. 002"
+      }
+    };
+
     const context = canvas.getContext("2d");
-    const reducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     let audioContext;
     let analyser;
     let source;
-    let samples;
+    let frequencySamples;
     let animationFrame = 0;
     let isReady = false;
+    let isSeeking = false;
+
+    function formatTime(seconds) {
+      if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
+      const minutes = Math.floor(seconds / 60);
+      const remaining = Math.floor(seconds % 60).toString().padStart(2, "0");
+      return `${minutes}:${remaining}`;
+    }
 
     function resizeCanvas() {
       if (!context) return;
-
       const rect = canvas.getBoundingClientRect();
       const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
-
       canvas.width = Math.max(1, Math.round(rect.width * pixelRatio));
       canvas.height = Math.max(1, Math.round(rect.height * pixelRatio));
-
       context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-      drawIdleWave();
+      drawIdleVisualizer();
     }
 
-    function drawIdleWave() {
+    function drawIdleVisualizer() {
       if (!context) return;
-
       const width = canvas.clientWidth;
       const height = canvas.clientHeight;
+      if (!width || !height) return;
 
       context.clearRect(0, 0, width, height);
-      context.beginPath();
-      context.lineWidth = 1.4;
-      context.lineCap = "round";
-      context.strokeStyle = getComputedStyle(player).color;
-      context.globalAlpha = 0.5;
+      const bars = Math.max(12, Math.floor(width / 4));
+      const gap = 2;
+      const barWidth = Math.max(1, (width - gap * (bars - 1)) / bars);
 
-      for (let x = 0; x <= width; x += 2) {
-        const y =
-          height / 2 +
-          Math.sin((x / Math.max(width, 1)) * Math.PI * 4) * 1.5;
-
-        if (x === 0) context.moveTo(x, y);
-        else context.lineTo(x, y);
+      for (let i = 0; i < bars; i++) {
+        const barHeight = 2 + Math.abs(Math.sin(i * 0.55)) * 4;
+        const x = i * (barWidth + gap);
+        context.fillStyle = "rgba(199, 173, 125, 0.48)";
+        context.fillRect(x, (height - barHeight) / 2, barWidth, barHeight);
       }
-
-      context.stroke();
-      context.globalAlpha = 1;
     }
 
     function setupAudio() {
       if (isReady) return true;
 
-      const AudioContextClass =
-        window.AudioContext || window.webkitAudioContext;
-
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
       if (!AudioContextClass || !context) return false;
 
       try {
         audioContext = new AudioContextClass();
         analyser = audioContext.createAnalyser();
-        analyser.fftSize = 1024;
-        analyser.smoothingTimeConstant = 0.78;
+        analyser.fftSize = 256;
+        analyser.smoothingTimeConstant = 0.82;
 
         source = audioContext.createMediaElementSource(audio);
         source.connect(analyser);
         analyser.connect(audioContext.destination);
 
-        samples = new Uint8Array(analyser.fftSize);
+        frequencySamples = new Uint8Array(analyser.frequencyBinCount);
         isReady = true;
-
         return true;
       } catch {
         statusLabel.textContent = "AUDIO ONLY";
@@ -416,53 +902,62 @@
       }
     }
 
-    function drawWaveform() {
-      if (!context || !analyser || !samples || audio.paused) return;
+    function drawVisualizer() {
+      if (!context || !analyser || !frequencySamples || audio.paused) return;
 
       const width = canvas.clientWidth;
       const height = canvas.clientHeight;
 
       if (!width || !height) {
-        if (!reducedMotion) {
-          animationFrame = requestAnimationFrame(drawWaveform);
-        }
+        if (!reducedMotion) animationFrame = requestAnimationFrame(drawVisualizer);
         return;
       }
 
-      analyser.getByteTimeDomainData(samples);
-
+      analyser.getByteFrequencyData(frequencySamples);
       context.clearRect(0, 0, width, height);
-      context.beginPath();
-      context.lineWidth = 1.5;
-      context.lineCap = "round";
-      context.lineJoin = "round";
-      context.strokeStyle = getComputedStyle(player).color;
-      context.globalAlpha = 0.9;
 
+      const bars = Math.min(64, Math.max(16, Math.floor(width / 3.5)));
+      const gap = 2;
+      const barWidth = Math.max(1, (width - gap * (bars - 1)) / bars);
       const middle = height / 2;
-      const amplitude = height * 0.46;
-      const step = width / (samples.length - 1);
 
-      for (let i = 0; i < samples.length; i++) {
-        const x = i * step;
-        const normalized = (samples[i] - 128) / 128;
-        const y = middle + normalized * amplitude;
+      for (let i = 0; i < bars; i++) {
+        const sampleIndex = Math.floor((i / bars) * frequencySamples.length * 0.72);
+        const value = frequencySamples[sampleIndex] / 255;
+        const shaped = Math.pow(value, 0.85);
+        const barHeight = Math.max(2, shaped * height * 0.92);
+        const x = i * (barWidth + gap);
 
-        if (i === 0) context.moveTo(x, y);
-        else context.lineTo(x, y);
+        context.fillStyle = `rgba(199, 173, 125, ${0.42 + shaped * 0.58})`;
+        context.fillRect(x, middle - barHeight / 2, barWidth, barHeight);
       }
 
-      context.stroke();
-      context.globalAlpha = 1;
+      if (!reducedMotion) animationFrame = requestAnimationFrame(drawVisualizer);
+    }
 
-      if (!reducedMotion) {
-        animationFrame = requestAnimationFrame(drawWaveform);
-      }
+    function updateTrackInformation(index) {
+      const playlistKey = playlistSelect.value;
+      const track = playlists[playlistKey]?.[index];
+      if (!track) return;
+
+      const [fullName] = track;
+      const separator = fullName.lastIndexOf(" - ");
+      const title = separator > -1 ? fullName.slice(0, separator) : fullName;
+      const artist = separator > -1 ? fullName.slice(separator + 3) : "Unknown artist";
+      const details = playlistDetails[playlistKey];
+
+      currentTrackLabel.textContent = title;
+      currentArtistLabel.textContent = artist;
+      artworkTitle.textContent = details.title;
+      artworkOverline.textContent = details.overline;
+      artworkEdition.textContent = details.edition;
+      artwork.dataset.playlist = details.key;
+      trackCount.textContent =
+        `${String(index + 1).padStart(2, "0")} / ${String(playlists[playlistKey].length).padStart(2, "0")}`;
     }
 
     function populateTracks() {
       const playlist = playlists[playlistSelect.value];
-
       trackSelect.replaceChildren();
 
       playlist.forEach(([name], index) => {
@@ -471,34 +966,37 @@
         option.textContent = name;
         trackSelect.appendChild(option);
       });
+
+      updateTrackInformation(0);
     }
 
     function loadTrack(index, autoplay = false) {
       const playlistKey = playlistSelect.value;
       const playlist = playlists[playlistKey];
-      const track = playlist[index];
-
-      if (!track) return;
+      if (!playlist?.length) return;
 
       const wasPlaying = !audio.paused;
+      const nextIndex = (index + playlist.length) % playlist.length;
+
       audio.pause();
-
-      audio.src =
-        playlistFolders[playlistKey] + encodeURIComponent(track[1]);
-
+      audio.src = playlistFolders[playlistKey] + encodeURIComponent(playlist[nextIndex][1]);
       audio.load();
-      trackSelect.value = String(index);
+
+      trackSelect.value = String(nextIndex);
+      updateTrackInformation(nextIndex);
+      progress.value = "0";
+      currentTimeLabel.textContent = "0:00";
+      durationLabel.textContent = "0:00";
+
       player.classList.remove("is-playing");
       playButton.setAttribute("aria-label", "Play music");
       playButton.title = "Play music";
       statusLabel.textContent = "READY";
 
       cancelAnimationFrame(animationFrame);
-      drawIdleWave();
+      drawIdleVisualizer();
 
-      if (autoplay || wasPlaying) {
-        void playAudio();
-      }
+      if (autoplay || wasPlaying) void playAudio();
     }
 
     async function playAudio() {
@@ -513,15 +1011,13 @@
 
       try {
         await audio.play();
-
         player.classList.add("is-playing");
         playButton.setAttribute("aria-label", "Pause music");
         playButton.title = "Pause music";
-        statusLabel.textContent = "PLAYING";
+        statusLabel.textContent = "ON AIR";
 
         cancelAnimationFrame(animationFrame);
-
-        if (isReady) drawWaveform();
+        if (isReady && !reducedMotion) drawVisualizer();
       } catch {
         player.classList.remove("is-playing");
         statusLabel.textContent = "TRACK UNAVAILABLE";
@@ -534,10 +1030,29 @@
       playButton.setAttribute("aria-label", "Play music");
       playButton.title = "Play music";
       statusLabel.textContent = "PAUSED";
-
       cancelAnimationFrame(animationFrame);
-      drawIdleWave();
+      drawIdleVisualizer();
     }
+
+    function updateProgress() {
+      if (!Number.isFinite(audio.duration) || audio.duration <= 0) return;
+      if (!isSeeking) {
+        progress.value = String((audio.currentTime / audio.duration) * 100);
+      }
+      currentTimeLabel.textContent = formatTime(audio.currentTime);
+      durationLabel.textContent = formatTime(audio.duration);
+    }
+
+    expandButton.addEventListener("click", () => {
+      const expanded = player.classList.toggle("is-expanded");
+      expandButton.setAttribute("aria-expanded", String(expanded));
+      expandButton.setAttribute(
+        "aria-label",
+        expanded ? "Collapse radio player" : "Expand radio player"
+      );
+      expandButton.title = expanded ? "Collapse player" : "Expand player";
+      requestAnimationFrame(resizeCanvas);
+    });
 
     playlistSelect.addEventListener("change", () => {
       populateTracks();
@@ -553,39 +1068,62 @@
       else pauseAudio();
     });
 
+    previousButton.addEventListener("click", () => {
+      const current = Number(trackSelect.value);
+      loadTrack(current - 1, true);
+    });
+
+    nextButton.addEventListener("click", () => {
+      const current = Number(trackSelect.value);
+      loadTrack(current + 1, true);
+    });
+
     muteButton.addEventListener("click", () => {
       audio.muted = !audio.muted;
       player.classList.toggle("is-muted", audio.muted);
-
       muteButton.setAttribute(
         "aria-label",
         audio.muted ? "Unmute music" : "Mute music"
       );
-
       muteButton.title = audio.muted ? "Unmute music" : "Mute music";
     });
+
+    progress.addEventListener("input", () => {
+      isSeeking = true;
+      if (Number.isFinite(audio.duration) && audio.duration > 0) {
+        currentTimeLabel.textContent = formatTime(
+          (Number(progress.value) / 100) * audio.duration
+        );
+      }
+    });
+
+    progress.addEventListener("change", () => {
+      if (Number.isFinite(audio.duration) && audio.duration > 0) {
+        audio.currentTime = (Number(progress.value) / 100) * audio.duration;
+      }
+      isSeeking = false;
+      updateProgress();
+    });
+
+    audio.addEventListener("loadedmetadata", updateProgress);
+    audio.addEventListener("timeupdate", updateProgress);
 
     audio.addEventListener("playing", () => {
       player.classList.add("is-playing");
       playButton.setAttribute("aria-label", "Pause music");
       playButton.title = "Pause music";
-      statusLabel.textContent = "PLAYING";
+      statusLabel.textContent = "ON AIR";
     });
 
     audio.addEventListener("pause", () => {
       if (audio.ended) return;
-
       player.classList.remove("is-playing");
       cancelAnimationFrame(animationFrame);
-      drawIdleWave();
+      drawIdleVisualizer();
     });
 
     audio.addEventListener("ended", () => {
-      const nextIndex = Number(trackSelect.value) + 1;
-      const playlist = playlists[playlistSelect.value];
-
-      // Continue to the next song, then restart the playlist.
-      loadTrack(nextIndex < playlist.length ? nextIndex : 0, true);
+      loadTrack(Number(trackSelect.value) + 1, true);
     });
 
     audio.addEventListener("error", () => {
