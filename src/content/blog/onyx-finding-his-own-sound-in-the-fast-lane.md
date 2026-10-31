@@ -119,10 +119,6 @@ One collaboration that stands out is his connection with Shishastopsippin, a Rus
 
 His relationships outside the studio have been just as influential. Kiki, in particular, has played a significant role in his personal and creative development. He credits her as one of the major reasons *Sunkist* came together, but her influence extends beyond the music itself. Their conversations helped him connect with someone on a deeper level, encouraging him to become more appreciative, open, and intentional about the way he approaches life.
 
-<figure>
-  <img src="/images/3onyx.JPG"/>
-</figure>
-
 For Onyx, the right people don't simply add to your life; they change the way you experience it. He sees love, support, and genuine connection as things that can give someone a different perspective on themselves and the world around them.
 
 That same sense of support is reflected in his friendships with Dior Zack. He speaks highly of the people who believed in his abilities, recognized his potential, and encouraged him to continue pursuing music. He also values being someone who can offer that same support to others, particularly when it comes to giving friends the space and confidence to express themselves creatively.
