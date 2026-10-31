@@ -2,7 +2,7 @@
 title: "Onyx: Finding His Own Sound in the Fast Lane"
 pubDate: 2026-10-29
 description: "From Trinidad to New Jersey, the 18-year-old artist is building a world of his own through melodic rap, experimental production, and music rooted in the emotions and experiences that shape him."
-thumbnail: "/images/1onyxx.JPG"
+thumbnail: "/images/15onyx.JPG"
 ---
 
 At 18, Onyx is moving with the urgency of someone who knows exactly what he wants, even if he is still discovering what that vision will become. Also known as Juggbaby77, Onyx77, the North Plainfield, New Jersey-based artist has spent the past year turning years of experimentation into something more intentional. Between *Sunkist*, his debut EP released in April, *Sunset*, his debut album released in July, and his upcoming second album, *Red Moon*, he is beginning to establish an identity that stretches beyond any single sound or scene.
@@ -86,7 +86,7 @@ That balance between spontaneity and intention is central to his growth. He want
 His personal life also played a significant role in reaching this point. Onyx describes spending roughly two years in a difficult relationship that affected his confidence and motivation. During that period, he felt disconnected from himself and was not putting the same amount of work into music. He was around other people creating, but he struggled to find the drive to develop his own craft.
 
 <figure>
-  <img src="/images/16onyx.JPG"/>
+  <img src="/images/17onyx.JPG"/>
 </figure>
 
 When that chapter ended, his relationship with music changed.
@@ -104,7 +104,7 @@ For Onyx, that is the point. A song can have an infectious melody or an exciting
 Although Onyx's creative identity is deeply personal, his journey has never been entirely solitary. His circle of friends, collaborators, and producers has become an important part of the world he is building. For him, the people around him are more than collaborators; they're part of the reason he continues to create.
 
 <figure>
-  <img src="/images/7onyx.JPG"/>
+  <img src="/images/12onyx.JPG"/>
 </figure>
 
 One of the most significant figures in his journey is Vax, someone Onyx credits with helping shape the artist he is today. He speaks about him with genuine appreciation, describing him as someone who helped put him on to new sounds, showed him different approaches to music, and encouraged him to recognize his own potential. More than anything, Vax is someone he considers a real friend. Onyx doesn't separate that personal connection from the influence he's had on his development.
