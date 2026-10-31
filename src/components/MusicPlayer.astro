@@ -37,14 +37,13 @@
   </div>
 
   <div class="turath-player-main">
-    <div class="turath-artwork" id="turath-artwork" data-playlist="vibeland">
-      <div class="turath-artwork-orbit"></div>
-      <div class="turath-artwork-inner">
-        <span class="turath-artwork-overline" id="turath-artwork-overline">TURATH SOUND SYSTEM</span>
-        <span class="turath-artwork-title" id="turath-artwork-title">VIBELAND</span>
-        <span class="turath-artwork-edition" id="turath-artwork-edition">VOL. 001</span>
-      </div>
-      <span class="turath-artwork-stamp">TR</span>
+    <div class="turath-artwork" id="turath-artwork">
+      <img
+        class="turath-artwork-image"
+        id="turath-artwork-image"
+        src="/images/radio-covers/vibeland.jpg"
+        alt="Vibeland album cover"
+      />
     </div>
 
     <div class="turath-player-details">
@@ -289,97 +288,25 @@
 
   .turath-artwork {
     position: relative;
-    display: grid;
     flex: 0 0 88px;
     width: 88px;
     height: 88px;
     overflow: hidden;
-    place-items: center;
-    isolation: isolate;
-    color: #eee4d1;
-    background:
-      radial-gradient(circle at 70% 28%, rgba(218, 180, 119, 0.65), transparent 22%),
-      radial-gradient(circle at 25% 78%, rgba(111, 79, 61, 0.9), transparent 42%),
-      linear-gradient(140deg, #3c3028, #171817 68%);
+    background: #171817;
     border: 1px solid rgba(238, 232, 220, 0.19);
-    box-shadow: inset 0 0 28px rgba(0, 0, 0, 0.32);
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.24);
   }
 
-  .turath-artwork::before,
-  .turath-artwork::after {
-    position: absolute;
-    z-index: -1;
-    content: "";
-    border: 1px solid rgba(231, 207, 166, 0.36);
-    border-radius: 50%;
+  .turath-artwork-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: filter 350ms ease, opacity 250ms ease;
   }
 
-  .turath-artwork::before {
-    width: 72px;
-    height: 72px;
-  }
-
-  .turath-artwork::after {
-    width: 48px;
-    height: 48px;
-    border-style: dashed;
-    opacity: 0.65;
-  }
-
-  .turath-artwork[data-playlist="amber"] {
-    background:
-      radial-gradient(ellipse at 65% 35%, rgba(194, 142, 96, 0.68), transparent 26%),
-      linear-gradient(145deg, #48312e, #171313 70%);
-  }
-
-  .turath-artwork-orbit {
-    position: absolute;
-    width: 110px;
-    height: 30px;
-    border: 1px solid rgba(230, 202, 157, 0.48);
-    border-radius: 50%;
-    transform: rotate(-38deg);
-  }
-
-  .turath-artwork-inner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-    text-align: center;
-    transition: transform 300ms ease;
-  }
-
-  .turath-artwork-overline {
-    font-size: 5px;
-    letter-spacing: 0.16em;
-  }
-
-  .turath-artwork-title {
-    max-width: 78px;
-    font-family: Georgia, serif;
-    font-size: 12px;
-    font-style: italic;
-    letter-spacing: 0.04em;
-  }
-
-  .turath-artwork-edition {
-    font-size: 6px;
-    letter-spacing: 0.2em;
-  }
-
-  .turath-artwork-stamp {
-    position: absolute;
-    right: 6px;
-    bottom: 5px;
-    font-family: Georgia, serif;
-    font-size: 7px;
-    letter-spacing: 0.1em;
-    opacity: 0.65;
-  }
-
-  .turath-music-player.is-playing .turath-artwork {
-    animation: turath-artwork-turn 18s linear infinite;
+  .turath-music-player.is-playing .turath-artwork-image {
+    animation: turath-artwork-turn 24s linear infinite;
   }
 
   @keyframes turath-artwork-turn {
@@ -649,21 +576,6 @@
     height: 116px;
   }
 
-  .turath-music-player.is-expanded .turath-artwork::before {
-    width: 94px;
-    height: 94px;
-  }
-
-  .turath-music-player.is-expanded .turath-artwork::after {
-    width: 64px;
-    height: 64px;
-  }
-
-  .turath-music-player.is-expanded .turath-artwork-title {
-    max-width: 100px;
-    font-size: 15px;
-  }
-
   .turath-music-player.is-expanded .turath-waveform {
     height: 38px;
     margin-top: 9px;
@@ -717,11 +629,6 @@
       width: 98px;
       height: 98px;
     }
-
-    .turath-music-player.is-expanded .turath-artwork::before {
-      width: 80px;
-      height: 80px;
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -753,9 +660,7 @@
   const currentTrackLabel = document.querySelector("#turath-current-track");
   const currentArtistLabel = document.querySelector("#turath-current-artist");
   const artwork = document.querySelector("#turath-artwork");
-  const artworkTitle = document.querySelector("#turath-artwork-title");
-  const artworkOverline = document.querySelector("#turath-artwork-overline");
-  const artworkEdition = document.querySelector("#turath-artwork-edition");
+  const artworkImage = document.querySelector("#turath-artwork-image");
   const trackCount = document.querySelector("#turath-track-count");
 
   if (
@@ -776,37 +681,35 @@
     currentTrackLabel instanceof HTMLElement &&
     currentArtistLabel instanceof HTMLElement &&
     artwork instanceof HTMLElement &&
-    artworkTitle instanceof HTMLElement &&
-    artworkOverline instanceof HTMLElement &&
-    artworkEdition instanceof HTMLElement &&
+    artworkImage instanceof HTMLImageElement &&
     trackCount instanceof HTMLElement
   ) {
     const playlists = {
       "vibesvibinginvibeland.mp3": [
         ["Blang - Toren", "Blang - Toren.mp3"],
-        ["Bliss - Toren", "Bliss - Toren - Topic.mp3"],
-        ["Check My Phone - Toren", "Check My Phone - Toren.mp3"],
-        ["Different Regions - Toren", "Different Regions - Toren.mp3"],
-        ["DrugDealer - Toren", "DrugDealer - Toren.mp3"],
-        ["Dubbies - Toren", "Dubbies - Toren.mp3"],
-        ["GT - Toren", "GT - Toren.mp3"],
-        ["Jungle Odyssey - Toren", "Jungle Odyssey - Toren.mp3"],
-        ["Kirk - Toren", "Kirk - Toren.mp3"],
-        ["Let's Have Fun! - Toren", "Let's Have Fun ! - Toren.mp3"],
-        ["Lookin Up - Toren", "Lookin Up - Toren .mp3"],
-        ["Nameless - Toren", "Nameless - Toren.mp3"],
-        ["New 2 This Life - Toren", "New 2 This Life - Toren.mp3"],
-        ["Omgbrain - Toren", "Omgbrain - Toren.mp3"],
-        ["Rockin 1of1 - Toren", "Rockin 1of1 - Toren.mp3"],
-        ["Stellium - Toren", "Stellium - Toren.mp3"],
-        ["Tom Holland - Toren", "Tom Holland - Toren.mp3"],
-        ["Top Rank - Toren", "Top Rank - Toren.mp3"],
-        ["Vibe With You - Toren", "Vibe With You - Toren.mp3"]
+        ["Bliss - Savia Ashby", "Bliss - Savia Ashby.mp3"],
+        ["Check My Phone - Savia Ashby", "Check My Phone - Savia Ashby.mp3"],
+        ["Different Regions - Savia Ashby", "Different Regions - Savia Ashby.mp3"],
+        ["Drugdealer - Savia Ashby", "Drugdealer - Savia Ashby.mp3"],
+        ["Dubbies - Savia Ashby", "Dubbies - Savia Ashby.mp3"],
+        ["GT - Savia Ashby", "GT - Savia Ashby.mp3"],
+        ["Jungle Odyssey - Savia Ashby", "Jungle Odyssey - Savia Ashby.mp3"],
+        ["Kirk - Savia Ashby", "Kirk - Savia Ashby.mp3"],
+        ["Let's Have Fun - Savia Ashby", "Let's Have Fun - Savia Ashby.mp3"],
+        ["Lookin Up - Savia Ashby", "Lookin Up - Savia Ashby.mp3"],
+        ["Nameless - Savia Ashby", "Nameless - Savia Ashby.mp3"],
+        ["New 2 This Life - Savia Ashby", "New 2 This Life - Savia Ashby.mp3"],
+        ["OMGBrain - Savia Ashby", "OMGBrain - Savia Ashby.mp3"],
+        ["Rockin 1of1 - Savia Ashby", "Rockin 1of1 - Savia Ashby.mp3"],
+        ["Stellium - Savia Ashby", "Stellium - Savia Ashby.mp3"],
+        ["Tom Holland - Savia Ashby", "Tom Holland - Savia Ashby.mp3"],
+        ["Top Rank - Savia Ashby", "Top Rank - Savia Ashby.mp3"],
+        ["Vibe With You - Savia Ashby", "Vibe With You - Savia Ashby.mp3"]
       ],
       "ambereyedangelinablackdress.mp3": [
-        ["But I Might - Savia Ashby", "but i might - Savia Ashby.mp3"],
-        ["Juiceboxx - Savia Ashby", "juiceboxx - Savia Ashby.mp3"],
-        ["Tunnelvision - Savia Ashby", "tunnelvision - Savia Ashby.mp3"]
+        ["But I Might - Savia Ashby", "But I Might.mp3"],
+        ["Juiceboxx - Savia Ashby", "Juiceboxx.mp3"],
+        ["Tunnelvision - Savia Ashby", "Tunnelvision.mp3"]
       ]
     };
 
@@ -815,28 +718,15 @@
       "ambereyedangelinablackdress.mp3": "/audio/ambereyedangelinablackdress.mp3/"
     };
 
-    const playlistDetails = {
-      "vibesvibinginvibeland.mp3": {
-        key: "vibeland",
-        title: "VIBELAND",
-        overline: "TURATH SOUND SYSTEM",
-        edition: "VOL. 001"
-      },
-      "ambereyedangelinablackdress.mp3": {
-        key: "amber",
-        title: "AMBER-EYED",
-        overline: "SAVIA ASHBY",
-        edition: "VOL. 002"
-      }
-    };
-
-    const context = canvas.getContext("2d");
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
 
     let audioContext;
+    let context = canvas.getContext("2d");
     let analyser;
     let source;
-    let frequencySamples;
+    let samples;
     let animationFrame = 0;
     let isReady = false;
     let isSeeking = false;
@@ -855,45 +745,49 @@
       canvas.width = Math.max(1, Math.round(rect.width * pixelRatio));
       canvas.height = Math.max(1, Math.round(rect.height * pixelRatio));
       context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-      drawIdleVisualizer();
+      drawIdleWave();
     }
 
-    function drawIdleVisualizer() {
+    function drawIdleWave() {
       if (!context) return;
       const width = canvas.clientWidth;
       const height = canvas.clientHeight;
-      if (!width || !height) return;
-
       context.clearRect(0, 0, width, height);
-      const bars = Math.max(12, Math.floor(width / 4));
-      const gap = 2;
-      const barWidth = Math.max(1, (width - gap * (bars - 1)) / bars);
+      context.beginPath();
+      context.lineWidth = 1.4;
+      context.lineCap = "round";
+      context.strokeStyle = getComputedStyle(player).color;
+      context.globalAlpha = 0.5;
 
-      for (let i = 0; i < bars; i++) {
-        const barHeight = 2 + Math.abs(Math.sin(i * 0.55)) * 4;
-        const x = i * (barWidth + gap);
-        context.fillStyle = "rgba(199, 173, 125, 0.48)";
-        context.fillRect(x, (height - barHeight) / 2, barWidth, barHeight);
+      for (let x = 0; x <= width; x += 2) {
+        const y =
+          height / 2 +
+          Math.sin((x / Math.max(width, 1)) * Math.PI * 4) * 1.5;
+        if (x === 0) context.moveTo(x, y);
+        else context.lineTo(x, y);
       }
+
+      context.stroke();
+      context.globalAlpha = 1;
     }
 
     function setupAudio() {
       if (isReady) return true;
-
-      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      const AudioContextClass =
+        window.AudioContext || window.webkitAudioContext;
       if (!AudioContextClass || !context) return false;
 
       try {
         audioContext = new AudioContextClass();
         analyser = audioContext.createAnalyser();
-        analyser.fftSize = 256;
-        analyser.smoothingTimeConstant = 0.82;
+        analyser.fftSize = 1024;
+        analyser.smoothingTimeConstant = 0.78;
 
         source = audioContext.createMediaElementSource(audio);
         source.connect(analyser);
         analyser.connect(audioContext.destination);
 
-        frequencySamples = new Uint8Array(analyser.frequencyBinCount);
+        samples = new Uint8Array(analyser.fftSize);
         isReady = true;
         return true;
       } catch {
@@ -902,37 +796,44 @@
       }
     }
 
-    function drawVisualizer() {
-      if (!context || !analyser || !frequencySamples || audio.paused) return;
-
+    function drawWaveform() {
+      if (!context || !analyser || !samples || audio.paused) return;
       const width = canvas.clientWidth;
       const height = canvas.clientHeight;
 
       if (!width || !height) {
-        if (!reducedMotion) animationFrame = requestAnimationFrame(drawVisualizer);
+        if (!reducedMotion) {
+          animationFrame = requestAnimationFrame(drawWaveform);
+        }
         return;
       }
 
-      analyser.getByteFrequencyData(frequencySamples);
+      analyser.getByteTimeDomainData(samples);
       context.clearRect(0, 0, width, height);
+      context.beginPath();
+      context.lineWidth = 1.5;
+      context.lineCap = "round";
+      context.lineJoin = "round";
+      context.strokeStyle = getComputedStyle(player).color;
+      context.globalAlpha = 0.9;
 
-      const bars = Math.min(64, Math.max(16, Math.floor(width / 3.5)));
-      const gap = 2;
-      const barWidth = Math.max(1, (width - gap * (bars - 1)) / bars);
       const middle = height / 2;
+      const amplitude = height * 0.46;
+      const step = width / (samples.length - 1);
 
-      for (let i = 0; i < bars; i++) {
-        const sampleIndex = Math.floor((i / bars) * frequencySamples.length * 0.72);
-        const value = frequencySamples[sampleIndex] / 255;
-        const shaped = Math.pow(value, 0.85);
-        const barHeight = Math.max(2, shaped * height * 0.92);
-        const x = i * (barWidth + gap);
-
-        context.fillStyle = `rgba(199, 173, 125, ${0.42 + shaped * 0.58})`;
-        context.fillRect(x, middle - barHeight / 2, barWidth, barHeight);
+      for (let i = 0; i < samples.length; i++) {
+        const x = i * step;
+        const normalized = (samples[i] - 128) / 128;
+        const y = middle + normalized * amplitude;
+        if (i === 0) context.moveTo(x, y);
+        else context.lineTo(x, y);
       }
 
-      if (!reducedMotion) animationFrame = requestAnimationFrame(drawVisualizer);
+      context.stroke();
+      context.globalAlpha = 1;
+      if (!reducedMotion) {
+        animationFrame = requestAnimationFrame(drawWaveform);
+      }
     }
 
     function updateTrackInformation(index) {
@@ -941,17 +842,19 @@
       if (!track) return;
 
       const [fullName] = track;
+      const coverPath = playlistKey === "vibesvibinginvibeland.mp3"
+        ? "/images/radio-covers/vibeland.jpg"
+        : "/images/radio-covers/amber-eyed-angel.jpg";
       const separator = fullName.lastIndexOf(" - ");
       const title = separator > -1 ? fullName.slice(0, separator) : fullName;
       const artist = separator > -1 ? fullName.slice(separator + 3) : "Unknown artist";
-      const details = playlistDetails[playlistKey];
 
       currentTrackLabel.textContent = title;
       currentArtistLabel.textContent = artist;
-      artworkTitle.textContent = details.title;
-      artworkOverline.textContent = details.overline;
-      artworkEdition.textContent = details.edition;
-      artwork.dataset.playlist = details.key;
+      artworkImage.src = coverPath;
+      artworkImage.alt = playlistKey === "vibesvibinginvibeland.mp3"
+        ? "Vibeland album cover"
+        : "Amber-Eyed Angel in a Black Dress album cover";
       trackCount.textContent =
         `${String(index + 1).padStart(2, "0")} / ${String(playlists[playlistKey].length).padStart(2, "0")}`;
     }
@@ -994,7 +897,7 @@
       statusLabel.textContent = "READY";
 
       cancelAnimationFrame(animationFrame);
-      drawIdleVisualizer();
+      drawIdleWave();
 
       if (autoplay || wasPlaying) void playAudio();
     }
@@ -1017,7 +920,7 @@
         statusLabel.textContent = "ON AIR";
 
         cancelAnimationFrame(animationFrame);
-        if (isReady && !reducedMotion) drawVisualizer();
+        if (isReady && !reducedMotion) drawWaveform();
       } catch {
         player.classList.remove("is-playing");
         statusLabel.textContent = "TRACK UNAVAILABLE";
@@ -1031,7 +934,7 @@
       playButton.title = "Play music";
       statusLabel.textContent = "PAUSED";
       cancelAnimationFrame(animationFrame);
-      drawIdleVisualizer();
+      drawIdleWave();
     }
 
     function updateProgress() {
@@ -1119,7 +1022,7 @@
       if (audio.ended) return;
       player.classList.remove("is-playing");
       cancelAnimationFrame(animationFrame);
-      drawIdleVisualizer();
+      drawIdleWave();
     });
 
     audio.addEventListener("ended", () => {
