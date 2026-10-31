@@ -7,6 +7,8 @@ import LiquidCursor from '../components/LiquidCursor.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import BackgroundPhotoFlash from '../components/backgroundphotoflash.astro';
 import MusicPlayer from '../components/MusicPlayer.astro';
+import { ClientRouter } from 'astro:transitions';
+import TurathInteractions from '../components/TurathInteractions.astro';
 
 const allPosts = await getCollection('blog');
 
@@ -84,16 +86,25 @@ const sections = [
 
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta name="description" content="Turath — culture, art, expression, history, and the people behind them." />
-    <link rel="icon" type="image/png" href="/images/logo-removebg-preview.png" />
+   <head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="Turath — culture, art, expression, history, and the people behind them." />
+  <link rel="icon" type="image/png" href="/images/logo-removebg-preview.png" />
 
-    <title>Turath</title>
+  <title>Turath</title>
 
-    <style is:global>
+  <ClientRouter />
+
+  <style is:global>
+@font-face {
+  font-family: 'Queen Sheila Free';
+  src: url('/fonts/queen-sheila-free.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 @font-face {
   font-family: 'Queen Sheila Free';
   src: url('/fonts/queen-sheila-free.ttf') format('truetype');
@@ -975,6 +986,7 @@ const sections = [
     </footer>
 
     <MusicPlayer />
+    <TurathInteractions />
 
     <script>
       const wrapAround = (value, length) =>
