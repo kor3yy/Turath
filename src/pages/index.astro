@@ -90,7 +90,29 @@ const sections = [
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta name="description" content="Turath — culture, art, expression, history, and the people behind them." />
-    <link rel="icon" type="image/png" href="/images/logo-removebg-preview.png" />
+    <link rel="icon" type="image/png" href="/images/favicon2.png" />
+<script is:inline>
+  function updateFavicon() {
+    const theme = document.documentElement.getAttribute('data-theme');
+    const favicon = document.querySelector('link[rel="icon"]');
+
+    if (favicon) {
+      favicon.href =
+        theme === 'dark'
+          ? '/images/favicon1.png'
+          : '/images/favicon2.png';
+    }
+  }
+
+  updateFavicon();
+
+  const observer = new MutationObserver(updateFavicon);
+
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-theme']
+  });
+</script>
 
     <title>Turath</title>
 
@@ -738,10 +760,10 @@ const sections = [
       <nav>
         <a href="/" class="logo" aria-label="Turath homepage">
           <img
-            src="/images/logo-removebg-preview.png"
-            alt="Turath logo"
-            class="site-logo"
-          />
+  src="/images/favicon1.png"
+  alt="Turath logo"
+  class="site-logo"
+/>
         </a>
 
         <div class="nav-links">
