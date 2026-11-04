@@ -175,7 +175,12 @@ body:not(.home) .turath-photo-background.is-fading
 </style>
 
 <script>
-  const background = document.querySelector('.turath-photo-background');
+  let cleanupBackgroundPhotoFlash;
+
+  function initBackgroundPhotoFlash() {
+    cleanupBackgroundPhotoFlash?.();
+
+    const background = document.querySelector('.turath-photo-background');
   const ambientGlow = document.querySelector('.turath-ambient-glow');
 
   if (
@@ -445,7 +450,28 @@ body:not(.home) .turath-photo-background.is-fading
         }
       };
 
-      const observer = new MutationObserver(updateMode);
+     const handleReducedMotionChange = () => {
+  if (!reducedMotion.matches) {
+    mode = '';
+    updateMode();
+  } else {
+    runId++;
+    mode = '';
+
+    background.classList.remove('is-flashing', 'is-fading');
+
+    layers.forEach((layer) =>
+      layer.classList.remove('is-visible')
+    );
+
+    ambientGlow.style.removeProperty('--ambient-color');
+  }
+};
+
+reducedMotion.addEventListener(
+  'change',
+  handleReducedMotionChange
+);
 
       observer.observe(root, {
         attributes: true,
@@ -470,4 +496,30 @@ body:not(.home) .turath-photo-background.is-fading
       updateMode();
     }
   }
+</script>
+  cleanupBackgroundPhotoFlash = () => {
+    runId++;
+    mode = '';
+
+    observer.disconnect();
+
+    reducedMotion.removeEventListener(
+      'change',
+      handleReducedMotionChange
+    );
+  };
+}
+
+document.addEventListener(
+  'astro:before-swap',
+  () => cleanupBackgroundPhotoFlash?.()
+);
+
+document.addEventListener(
+  'astro:page-load',
+  initBackgroundPhotoFlash
+);
+
+// Initialize on the initial page load.
+initBackgroundPhotoFlash();
 </script>
