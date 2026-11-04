@@ -341,6 +341,30 @@ const readingTime = Math.max(1, Math.ceil(wordCount / 200));
         }
       }
     </style>
+    <link rel="icon" type="image/png" href="/images/favicon2.png" />
+
+    <script is:inline>
+      function updateFavicon() {
+        const theme = document.documentElement.getAttribute('data-theme');
+        const favicon = document.querySelector('link[rel="icon"]');
+
+        if (favicon) {
+          favicon.href =
+            theme === 'dark'
+              ? '/images/favicon1.png'
+              : '/images/favicon2.png';
+        }
+      }
+
+      updateFavicon();
+
+      const observer = new MutationObserver(updateFavicon);
+
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['data-theme']
+      });
+    </script>
   </head>
 
   <body>
