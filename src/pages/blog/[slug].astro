@@ -1,7 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
 import LiquidCursor from '../../components/LiquidCursor.astro';
-import MusicPlayer from '../../components/MusicPlayer.astro';
 import { ClientRouter } from 'astro:transitions';
 import TableOfContents from '../../components/TablesOfContents.astro';
 import BackgroundPhotoFlash from '../../components/backgroundphotoflash.astro';
@@ -353,7 +352,7 @@ const readingTime = Math.max(1, Math.ceil(wordCount / 200));
 
     <LiquidCursor />
 
-    {!isAcknowledgments && <MusicPlayer />}
+    {!isAcknowledgments/>}
 
     <header>
       <nav>
