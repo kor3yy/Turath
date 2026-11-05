@@ -1,3 +1,4 @@
+
 @font-face {
   font-family: 'Bickham Script One';
   src: url('/fonts/bickham-script-one_%5Ballfont.net%5D.ttf') format('truetype');
@@ -74,21 +75,8 @@ header nav {
   padding: 1rem 1.5rem;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 1.5rem;
-}
-
-header nav .logo {
-  display: inline-flex;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-.site-logo {
-  display: block;
-  width: 58px;
-  height: auto;
-  object-fit: contain;
 }
 
 .nav-links {
@@ -250,10 +238,6 @@ footer p {
     gap: 0.75rem;
   }
 
-  .site-logo {
-    width: 48px;
-  }
-
   .nav-links {
     gap: 0.8rem;
   }
@@ -283,6 +267,7 @@ footer p {
 }
 
 /* Force-remove any box around thumbnail title text */
+
 .thumbnail-wrap .thumbnail-title,
 .post-card .thumbnail-title {
   border: 0 !important;
@@ -292,20 +277,21 @@ footer p {
 }
 
 /* Remove any pseudo-element borders around the title */
+
 .thumbnail-wrap .thumbnail-title::before,
 .thumbnail-wrap .thumbnail-title::after {
   content: none !important;
   display: none !important;
 }
 
-/* Remove the border surrounding the Acknowledgments article */
+/* Remove the border surrounding articles */
+
 article:has(h1:first-child),
 article:has(h1) {
   border: none !important;
   outline: none !important;
   box-shadow: none !important;
 }
-
 
 /* TURATH — cinematic page transitions */
 
@@ -352,7 +338,6 @@ article:has(h1) {
 
 /* TURATH — consistent light and dark themes across all pages */
 
-/* Shared theme colours */
 :root {
   color-scheme: dark;
   --article-bg: var(--page-bg);
@@ -379,6 +364,7 @@ article:has(h1) {
 }
 
 /* Keep the entire document in sync with the selected theme */
+
 html,
 body {
   background-color: var(--page-bg);
@@ -396,6 +382,7 @@ main {
 }
 
 /* Article and content pages */
+
 article,
 .prose,
 .blog-content,
@@ -406,6 +393,7 @@ article,
 }
 
 /* Headings throughout the site */
+
 h1,
 h2,
 h3,
@@ -416,6 +404,7 @@ h6 {
 }
 
 /* Paragraphs and secondary text */
+
 p,
 li,
 blockquote,
@@ -425,6 +414,7 @@ small {
 }
 
 /* Theme-aware content surfaces */
+
 .card,
 article .content-card,
 .notice,
@@ -434,6 +424,7 @@ pre {
 }
 
 /* Links follow the active theme */
+
 article a,
 main a {
   color: var(--link-color);
@@ -445,6 +436,7 @@ main a:hover {
 }
 
 /* Forms and search fields */
+
 input,
 textarea,
 select {
@@ -454,6 +446,7 @@ select {
 }
 
 /* Placeholder text */
+
 input::placeholder,
 textarea::placeholder {
   color: var(--muted-text);
@@ -461,6 +454,7 @@ textarea::placeholder {
 }
 
 /* Keep controls readable in both themes */
+
 button {
   color: inherit;
 }
@@ -475,12 +469,14 @@ select:focus-visible {
 }
 
 /* Preserve image appearance when switching themes */
+
 img,
 video {
   color: inherit;
 }
 
 /* Respect reduced-motion preferences */
+
 @media (prefers-reduced-motion: reduce) {
   body,
   header,
@@ -490,8 +486,8 @@ video {
   }
 }
 
-
 /* TURATH — final sitewide theme overrides */
+
 :root[data-theme="dark"] {
   color-scheme: dark;
   --page-bg: #000000;
