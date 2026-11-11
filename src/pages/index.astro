@@ -18,10 +18,6 @@ const acknowledgments = allPosts.find((post) =>
   post.data.title.toLowerCase().includes('acknowledgment')
 );
 
-const latestArticle = allPosts
-  .filter((post) => post.slug !== acknowledgments?.slug)
-  .sort(newestFirst)[0];
-
 const findPost = (identity) => {
   const normalizedIdentity = identity.toLowerCase();
 
@@ -42,7 +38,7 @@ const musicPosts = [
   findPost('jenna'),
   findPost('toren'),
   findPost('onyx'),
-  findPost('pr0cr4stn8'),
+  findPost('pr0crastn8'),
 ].filter(Boolean);
 
 const uniquePosts = (posts) => {
@@ -58,15 +54,14 @@ const uniquePosts = (posts) => {
 const uniquePhotographyPosts = uniquePosts(photographyPosts);
 const uniqueMusicPosts = uniquePosts(musicPosts);
 
-const assignedSlugs = new Set([
-  acknowledgments?.slug,
-  ...uniquePhotographyPosts.map((post) => post.slug),
-  ...uniqueMusicPosts.map((post) => post.slug),
-].filter(Boolean));
-
-const otherPosts = allPosts
-  .filter((post) => !assignedSlugs.has(post.slug))
-  .sort(newestFirst);
+// Keep Music articles in their collection instead of repeating them
+// in the standalone latest-article feature.
+const latestArticle = allPosts
+  .filter((post) =>
+    post.slug !== acknowledgments?.slug &&
+    !uniqueMusicPosts.some((musicPost) => musicPost.slug === post.slug)
+  )
+  .sort(newestFirst)[0];
 
 const sections = [
   {
@@ -92,28 +87,29 @@ const sections = [
     <meta name="theme-color" content="#000000" />
     <meta name="description" content="Turath — culture, art, expression, history, and the people behind them." />
     <link rel="icon" type="image/png" href="/images/favicon2.png" />
-<script is:inline>
-  function updateFavicon() {
-    const theme = document.documentElement.getAttribute('data-theme');
-    const favicon = document.querySelector('link[rel="icon"]');
 
-    if (favicon) {
-      favicon.href =
-        theme === 'dark'
-          ? '/images/favicon1.png'
-          : '/images/favicon2.png';
-    }
-  }
+    <script is:inline>
+      function updateFavicon() {
+        const theme = document.documentElement.getAttribute('data-theme');
+        const favicon = document.querySelector('link[rel="icon"]');
 
-  updateFavicon();
+        if (favicon) {
+          favicon.href =
+            theme === 'dark'
+              ? '/images/favicon1.png'
+              : '/images/favicon2.png';
+        }
+      }
 
-  const observer = new MutationObserver(updateFavicon);
+      updateFavicon();
 
-  observer.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ['data-theme']
-  });
-</script>
+      const observer = new MutationObserver(updateFavicon);
+
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['data-theme']
+      });
+    </script>
 
     <title>Turath</title>
 
@@ -632,34 +628,6 @@ const sections = [
         letter-spacing: 0.12em;
       }
 
-      .other-articles {
-        margin-top: 4rem;
-      }
-
-      .other-articles h2 {
-        margin-bottom: 1rem;
-      }
-
-      .other-list {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 1rem;
-      }
-
-      .other-link {
-        padding: 1rem;
-        border: 1px solid var(--border-color);
-        border-radius: 10px;
-        background: var(--surface-bg);
-        color: var(--page-text);
-      }
-
-      .other-link p {
-        margin-bottom: 0;
-        color: var(--muted);
-        font-size: 0.85rem;
-      }
-
       @keyframes turath-scroll {
         to {
           transform: translateX(-50%);
@@ -730,10 +698,6 @@ const sections = [
         .article-card-image-wrap {
           flex-basis: 44%;
         }
-
-        .other-list {
-          grid-template-columns: 1fr;
-        }
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -761,10 +725,10 @@ const sections = [
       <nav>
         <a href="/" class="logo" aria-label="Turath homepage">
           <img
-  src="/images/favicon1.png"
-  alt="Turath logo"
-  class="site-logo"
-/>
+            src="/images/favicon1.png"
+            alt="Turath logo"
+            class="site-logo"
+          />
         </a>
 
         <div class="nav-links">
@@ -980,21 +944,6 @@ const sections = [
           </div>
         </section>
       ))}
-
-      {otherPosts.length > 0 && (
-        <section class="other-articles">
-          <h2>More articles</h2>
-
-          <div class="other-list">
-            {otherPosts.map((post) => (
-              <a class="other-link" href={`/blog/${post.slug}/`}>
-                <strong>{post.data.title}</strong>
-                <p>{post.data.description}</p>
-              </a>
-            ))}
-          </div>
-        </section>
-      )}
     </main>
 
     <footer>
