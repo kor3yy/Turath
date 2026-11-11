@@ -16,6 +16,10 @@ His music blends between cloud rap, electronic production, melodic hip-hop, and 
 
 That willingness to move between worlds has roots in the music he grew up listening to. During his high school years, artists like Mac DeMarco and Kid Cudi became important parts of his musical landscape. He was particularly drawn to Kid Cudi, whose music offered a combination of introspection, melody, and atmosphere. Kanye West, JAY-Z, A Boogie wit da Hoodie, and Deadmau5 also helped shape his understanding of music, each bringing something different to the picture.
 
+<figure>
+  <img src="/images/EC590A97-F1B6-4237-B265-1E5A4078E51D.JPG"/>
+</figure>
+
 Michael Jackson was another constant influence. Growing up, his music played around the house, making him part of the soundtrack of PR0CR4STN8's childhood. As his own taste developed, those early memories became part of a wider appreciation for artists who could create a distinct identity around their work, not just through music, but through presentation, style, and the worlds they built around themselves.
 
 His older brother played an important role in that development, introducing him to new music, aesthetics, and colours during the Tumblr era. It was a period when online culture helped shape how young people discovered artists and expressed themselves. Music, fashion, and visual identity increasingly became connected, and that relationship would eventually become central to PR0CR4STN8's own creative direction.
@@ -31,6 +35,10 @@ His beginnings were DIY in the most literal sense. Alongside his younger cousin 
 Creativity, however, wasn't necessarily the path his family had imagined for him. His upbringing placed a strong emphasis on education and the prospect of a conventional corporate career. Pursuing music seriously meant moving toward something less predictable, and the transition took time. His family has gradually become more understanding of the vision, allowing him to continue building something that initially existed outside the future they had envisioned for him.
 
 The shift became particularly important around the COVID-19 period. Isolation, long stretches of time spent online, and a mentally draining time during a relationship pushed him toward music in a more serious way. YouTube became another source of discovery, connecting him with sounds and artists that helped him imagine what his own work could become.
+
+<figure>
+  <img src="/images/F331F050-179E-49EE-A5F9-67F8A56DC2A6.JPG"/>
+</figure>
 
 Kid Cudi, Jean Dawson, and Frank Ocean were among the artists who resonated with him during that period. Their approaches to melody, emotion, and artistic identity offered different ways of thinking about what music could communicate. Rather than simply entertaining a listener, a song could create an atmosphere, capture a feeling, or provide an alternative to whatever was happening outside it.
 
@@ -80,6 +88,10 @@ Collaborating with venues and opening for other artists are among the next steps
 
 For now, he remains independent while continuing to develop his catalogue and consider how his discography should come together. The priority is to build a body of work that reflects the direction he's moving in rather than rushing into a particular structure or trying to meet expectations before he's ready.
 
+<figure>
+  <img src="/images/A135A19D-E10F-426F-BF6A-EDD9D9742AB0.JPG"/>
+</figure>
+
 That approach connects to a larger belief he holds about making art: influence matters more than numbers. Streams, recognition, and attention can all become measures of success, but they don't necessarily tell the whole story. He wants to create work that resonates with people and demonstrates what's possible when artists take the initiative to build something themselves.
 
 His own journey began with limited equipment, experimentation, and support from the people closest to him. That experience informs the advice he would give to others starting out. Learn from the artists who came before you, pay attention to what makes their work effective, and apply those lessons in your own way. Take inspiration seriously, but don't allow it to become a substitute for developing your own identity.
@@ -103,15 +115,3 @@ For PR0CR4STN8, that process is still unfolding. The music continues to develop,
 Ultimately, his goal is to show that you don't need to have everything figured out before you begin. You can start with what you have, learn as you go, and build toward something bigger through experimentation and persistence.
 
 The name may suggest putting things off, but the vision behind PR0CR4STN8 is about moving forward: letting go of old versions of yourself, trusting your instincts, and creating something that feels true to who you're becoming.
-
-<figure>
-  <img src="/images/A135A19D-E10F-426F-BF6A-EDD9D9742AB0.JPG"/>
-</figure>
-
-<figure>
-  <img src="/images/EC590A97-F1B6-4237-B265-1E5A4078E51D.JPG"/>
-</figure>
-
-<figure>
-  <img src="/images/F331F050-179E-49EE-A5F9-67F8A56DC2A6.JPG"/>
-</figure>
