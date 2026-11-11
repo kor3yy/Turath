@@ -130,6 +130,40 @@ console.log('Background images found:', imagePaths);
     opacity: 0.45;
   }
 
+  /* Sharp spotlight layer */
+
+  .turath-photo-reveal {
+    position: fixed;
+    inset: -40px;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+    filter: none !important;
+    transform: scale(1.08);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+
+    -webkit-mask-image: radial-gradient(
+      circle 145px at var(--turath-reveal-x, -200px)
+      var(--turath-reveal-y, -200px),
+      black 0%,
+      black 55%,
+      transparent 100%
+    );
+
+    mask-image: radial-gradient(
+      circle 145px at var(--turath-reveal-x, -200px)
+      var(--turath-reveal-y, -200px),
+      black 0%,
+      black 55%,
+      transparent 100%
+    );
+  }
+
+  html.turath-cursor-active .turath-photo-reveal {
+    opacity: 1;
+  }
+
   body.home > header,
   body.home > main,
   body.home > footer {
@@ -137,15 +171,14 @@ console.log('Background images found:', imagePaths);
     z-index: 1;
   }
 
-  /* Softer, darker photo backgrounds on non-homepage pages */
-
   body:not(.home) {
     background: transparent !important;
     isolation: isolate;
   }
 
   body:not(.home) .turath-photo-background,
-  body:not(.home) .turath-ambient-glow {
+  body:not(.home) .turath-ambient-glow,
+  body:not(.home) .turath-photo-reveal {
     z-index: -1;
   }
 
@@ -169,7 +202,8 @@ console.log('Background images found:', imagePaths);
 
   @media (prefers-reduced-motion: reduce) {
     .turath-photo-background,
-    .turath-ambient-glow {
+    .turath-ambient-glow,
+    .turath-photo-reveal {
       display: none !important;
     }
   }
@@ -205,6 +239,46 @@ console.log('Background images found:', imagePaths);
     );
 
     if (layers.length < 2) return;
+
+    // Create sharp duplicate background.
+    const reveal = background.cloneNode(true) as HTMLElement;
+
+    reveal.classList.add('turath-photo-reveal');
+    reveal.removeAttribute('data-images');
+
+    background.after(reveal);
+
+    const revealLayers = Array.from(
+      reveal.querySelectorAll<HTMLElement>(
+        '.turath-photo-layer'
+      )
+    );
+
+    const revealObserver = new MutationObserver(() => {
+      reveal.className =
+        `${background.className} turath-photo-reveal`;
+
+      layers.forEach((layer, index) => {
+        const sharpLayer = revealLayers[index];
+
+        if (!sharpLayer) return;
+
+        sharpLayer.className = layer.className;
+        sharpLayer.style.cssText = layer.style.cssText;
+      });
+    });
+
+    revealObserver.observe(background, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+
+    layers.forEach((layer) => {
+      revealObserver.observe(layer, {
+        attributes: true,
+        attributeFilter: ['class', 'style'],
+      });
+    });
 
     const root = document.documentElement;
 
@@ -505,15 +579,16 @@ console.log('Background images found:', imagePaths);
       handleReducedMotionChange
     );
 
-    // Start the correct animation for the current page.
     updateMode();
 
-    // Return cleanup for Astro navigation.
     return () => {
       runId++;
+
       mode = '';
 
       observer.disconnect();
+      revealObserver.disconnect();
+      reveal.remove();
 
       reducedMotion.removeEventListener(
         'change',
@@ -533,20 +608,16 @@ console.log('Background images found:', imagePaths);
       initBackgroundPhotoFlash();
   }
 
-  // Clean up before Astro replaces the current page.
   document.addEventListener('astro:before-swap', () => {
     cleanupBackgroundPhotoFlash?.();
     cleanupBackgroundPhotoFlash = undefined;
   });
 
-  // Initialize after every Astro page navigation,
-  // including the initial page load.
   document.addEventListener(
     'astro:page-load',
     startBackgroundPhotoFlash
   );
 
-  // Fallback for normal initial document loading.
   if (document.readyState !== 'loading') {
     startBackgroundPhotoFlash();
   } else {
