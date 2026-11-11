@@ -1,551 +1,186 @@
 
 ---
-import { readdir } from 'node:fs/promises';
-import path from 'node:path';
-
-const publicDirectory = path.resolve(process.cwd(), 'public');
-const backgroundDirectory = path.join(publicDirectory, 'background');
-
-const imageExtensions = new Set([
-  '.jpg',
-  '.jpeg',
-  '.png',
-  '.webp',
-  '.avif',
-  '.gif',
-]);
-
-async function findImages(directory: string): Promise<string[]> {
-  const images: string[] = [];
-
-  try {
-    const entries = await readdir(directory, { withFileTypes: true });
-
-    for (const entry of entries) {
-      const fullPath = path.join(directory, entry.name);
-
-      if (entry.isDirectory()) {
-        images.push(...(await findImages(fullPath)));
-      } else if (
-        entry.isFile() &&
-        imageExtensions.has(path.extname(entry.name).toLowerCase())
-      ) {
-        const relativePath = path
-          .relative(publicDirectory, fullPath)
-          .split(path.sep)
-          .map(encodeURIComponent)
-          .join('/');
-
-        images.push(`/${relativePath}`);
-      }
-    }
-  } catch (error) {
-    console.error('Unable to scan background images:', error);
-  }
-
-  return [...new Set(images)];
-}
-
-const imagePaths = await findImages(backgroundDirectory);
-
-console.log('Background images found:', imagePaths);
 ---
 
-{imagePaths.length > 0 && (
-  <>
-    <div class="turath-ambient-glow" aria-hidden="true"></div>
+<div class="liquid-cursor" aria-hidden="true">
+  <span class="liquid-cursor__core"></span>
+</div>
 
-    <div
-      class="turath-photo-background"
-      data-images={JSON.stringify(imagePaths)}
-      aria-hidden="true"
-    >
-      <div class="turath-photo-layer"></div>
-      <div class="turath-photo-layer"></div>
-    </div>
-  </>
-)}
+<svg class="liquid-filters" aria-hidden="true">
+  <filter id="liquid-warp">
+    <feTurbulence
+      type="fractalNoise"
+      baseFrequency="0.018 0.025"
+      numOctaves="2"
+      seed="8"
+      result="noise"
+    />
+    <feDisplacementMap
+      in="SourceGraphic"
+      in2="noise"
+      scale="22"
+      xChannelSelector="R"
+      yChannelSelector="G"
+    />
+  </filter>
+</svg>
 
-<style is:global>
-  @property --ambient-color {
-    syntax: '<color>';
-    inherits: false;
-    initial-value: rgba(0, 0, 0, 0.28);
-  }
-
-  .turath-ambient-glow {
-    position: fixed;
-    inset: -12%;
-    z-index: 0;
-    pointer-events: none;
-    opacity: 0.9;
-    --ambient-color: rgba(0, 0, 0, 0.28);
-    background:
-      radial-gradient(
-        ellipse at 15% 28%,
-        var(--ambient-color),
-        transparent 58%
-      ),
-      radial-gradient(
-        ellipse at 85% 72%,
-        var(--ambient-color),
-        transparent 62%
-      );
-    transition: --ambient-color 1.5s ease;
-    will-change: background;
-  }
-
-  .turath-photo-background {
-    position: fixed;
-    inset: -40px;
-    z-index: 0;
-    pointer-events: none;
-    overflow: hidden;
-    filter: blur(24px) saturate(1.65) brightness(0.9);
-    transform: scale(1.08);
-  }
-
-  .turath-photo-layer {
+<style>
+  .liquid-filters {
     position: absolute;
-    inset: 0;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+
+  .liquid-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 76px;
+    height: 76px;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 48% 52% 63% 37% / 42% 44% 56% 58%;
+    background: rgba(255, 255, 255, 0.07);
+    backdrop-filter: invert(1) contrast(1.2);
+    -webkit-backdrop-filter: invert(1) contrast(1.2);
+    filter: url(#liquid-warp);
+    pointer-events: none;
+    z-index: 99999;
     opacity: 0;
-    transition: opacity 0.9s ease-in-out;
-    will-change: opacity;
+    transform: translate3d(-50%, -50%, 0);
+    transition:
+      width 0.25s ease,
+      height 0.25s ease,
+      opacity 0.2s ease,
+      border-radius 0.3s ease;
+    mix-blend-mode: difference;
+    will-change: left, top;
   }
 
-  .turath-photo-background.is-flashing .turath-photo-layer {
-    transition: opacity 0.8s ease-in-out;
+  .liquid-cursor__core {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    top: 50%;
+    left: 50%;
+    border-radius: 50%;
+    background: white;
+    transform: translate(-50%, -50%);
   }
 
-  .turath-photo-background.is-flashing
-    .turath-photo-layer.is-visible {
-    opacity: 0.65;
+  .liquid-cursor.is-visible {
+    opacity: 1;
   }
 
-  .turath-photo-background.is-fading
-    .turath-photo-layer.is-visible {
-    opacity: 0.45;
+  .liquid-cursor.is-hovering {
+    width: 105px;
+    height: 105px;
+    border-radius: 35% 65% 43% 57% / 58% 38% 62% 42%;
   }
 
-  body.home > header,
-  body.home > main,
-  body.home > footer {
-    position: relative;
-    z-index: 1;
+  @media (hover: hover) and (pointer: fine) {
+    html,
+    body,
+    a,
+    button {
+      cursor: none;
+    }
   }
 
-  body:not(.home) {
-    background: transparent !important;
-    isolation: isolate;
-  }
+  @media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+    .liquid-cursor {
+      display: none;
+    }
 
-  body:not(.home) .turath-photo-background,
-  body:not(.home) .turath-ambient-glow {
-    z-index: -1;
-  }
-
-  body:not(.home) .turath-photo-background {
-    filter: blur(12px) saturate(1.4) brightness(0.5);
-  }
-
-  body:not(.home) .turath-ambient-glow {
-    opacity: 0.35;
-  }
-
-  body:not(.home) .turath-photo-background.is-flashing
-    .turath-photo-layer.is-visible {
-    opacity: 0.4;
-  }
-
-  body:not(.home) .turath-photo-background.is-fading
-    .turath-photo-layer.is-visible {
-    opacity: 0.3;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .turath-photo-background,
-    .turath-ambient-glow {
-      display: none !important;
+    html,
+    body,
+    a,
+    button {
+      cursor: auto;
     }
   }
 </style>
 
 <script>
-  function initBackgroundPhotoFlash() {
-    const background = document.querySelector(
-      '.turath-photo-background'
-    );
+  const initLiquidCursor = () => {
+    const cursor = document.querySelector('.liquid-cursor');
 
-    const ambientGlow = document.querySelector(
-      '.turath-ambient-glow'
-    );
+    if (!(cursor instanceof HTMLElement)) return;
 
-    if (
-      !(background instanceof HTMLElement) ||
-      !(ambientGlow instanceof HTMLElement)
-    ) {
-      return;
-    }
+    // Prevent duplicate listeners if the page is navigated internally.
+    if (cursor.dataset.initialized === 'true') return;
+    cursor.dataset.initialized = 'true';
 
-    const imagePaths: string[] = JSON.parse(
-      background.dataset.images || '[]'
-    );
+    let targetX = -100;
+    let targetY = -100;
+    let currentX = targetX;
+    let currentY = targetY;
+    let animationFrame = 0;
 
-    if (imagePaths.length === 0) return;
+    const animate = () => {
+      currentX += (targetX - currentX) * 0.18;
+      currentY += (targetY - currentY) * 0.18;
 
-    const layers = Array.from(
-      background.querySelectorAll<HTMLElement>(
-        '.turath-photo-layer'
-      )
-    );
+      cursor.style.left = `${currentX}px`;
+      cursor.style.top = `${currentY}px`;
 
-    if (layers.length < 2) return;
-
-    const root = document.documentElement;
-
-    const reducedMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)'
-    );
-
-    let runId = 0;
-    let mode = '';
-    let activeLayer = 0;
-
-    const wait = (ms: number) =>
-      new Promise<void>((resolve) => {
-        window.setTimeout(resolve, ms);
-      });
-
-    const shuffle = (items: string[]) => {
-      const result = [...items];
-
-      for (let i = result.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [result[i], result[j]] = [result[j], result[i]];
+      if (
+        Math.abs(targetX - currentX) > 0.1 ||
+        Math.abs(targetY - currentY) > 0.1
+      ) {
+        animationFrame = requestAnimationFrame(animate);
+      } else {
+        animationFrame = 0;
       }
-
-      return result;
     };
 
-    async function loadImage(
-      src: string
-    ): Promise<HTMLImageElement | null> {
-      const image = new Image();
-      image.src = src;
+    document.addEventListener('pointermove', (event) => {
+      if (event.pointerType !== 'mouse') return;
 
-      try {
-        await image.decode();
-        return image;
-      } catch {
-        console.warn('Unable to load background image:', src);
-        return null;
+      targetX = event.clientX;
+      targetY = event.clientY;
+
+      cursor.classList.add('is-visible');
+
+      if (!animationFrame) {
+        animationFrame = requestAnimationFrame(animate);
       }
-    }
-
-    function updateAmbientColor(image: HTMLImageElement) {
-      try {
-        const canvas = document.createElement('canvas');
-        const size = 32;
-
-        canvas.width = size;
-        canvas.height = size;
-
-        const context = canvas.getContext('2d', {
-          willReadFrequently: true,
-        });
-
-        if (!context) return;
-
-        context.drawImage(image, 0, 0, size, size);
-
-        const pixels = context.getImageData(
-          0,
-          0,
-          size,
-          size
-        ).data;
-
-        const bins = Array.from({ length: 24 }, () => ({
-          weight: 0,
-          r: 0,
-          g: 0,
-          b: 0,
-        }));
-
-        let fallbackR = 0;
-        let fallbackG = 0;
-        let fallbackB = 0;
-        let pixelCount = 0;
-
-        for (let i = 0; i < pixels.length; i += 4) {
-          const r = pixels[i];
-          const g = pixels[i + 1];
-          const b = pixels[i + 2];
-          const alpha = pixels[i + 3] / 255;
-
-          if (alpha < 0.5) continue;
-
-          fallbackR += r;
-          fallbackG += g;
-          fallbackB += b;
-          pixelCount++;
-
-          const red = r / 255;
-          const green = g / 255;
-          const blue = b / 255;
-
-          const max = Math.max(red, green, blue);
-          const min = Math.min(red, green, blue);
-          const delta = max - min;
-
-          if (delta < 0.08 || max < 0.12) continue;
-
-          let hue = 0;
-
-          if (max === red) {
-            hue = ((green - blue) / delta) % 6;
-          } else if (max === green) {
-            hue = (blue - red) / delta + 2;
-          } else {
-            hue = (red - green) / delta + 4;
-          }
-
-          hue = (hue * 60 + 360) % 360;
-
-          const saturation = delta / max;
-          const brightness = max;
-
-          const weight =
-            saturation * (0.35 + brightness * 0.65) * alpha;
-
-          const bin = bins[Math.floor(hue / 15) % 24];
-
-          bin.weight += weight;
-          bin.r += r * weight;
-          bin.g += g * weight;
-          bin.b += b * weight;
-        }
-
-        const dominant = bins.reduce((best, bin) =>
-          bin.weight > best.weight ? bin : best
-        );
-
-        let r: number;
-        let g: number;
-        let b: number;
-
-        if (dominant.weight > 0) {
-          r = Math.round(dominant.r / dominant.weight);
-          g = Math.round(dominant.g / dominant.weight);
-          b = Math.round(dominant.b / dominant.weight);
-        } else if (pixelCount > 0) {
-          r = Math.round(fallbackR / pixelCount);
-          g = Math.round(fallbackG / pixelCount);
-          b = Math.round(fallbackB / pixelCount);
-        } else {
-          return;
-        }
-
-        ambientGlow.style.setProperty(
-          '--ambient-color',
-          `rgba(${r}, ${g}, ${b}, 0.38)`
-        );
-      } catch (error) {
-        console.warn('Unable to sample ambient colour:', error);
-      }
-    }
-
-    async function runFlashes(id: number) {
-      background.classList.add('is-flashing');
-      background.classList.remove('is-fading');
-
-      layers.forEach((layer) =>
-        layer.classList.remove('is-visible')
-      );
-
-      while (
-        background.isConnected &&
-        id === runId &&
-        mode === 'flash' &&
-        !reducedMotion.matches
-      ) {
-        for (const src of shuffle(imagePaths)) {
-          if (id !== runId || mode !== 'flash') return;
-
-          const image = await loadImage(src);
-
-          if (!image || id !== runId || mode !== 'flash') {
-            continue;
-          }
-
-          updateAmbientColor(image);
-
-          const layer = layers[0];
-          if (!layer) return;
-
-          layer.style.backgroundImage = `url("${src}")`;
-          layer.classList.add('is-visible');
-
-          await wait(1800);
-
-          if (id !== runId || mode !== 'flash') return;
-
-          layer.classList.remove('is-visible');
-
-          await wait(100);
-        }
-      }
-    }
-
-    async function runFades(id: number) {
-      background.classList.remove('is-flashing');
-      background.classList.add('is-fading');
-
-      layers.forEach((layer) =>
-        layer.classList.remove('is-visible')
-      );
-
-      let index = 0;
-
-      while (
-        background.isConnected &&
-        id === runId &&
-        mode === 'fade' &&
-        !reducedMotion.matches
-      ) {
-        const src = imagePaths[index % imagePaths.length];
-
-        const nextLayerIndex = activeLayer === 0 ? 1 : 0;
-        const nextLayer = layers[nextLayerIndex];
-
-        if (!nextLayer) return;
-
-        const image = await loadImage(src);
-
-        if (!image || id !== runId || mode !== 'fade') {
-          continue;
-        }
-
-        updateAmbientColor(image);
-
-        nextLayer.style.backgroundImage = `url("${src}")`;
-        nextLayer.classList.add('is-visible');
-
-        await wait(1800);
-
-        if (id !== runId || mode !== 'fade') return;
-
-        layers[activeLayer]?.classList.remove('is-visible');
-
-        activeLayer = nextLayerIndex;
-        index++;
-
-        await wait(200);
-      }
-    }
-
-    function setMode(nextMode: string) {
-      if (nextMode === mode || reducedMotion.matches) return;
-
-      mode = nextMode;
-      const id = ++runId;
-
-      if (mode === 'flash') {
-        void runFlashes(id);
-      } else {
-        void runFades(id);
-      }
-    }
-
-    function updateMode() {
-      if (reducedMotion.matches) return;
-
-      if (root.classList.contains('turath-intro-playing')) {
-        setMode('flash');
-      } else {
-        setMode('fade');
-      }
-    }
-
-    const observer = new MutationObserver(updateMode);
-
-    observer.observe(root, {
-      attributes: true,
-      attributeFilter: ['class'],
     });
 
-    function handleReducedMotionChange() {
-      if (!reducedMotion.matches) {
-        mode = '';
-        updateMode();
+    document.addEventListener('pointerleave', () => {
+      cursor.classList.remove('is-visible');
+    });
+
+    document.addEventListener('pointerover', (event) => {
+      if (event.pointerType !== 'mouse') return;
+
+      const target = event.target;
+
+      if (
+        target instanceof Element &&
+        target.closest('a, button, input, textarea, select, [role="button"]')
+      ) {
+        cursor.classList.add('is-hovering');
       } else {
-        runId++;
-        mode = '';
-
-        background.classList.remove(
-          'is-flashing',
-          'is-fading'
-        );
-
-        layers.forEach((layer) =>
-          layer.classList.remove('is-visible')
-        );
-
-        ambientGlow.style.removeProperty('--ambient-color');
+        cursor.classList.remove('is-hovering');
       }
-    }
+    });
 
-    reducedMotion.addEventListener(
-      'change',
-      handleReducedMotionChange
-    );
+    document.addEventListener('pointerout', (event) => {
+      if (event.relatedTarget === null) {
+        cursor.classList.remove('is-visible');
+      }
+    });
+  };
 
-    updateMode();
-
-    return () => {
-      runId++;
-      mode = '';
-
-      observer.disconnect();
-
-      reducedMotion.removeEventListener(
-        'change',
-        handleReducedMotionChange
-      );
-    };
-  }
-
-  let cleanupBackgroundPhotoFlash:
-    | (() => void)
-    | undefined;
-
-  function startBackgroundPhotoFlash() {
-    cleanupBackgroundPhotoFlash?.();
-
-    cleanupBackgroundPhotoFlash =
-      initBackgroundPhotoFlash();
-  }
-
-  document.addEventListener('astro:before-swap', () => {
-    cleanupBackgroundPhotoFlash?.();
-    cleanupBackgroundPhotoFlash = undefined;
-  });
-
-  document.addEventListener(
-    'astro:page-load',
-    startBackgroundPhotoFlash
-  );
-
-  if (document.readyState !== 'loading') {
-    startBackgroundPhotoFlash();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initLiquidCursor, {
+      once: true,
+    });
   } else {
-    document.addEventListener(
-      'DOMContentLoaded',
-      startBackgroundPhotoFlash,
-      { once: true }
-    );
+    initLiquidCursor();
   }
+
+  document.addEventListener('astro:page-load', initLiquidCursor);
 </script>
