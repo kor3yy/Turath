@@ -107,9 +107,8 @@
     const cursor = document.querySelector('.liquid-cursor');
 
     if (!(cursor instanceof HTMLElement)) return;
-
-    // Prevent duplicate listeners if the page is navigated internally.
     if (cursor.dataset.initialized === 'true') return;
+
     cursor.dataset.initialized = 'true';
 
     let targetX = -100;
@@ -118,12 +117,24 @@
     let currentY = targetY;
     let animationFrame = 0;
 
+    const root = document.documentElement;
+
     const animate = () => {
       currentX += (targetX - currentX) * 0.18;
       currentY += (targetY - currentY) * 0.18;
 
       cursor.style.left = `${currentX}px`;
       cursor.style.top = `${currentY}px`;
+
+      root.style.setProperty(
+        '--turath-reveal-x',
+        `${currentX}px`
+      );
+
+      root.style.setProperty(
+        '--turath-reveal-y',
+        `${currentY}px`
+      );
 
       if (
         Math.abs(targetX - currentX) > 0.1 ||
@@ -142,6 +153,7 @@
       targetY = event.clientY;
 
       cursor.classList.add('is-visible');
+      root.classList.add('turath-cursor-active');
 
       if (!animationFrame) {
         animationFrame = requestAnimationFrame(animate);
@@ -150,6 +162,7 @@
 
     document.addEventListener('pointerleave', () => {
       cursor.classList.remove('is-visible');
+      root.classList.remove('turath-cursor-active');
     });
 
     document.addEventListener('pointerover', (event) => {
@@ -170,6 +183,7 @@
     document.addEventListener('pointerout', (event) => {
       if (event.relatedTarget === null) {
         cursor.classList.remove('is-visible');
+        root.classList.remove('turath-cursor-active');
       }
     });
   };
