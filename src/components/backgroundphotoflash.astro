@@ -1,3 +1,4 @@
+@@ -1,52 +1,53 @@
 
 ---
 import { readdir } from 'node:fs/promises';
@@ -43,158 +44,74 @@ async function findImages(directory: string): Promise<string[]> {
     console.error('Unable to scan background images:', error);
   }
 
+  return images;
   return [...new Set(images)];
 }
 
+const imagePaths = [...new Set(await findImages(backgroundDirectory))];
 const imagePaths = await findImages(backgroundDirectory);
 
 console.log('Background images found:', imagePaths);
 ---
 
-{imagePaths.length > 0 && (
-  <>
-    <div class="turath-ambient-glow" aria-hidden="true"></div>
-
-    <div
-      class="turath-photo-background"
-      data-images={JSON.stringify(imagePaths)}
-      aria-hidden="true"
-    >
-      <div class="turath-photo-layer"></div>
-      <div class="turath-photo-layer"></div>
-    </div>
-  </>
-)}
-
-<style is:global>
-  @property --ambient-color {
-    syntax: '<color>';
-    inherits: false;
-    initial-value: rgba(0, 0, 0, 0.28);
-  }
-
-  .turath-ambient-glow {
-    position: fixed;
-    inset: -12%;
-    z-index: 0;
-    pointer-events: none;
-    opacity: 0.9;
-    --ambient-color: rgba(0, 0, 0, 0.28);
-    background:
-      radial-gradient(
-        ellipse at 15% 28%,
-        var(--ambient-color),
-        transparent 58%
-      ),
-      radial-gradient(
-        ellipse at 85% 72%,
-        var(--ambient-color),
-        transparent 62%
-      );
-    transition: --ambient-color 1.5s ease;
-    will-change: background;
-  }
-
-  .turath-photo-background {
-    position: fixed;
-    inset: -40px;
-    z-index: 0;
-    pointer-events: none;
-    overflow: hidden;
-    filter: blur(24px) saturate(1.65) brightness(0.9);
-    transform: scale(1.08);
-  }
-
-  .turath-photo-layer {
-    position: absolute;
-    inset: 0;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    opacity: 0;
-    transition: opacity 0.9s ease-in-out;
-    will-change: opacity;
-  }
-
-  .turath-photo-background.is-flashing .turath-photo-layer {
-    transition: opacity 0.8s ease-in-out;
-  }
-
-  .turath-photo-background.is-flashing
-    .turath-photo-layer.is-visible {
-    opacity: 0.65;
-  }
-
-  .turath-photo-background.is-fading
-    .turath-photo-layer.is-visible {
-    opacity: 0.45;
-  }
-
-  /* Sharp spotlight layer */
-
-  .turath-photo-reveal {
-    position: fixed;
-    inset: -40px;
-    z-index: 0;
-    pointer-events: none;
-    overflow: hidden;
-    filter: none !important;
-    transform: scale(1.08);
-    opacity: 0;
-    transition: opacity 0.2s ease;
-
-    -webkit-mask-image: radial-gradient(
-      circle 145px at var(--turath-reveal-x, -200px)
-      var(--turath-reveal-y, -200px),
-      black 0%,
-      black 55%,
-      transparent 100%
-    );
-
-    mask-image: radial-gradient(
-      circle 145px at var(--turath-reveal-x, -200px)
-      var(--turath-reveal-y, -200px),
-      black 0%,
-      black 55%,
-      transparent 100%
-    );
-  }
-
-  html.turath-cursor-active .turath-photo-reveal {
-    opacity: 1;
-  }
-
-  body.home > header,
-  body.home > main,
-  body.home > footer {
-    position: relative;
+@@ -136,65 +137,77 @@
     z-index: 1;
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    .turath-photo-background,
+    .turath-ambient-glow {
+      display: none !important;
+    }
+  }
+  /* Softer, darker photo backgrounds on non-homepage pages */
+
+/* Softer, darker photo backgrounds on every non-homepage */
+body:not(.home) {
+  background: transparent !important;
+  isolation: isolate;
+}
   body:not(.home) {
     background: transparent !important;
     isolation: isolate;
   }
 
+body:not(.home) .turath-photo-background,
+body:not(.home) .turath-ambient-glow {
+  z-index: -1;
+}
   body:not(.home) .turath-photo-background,
-  body:not(.home) .turath-ambient-glow,
-  body:not(.home) .turath-photo-reveal {
+  body:not(.home) .turath-ambient-glow {
     z-index: -1;
   }
 
+body:not(.home) .turath-photo-background {
+  filter: blur(12px) saturate(1.4) brightness(0.5);
+}
   body:not(.home) .turath-photo-background {
     filter: blur(12px) saturate(1.4) brightness(0.5);
   }
 
+body:not(.home) .turath-ambient-glow {
+  opacity: 0.35;
+}
   body:not(.home) .turath-ambient-glow {
     opacity: 0.35;
   }
 
+body:not(.home) .turath-photo-background.is-flashing
+.turath-photo-layer.is-visible {
+  opacity: 0.4;
+}
   body:not(.home) .turath-photo-background.is-flashing
     .turath-photo-layer.is-visible {
     opacity: 0.4;
   }
 
+body:not(.home) .turath-photo-background.is-fading
+.turath-photo-layer.is-visible {
+  opacity: 0.3;
+}
   body:not(.home) .turath-photo-background.is-fading
     .turath-photo-layer.is-visible {
     opacity: 0.3;
@@ -202,15 +119,17 @@ console.log('Background images found:', imagePaths);
 
   @media (prefers-reduced-motion: reduce) {
     .turath-photo-background,
-    .turath-ambient-glow,
-    .turath-photo-reveal {
+    .turath-ambient-glow {
       display: none !important;
     }
   }
 </style>
 
 <script>
+  let cleanupBackgroundPhotoFlash;
+
   function initBackgroundPhotoFlash() {
+    cleanupBackgroundPhotoFlash?.();
     const background = document.querySelector(
       '.turath-photo-background'
     );
@@ -219,6 +138,8 @@ console.log('Background images found:', imagePaths);
       '.turath-ambient-glow'
     );
 
+    const background = document.querySelector('.turath-photo-background');
+  const ambientGlow = document.querySelector('.turath-ambient-glow');
     if (
       !(background instanceof HTMLElement) ||
       !(ambientGlow instanceof HTMLElement)
@@ -226,6 +147,10 @@ console.log('Background images found:', imagePaths);
       return;
     }
 
+  if (
+    background instanceof HTMLElement &&
+    ambientGlow instanceof HTMLElement
+  ) {
     const imagePaths: string[] = JSON.parse(
       background.dataset.images || '[]'
     );
@@ -233,6 +158,7 @@ console.log('Background images found:', imagePaths);
     if (imagePaths.length === 0) return;
 
     const layers = Array.from(
+      background.querySelectorAll<HTMLElement>('.turath-photo-layer')
       background.querySelectorAll<HTMLElement>(
         '.turath-photo-layer'
       )
@@ -240,233 +166,78 @@ console.log('Background images found:', imagePaths);
 
     if (layers.length < 2) return;
 
-    // Create sharp duplicate background.
-    const reveal = background.cloneNode(true) as HTMLElement;
-
-    reveal.classList.add('turath-photo-reveal');
-    reveal.removeAttribute('data-images');
-
-    background.after(reveal);
-
-    const revealLayers = Array.from(
-      reveal.querySelectorAll<HTMLElement>(
-        '.turath-photo-layer'
-      )
-    );
-
-    const revealObserver = new MutationObserver(() => {
-      reveal.className =
-        `${background.className} turath-photo-reveal`;
-
-      layers.forEach((layer, index) => {
-        const sharpLayer = revealLayers[index];
-
-        if (!sharpLayer) return;
-
-        sharpLayer.className = layer.className;
-        sharpLayer.style.cssText = layer.style.cssText;
-      });
-    });
-
-    revealObserver.observe(background, {
-      attributes: true,
-      attributeFilter: ['class'],
-    });
-
-    layers.forEach((layer) => {
-      revealObserver.observe(layer, {
-        attributes: true,
-        attributeFilter: ['class', 'style'],
-      });
-    });
-
     const root = document.documentElement;
 
     const reducedMotion = window.matchMedia(
       '(prefers-reduced-motion: reduce)'
     );
-
-    let runId = 0;
-    let mode = '';
+@@ -204,7 +217,9 @@
     let activeLayer = 0;
 
     const wait = (ms: number) =>
+      new Promise<void>((resolve) => window.setTimeout(resolve, ms));
       new Promise<void>((resolve) => {
         window.setTimeout(resolve, ms);
       });
 
     const shuffle = (items: string[]) => {
       const result = [...items];
-
-      for (let i = result.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [result[i], result[j]] = [result[j], result[i]];
-      }
-
+@@ -217,7 +232,9 @@
       return result;
     };
 
+    async function loadImage(src: string): Promise<HTMLImageElement | null> {
     async function loadImage(
       src: string
     ): Promise<HTMLImageElement | null> {
       const image = new Image();
       image.src = src;
 
-      try {
-        await image.decode();
-        return image;
-      } catch {
-        console.warn('Unable to load background image:', src);
-        return null;
-      }
-    }
-
-    function updateAmbientColor(image: HTMLImageElement) {
-      try {
-        const canvas = document.createElement('canvas');
-        const size = 32;
-
-        canvas.width = size;
-        canvas.height = size;
-
-        const context = canvas.getContext('2d', {
-          willReadFrequently: true,
-        });
-
-        if (!context) return;
-
-        context.drawImage(image, 0, 0, size, size);
-
-        const pixels = context.getImageData(
-          0,
-          0,
-          size,
+@@ -253,7 +270,6 @@
           size
         ).data;
 
+        // Group vivid pixels by hue to find the photo's dominant colour.
         const bins = Array.from({ length: 24 }, () => ({
           weight: 0,
           r: 0,
-          g: 0,
-          b: 0,
-        }));
-
-        let fallbackR = 0;
-        let fallbackG = 0;
-        let fallbackB = 0;
-        let pixelCount = 0;
-
-        for (let i = 0; i < pixels.length; i += 4) {
-          const r = pixels[i];
-          const g = pixels[i + 1];
-          const b = pixels[i + 2];
-          const alpha = pixels[i + 3] / 255;
-
-          if (alpha < 0.5) continue;
-
-          fallbackR += r;
-          fallbackG += g;
-          fallbackB += b;
-          pixelCount++;
-
-          const red = r / 255;
-          const green = g / 255;
-          const blue = b / 255;
-
-          const max = Math.max(red, green, blue);
-          const min = Math.min(red, green, blue);
-          const delta = max - min;
-
-          if (delta < 0.08 || max < 0.12) continue;
-
-          let hue = 0;
-
-          if (max === red) {
-            hue = ((green - blue) / delta) % 6;
-          } else if (max === green) {
-            hue = (blue - red) / delta + 2;
-          } else {
-            hue = (red - green) / delta + 4;
-          }
-
-          hue = (hue * 60 + 360) % 360;
-
-          const saturation = delta / max;
-          const brightness = max;
-
-          const weight =
-            saturation * (0.35 + brightness * 0.65) * alpha;
-
-          const bin = bins[Math.floor(hue / 15) % 24];
-
-          bin.weight += weight;
-          bin.r += r * weight;
-          bin.g += g * weight;
-          bin.b += b * weight;
-        }
-
-        const dominant = bins.reduce((best, bin) =>
-          bin.weight > best.weight ? bin : best
-        );
-
-        let r: number;
-        let g: number;
-        let b: number;
-
-        if (dominant.weight > 0) {
-          r = Math.round(dominant.r / dominant.weight);
-          g = Math.round(dominant.g / dominant.weight);
-          b = Math.round(dominant.b / dominant.weight);
-        } else if (pixelCount > 0) {
-          r = Math.round(fallbackR / pixelCount);
-          g = Math.round(fallbackG / pixelCount);
-          b = Math.round(fallbackB / pixelCount);
-        } else {
+@@ -335,13 +351,11 @@
           return;
         }
 
+        // The same sampled colour drives both ambient glows.
         ambientGlow.style.setProperty(
           '--ambient-color',
           `rgba(${r}, ${g}, ${b}, 0.38)`
         );
       } catch (error) {
+        // The photo can still display if colour sampling fails.
         console.warn('Unable to sample ambient colour:', error);
       }
     }
-
-    async function runFlashes(id: number) {
+@@ -350,7 +364,9 @@
       background.classList.add('is-flashing');
       background.classList.remove('is-fading');
 
+      layers.forEach((layer) => layer.classList.remove('is-visible'));
       layers.forEach((layer) =>
         layer.classList.remove('is-visible')
       );
 
       while (
         background.isConnected &&
-        id === runId &&
-        mode === 'flash' &&
-        !reducedMotion.matches
-      ) {
-        for (const src of shuffle(imagePaths)) {
-          if (id !== runId || mode !== 'flash') return;
+@@ -363,7 +379,9 @@
 
           const image = await loadImage(src);
 
+          if (!image || id !== runId || mode !== 'flash') continue;
           if (!image || id !== runId || mode !== 'flash') {
             continue;
           }
 
           updateAmbientColor(image);
 
-          const layer = layers[0];
-          if (!layer) return;
-
-          layer.style.backgroundImage = `url("${src}")`;
-          layer.classList.add('is-visible');
-
-          await wait(1800);
-
+@@ -378,6 +396,7 @@
           if (id !== runId || mode !== 'flash') return;
 
           layer.classList.remove('is-visible');
@@ -474,22 +245,18 @@ console.log('Background images found:', imagePaths);
           await wait(100);
         }
       }
-    }
-
-    async function runFades(id: number) {
+@@ -387,7 +406,9 @@
       background.classList.remove('is-flashing');
       background.classList.add('is-fading');
 
+      layers.forEach((layer) => layer.classList.remove('is-visible'));
       layers.forEach((layer) =>
         layer.classList.remove('is-visible')
       );
 
       let index = 0;
 
-      while (
-        background.isConnected &&
-        id === runId &&
-        mode === 'fade' &&
+@@ -398,14 +419,17 @@
         !reducedMotion.matches
       ) {
         const src = imagePaths[index % imagePaths.length];
@@ -501,17 +268,14 @@ console.log('Background images found:', imagePaths);
 
         const image = await loadImage(src);
 
+        if (!image || id !== runId || mode !== 'fade') continue;
         if (!image || id !== runId || mode !== 'fade') {
           continue;
         }
 
         updateAmbientColor(image);
 
-        nextLayer.style.backgroundImage = `url("${src}")`;
-        nextLayer.classList.add('is-visible');
-
-        await wait(1800);
-
+@@ -417,6 +441,7 @@
         if (id !== runId || mode !== 'fade') return;
 
         layers[activeLayer]?.classList.remove('is-visible');
@@ -519,26 +283,17 @@ console.log('Background images found:', imagePaths);
         activeLayer = nextLayerIndex;
         index++;
 
-        await wait(200);
+@@ -437,89 +462,98 @@
       }
     }
 
-    function setMode(nextMode: string) {
-      if (nextMode === mode || reducedMotion.matches) return;
-
-      mode = nextMode;
-      const id = ++runId;
-
-      if (mode === 'flash') {
-        void runFlashes(id);
-      } else {
-        void runFades(id);
-      }
-    }
-
+    if (imagePaths.length > 0) {
+      const root = document.documentElement;
     function updateMode() {
       if (reducedMotion.matches) return;
 
+      const updateMode = () => {
+        if (reducedMotion.matches) return;
       if (root.classList.contains('turath-intro-playing')) {
         setMode('flash');
       } else {
@@ -546,13 +301,27 @@ console.log('Background images found:', imagePaths);
       }
     }
 
+        if (root.classList.contains('turath-intro-playing')) {
+          setMode('flash');
+        } else {
+          setMode('fade');
+        }
+      };
     const observer = new MutationObserver(updateMode);
 
+     const handleReducedMotionChange = () => {
+  if (!reducedMotion.matches) {
+    mode = '';
+    updateMode();
+  } else {
+    runId++;
+    mode = '';
     observer.observe(root, {
       attributes: true,
       attributeFilter: ['class'],
     });
 
+    background.classList.remove('is-flashing', 'is-fading');
     function handleReducedMotionChange() {
       if (!reducedMotion.matches) {
         mode = '';
@@ -561,63 +330,116 @@ console.log('Background images found:', imagePaths);
         runId++;
         mode = '';
 
+    layers.forEach((layer) =>
+      layer.classList.remove('is-visible')
+    );
         background.classList.remove(
           'is-flashing',
           'is-fading'
         );
 
+    ambientGlow.style.removeProperty('--ambient-color');
+  }
+};
         layers.forEach((layer) =>
           layer.classList.remove('is-visible')
         );
 
+reducedMotion.addEventListener(
+  'change',
+  handleReducedMotionChange
+);
         ambientGlow.style.removeProperty('--ambient-color');
       }
     }
 
+      observer.observe(root, {
+        attributes: true,
+        attributeFilter: ['class'],
+      });
     reducedMotion.addEventListener(
       'change',
       handleReducedMotionChange
     );
 
+      reducedMotion.addEventListener('change', () => {
+        if (!reducedMotion.matches) {
+          mode = '';
+          updateMode();
+        } else {
+          runId++;
+          mode = '';
+    // Start the correct animation for the current page.
     updateMode();
 
+          background.classList.remove('is-flashing', 'is-fading');
+          layers.forEach((layer) => layer.classList.remove('is-visible'));
+    // Return cleanup for Astro navigation.
     return () => {
       runId++;
-
       mode = '';
 
+          ambientGlow.style.removeProperty('--ambient-color');
+        }
+      });
       observer.disconnect();
-      revealObserver.disconnect();
-      reveal.remove();
 
+      updateMode();
+    }
       reducedMotion.removeEventListener(
         'change',
         handleReducedMotionChange
       );
     };
   }
+</script>
+  cleanupBackgroundPhotoFlash = () => {
+    runId++;
+    mode = '';
 
+    observer.disconnect();
+
+    reducedMotion.removeEventListener(
+      'change',
+      handleReducedMotionChange
+    );
+  };
+}
   let cleanupBackgroundPhotoFlash:
     | (() => void)
     | undefined;
 
+document.addEventListener(
+  'astro:before-swap',
+  () => cleanupBackgroundPhotoFlash?.()
+);
   function startBackgroundPhotoFlash() {
     cleanupBackgroundPhotoFlash?.();
 
+document.addEventListener(
+  'astro:page-load',
+  initBackgroundPhotoFlash
+);
     cleanupBackgroundPhotoFlash =
       initBackgroundPhotoFlash();
   }
 
+// Initialize on the initial page load.
+initBackgroundPhotoFlash();
+  // Clean up before Astro replaces the current page.
   document.addEventListener('astro:before-swap', () => {
     cleanupBackgroundPhotoFlash?.();
     cleanupBackgroundPhotoFlash = undefined;
   });
 
+  // Initialize after every Astro page navigation,
+  // including the initial page load.
   document.addEventListener(
     'astro:page-load',
     startBackgroundPhotoFlash
   );
 
+  // Fallback for normal initial document loading.
   if (document.readyState !== 'loading') {
     startBackgroundPhotoFlash();
   } else {
