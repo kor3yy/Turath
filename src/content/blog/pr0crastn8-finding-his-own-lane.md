@@ -21,7 +21,7 @@ That willingness to move between worlds has roots in the music he grew up listen
   <img src="/images/EC590A97-F1B6-4237-B265-1E5A4078E51D.JPG"/>
 </figure>
 
-Michael Jackson was another constant influence. Growing up, his music played around the house, making him part of the soundtrack of PR0CR4STN8's childhood. As his own taste developed, those early memories became part of a wider appreciation for artists who could create a distinct identity around their work, not just through music, but through presentation, style, and the worlds they built around themselves.
+Michael Jackson was another constant influence. Growing up, his music played around the house, making him part of the soundtrack of PR0CRASTN8's childhood. As his own taste developed, those early memories became part of a wider appreciation for artists who could create a distinct identity around their work, not just through music, but through presentation, style, and the worlds they built around themselves.
 
 His older brother played an important role in that development, introducing him to new music, aesthetics, and colours during the Tumblr era. It was a period when online culture helped shape how young people discovered artists and expressed themselves. Music, fashion, and visual identity increasingly became connected, and that relationship would eventually become central to PR0CRASTN8's own creative direction.
 
