@@ -4,6 +4,7 @@ pubDate: 2026-11-11
 description: "Blending cloud rap, electronic experimentation, and nostalgia, Los Angeles bred artist PR0CRASTN8 is building a creative identity rooted in authenticity, reinvention, and the freedom to do things his own way."
 thumbnail: "/images/8CE88825-EF97-4873-92A5-3733DD3975C8-modified.JPG"
 ---
+
 Los Angeles is a city where creativity is everywhere, but standing out is another story. For PR0CRASTN8, the 24-year-old artist of Argentine, Mexican, Italian, and Puerto Rican heritage, navigating an oversaturated scene means finding a way to make something that feels distinctly his own. His answer isn't to commit to one sound or aesthetic. Instead, he pulls from different eras, genres, and creative movements, bringing them together into a world that feels as unpredictable as the influences behind it.
 
 <figure>
