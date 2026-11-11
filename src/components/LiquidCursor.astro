@@ -73,18 +73,6 @@
     border-radius: 55% 45% 48% 52% / 43% 57% 45% 55%;
   }
 
-  /* Only transparent over the background */
-  .liquid-cursor.cursor-background-mode {
-    background: transparent !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    mix-blend-mode: normal !important;
-  }
-
-  .liquid-cursor.cursor-background-mode .liquid-cursor__core {
-    opacity: 0;
-  }
-
   @media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
     .liquid-cursor {
       display: none !important;
@@ -104,56 +92,6 @@
     let mouseY = window.innerHeight / 2;
     let currentX = mouseX;
     let currentY = mouseY;
-    let animationFrame;
-
-    const interactiveSelector = [
-      'a',
-      'button',
-      'input',
-      'textarea',
-      'select',
-      'article',
-      'section',
-      '[role="button"]',
-      '[tabindex]:not([tabindex="-1"])',
-      '.article-card',
-      '.post-card',
-      '.music-card',
-      '.photo-card',
-      '.clickable'
-    ].join(',');
-
-    function isBackground(target) {
-      if (!(target instanceof Element)) return true;
-
-      if (target.closest(interactiveSelector)) return false;
-
-      if (
-        target.closest(
-          '.turath-photo-background, .turath-photo-reveal, .turath-ambient-glow'
-        )
-      ) {
-        return true;
-      }
-
-      return !target.closest(
-        'main, article, section, header, footer, nav, .article-content, .content'
-      );
-    }
-
-    function updateMode(target) {
-      const backgroundMode = isBackground(target);
-
-      cursor.classList.toggle(
-        'cursor-background-mode',
-        backgroundMode
-      );
-
-      document.documentElement.classList.toggle(
-        'turath-cursor-active',
-        backgroundMode
-      );
-    }
 
     function animate() {
       currentX += (mouseX - currentX) * 0.18;
@@ -162,50 +100,23 @@
       cursor.style.transform =
         `translate3d(${currentX}px, ${currentY}px, 0) translate(-50%, -50%)`;
 
-      document.documentElement.style.setProperty(
-        '--turath-reveal-x',
-        `${currentX}px`
-      );
-
-      document.documentElement.style.setProperty(
-        '--turath-reveal-y',
-        `${currentY}px`
-      );
-
-      animationFrame = requestAnimationFrame(animate);
+      requestAnimationFrame(animate);
     }
 
     function handlePointerMove(event) {
       mouseX = event.clientX;
       mouseY = event.clientY;
 
-      updateMode(event.target);
-
       const hoveredElement = event.target instanceof Element
-        ? event.target.closest('a, button, input, textarea, select, [role="button"]')
+        ? event.target.closest('a, button')
         : null;
 
       cursor.classList.toggle('is-hovering', Boolean(hoveredElement));
     }
 
-    function handlePointerLeave() {
-      cursor.classList.remove('cursor-background-mode', 'is-hovering');
-      document.documentElement.classList.remove('turath-cursor-active');
-    }
-
     window.addEventListener('pointermove', handlePointerMove);
-    document.addEventListener('pointerleave', handlePointerLeave);
-    window.addEventListener('blur', handlePointerLeave);
 
-    cancelAnimationFrame(animationFrame);
-    animationFrame = requestAnimationFrame(animate);
-
-    document.addEventListener('astro:before-swap', () => {
-      cancelAnimationFrame(animationFrame);
-      window.removeEventListener('pointermove', handlePointerMove);
-      document.removeEventListener('pointerleave', handlePointerLeave);
-      window.removeEventListener('blur', handlePointerLeave);
-    }, { once: true });
+    requestAnimationFrame(animate);
   }
 
   initLiquidCursor();
