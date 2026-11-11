@@ -7,11 +7,16 @@ import { ClientRouter } from 'astro:transitions';
 
 const allPosts = await getCollection('blog');
 
-const pinnedPosts = allPosts
+// Exclude PR0CRASTN8 from the general blog listing
+const visiblePosts = allPosts.filter(
+  (post) => !post.slug.includes('pr0crastn8-finding-his-own-lane')
+);
+
+const pinnedPosts = visiblePosts
   .filter((post) => post.data.pinned)
   .sort((a, b) => (b.data.pubDate?.valueOf() || 0) - (a.data.pubDate?.valueOf() || 0));
 
-const otherPosts = allPosts
+const otherPosts = visiblePosts
   .filter((post) => !post.data.pinned)
   .sort((a, b) => (b.data.pubDate?.valueOf() || 0) - (a.data.pubDate?.valueOf() || 0));
 
@@ -57,7 +62,15 @@ const postsWithThumbs = posts.map((post) => {
                 <img src={post.firstImage} alt={post.data.title} class="post-thumbnail" />
               )}
               <h3>{post.data.title}</h3>
-              <p class="post-date">{post.data.pubDate ? post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : ''}</p>
+              <p class="post-date">
+                {post.data.pubDate
+                  ? post.data.pubDate.toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })
+                  : ''}
+              </p>
               <p>{post.data.description}</p>
             </a>
           </li>
