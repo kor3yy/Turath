@@ -1,11 +1,12 @@
 
 ---
-import TurathIntro from '../components/TurathIntro.astro';
 import { getCollection } from 'astro:content';
 import '../styles/global.css';
 import BackgroundPhotoFlash from '../components/backgroundphotoflash.astro';
 import { ClientRouter } from 'astro:transitions';
+import TurathIntro from '../components/TurathIntro.astro';
 import TurathInteractions from '../components/TurathInteractions.astro';
+import TurathConstellation from '../components/TurathConstellation.astro';
 
 const allPosts = await getCollection('blog');
 
@@ -63,7 +64,10 @@ const latestArticle = allPosts
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta name="description" content="Turath — heritage, culture, art, expression, and the people behind them." />
+    <meta
+      name="description"
+      content="Turath — heritage, culture, art, expression, and the people behind them."
+    />
     <link rel="icon" type="image/png" href="/images/newfavicon.png" />
 
     <script is:inline>
@@ -112,109 +116,16 @@ const latestArticle = allPosts
         background-image: none;
       }
 
-      body.home header,
       body.home main,
       body.home footer {
         color: var(--page-text);
       }
 
-      /* Header */
-      body.home header {
-        position: relative;
-        z-index: 20;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 65px;
-        padding: 0 1.5rem;
-      }
-
-      .home-header-mark {
-        color: var(--page-text);
-        font-size: 0.7rem;
-        letter-spacing: 0.28em;
-        text-decoration: none;
-        opacity: 0.8;
-      }
-
-      /* Hero */
-      body.home .hero {
-        padding: 1.5rem 0.5rem 1rem;
-        text-align: center;
-        background: transparent;
-        border: none;
-        border-radius: 0;
-        box-shadow: none;
-      }
-
-      body.home .hero-logo {
-        position: relative;
-        width: clamp(180px, 35vw, 480px);
-        height: clamp(100px, 18vw, 220px);
-        max-width: 100%;
-        margin: 0 auto;
-      }
-
-      body.home .hero-logo__image {
-        position: absolute;
-        inset: 0;
-        display: block;
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        opacity: 0;
-        will-change: opacity;
-      }
-
-      body.home .hero-logo__image--first {
-        animation: hero-logo-first 4s ease-in-out infinite;
-      }
-
-      body.home .hero-logo__image--second {
-        animation: hero-logo-second 4s ease-in-out infinite;
-      }
-
-      @keyframes hero-logo-first {
-        0%, 35% { opacity: 1; }
-        50%, 85% { opacity: 0; }
-        100% { opacity: 1; }
-      }
-
-      @keyframes hero-logo-second {
-        0%, 35% { opacity: 0; }
-        50%, 85% { opacity: 1; }
-        100% { opacity: 0; }
-      }
-
-      /* Main introduction */
       .home-introduction {
         width: min(760px, calc(100% - 3rem));
         margin: 0 auto 5rem;
+        padding-top: 2rem;
         text-align: center;
-      }
-
-      .home-introduction .intro-eyebrow {
-        margin: 0 0 1.2rem;
-        color: var(--muted);
-        font-size: 0.68rem;
-        letter-spacing: 0.25em;
-        text-transform: uppercase;
-      }
-
-      .home-introduction h1 {
-        margin: 0 auto 1.5rem;
-        font-size: clamp(2rem, 5vw, 3.8rem);
-        line-height: 1.1;
-        letter-spacing: -0.055em;
-        font-weight: 500;
-      }
-
-      .home-introduction .intro-lead {
-        max-width: 650px;
-        margin: 0 auto 1.5rem;
-        color: var(--muted);
-        font-size: clamp(0.95rem, 2vw, 1.08rem);
-        line-height: 1.8;
       }
 
       .home-introduction-details {
@@ -239,304 +150,6 @@ const latestArticle = allPosts
         font-weight: 600;
       }
 
-      /* Left-side expandable navigation */
-      .archive-navigation {
-        position: fixed;
-        z-index: 50;
-        top: 50%;
-        left: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 0.65rem;
-        transform: translateY(-50%);
-        padding: 0.7rem 0.65rem 0.7rem 0;
-        pointer-events: none;
-      }
-
-      .archive-nav-item {
-        position: relative;
-        width: 58px;
-        pointer-events: auto;
-      }
-
-      .archive-nav-trigger {
-        position: relative;
-        display: flex;
-        align-items: center;
-        width: 58px;
-        min-height: 76px;
-        padding: 0.8rem 0.7rem;
-        overflow: hidden;
-        border: 1px solid var(--border-color);
-        border-left: 0;
-        border-radius: 0 9px 9px 0;
-        background: var(--surface-bg);
-        color: var(--page-text);
-        cursor: pointer;
-        text-align: left;
-        transition:
-          width 450ms cubic-bezier(.2, .8, .2, 1),
-          background 250ms ease,
-          border-color 250ms ease;
-      }
-
-      .archive-nav-trigger:hover,
-      .archive-nav-item.is-open .archive-nav-trigger {
-        width: 230px;
-        border-color: var(--page-text);
-        background: var(--page-bg);
-      }
-
-      .archive-nav-number {
-        flex: 0 0 30px;
-        color: var(--muted);
-        font-size: 0.65rem;
-        letter-spacing: 0.1em;
-      }
-
-      .archive-nav-title {
-        display: block;
-        white-space: nowrap;
-        font-size: 0.72rem;
-        font-weight: 600;
-        letter-spacing: 0.13em;
-        opacity: 0;
-        transform: translateX(-8px);
-        transition:
-          opacity 250ms ease,
-          transform 350ms ease;
-      }
-
-      .archive-nav-trigger:hover .archive-nav-title,
-      .archive-nav-item.is-open .archive-nav-title {
-        opacity: 1;
-        transform: translateX(0);
-      }
-
-      .archive-nav-panel {
-        position: absolute;
-        top: 0;
-        left: calc(100% + 12px);
-        width: min(520px, calc(100vw - 105px));
-        max-height: min(72vh, 650px);
-        padding: 1.3rem;
-        overflow-y: auto;
-        border: 1px solid var(--border-color);
-        border-radius: 12px;
-        background: var(--surface-bg);
-        color: var(--page-text);
-        box-shadow: 0 18px 55px rgb(0 0 0 / 18%);
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-        transform: translateX(-12px);
-        transition:
-          opacity 250ms ease,
-          transform 350ms ease,
-          visibility 250ms ease;
-      }
-
-      .archive-nav-item:hover .archive-nav-panel,
-      .archive-nav-item:focus-within .archive-nav-panel,
-      .archive-nav-item.is-open .archive-nav-panel {
-        opacity: 1;
-        visibility: visible;
-        pointer-events: auto;
-        transform: translateX(0);
-      }
-
-      .panel-eyebrow {
-        margin: 0 0 0.55rem;
-        color: var(--muted);
-        font-size: 0.64rem;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-      }
-
-      .archive-nav-panel h2 {
-        margin: 0 0 0.5rem;
-        font-size: clamp(1.5rem, 4vw, 2.1rem);
-        letter-spacing: -0.045em;
-      }
-
-      .panel-description {
-        margin: 0 0 1.2rem;
-        color: var(--muted);
-        font-size: 0.82rem;
-        line-height: 1.6;
-      }
-
-      .panel-feature-image {
-        display: block;
-        width: 100%;
-        max-height: 210px;
-        margin: 0 0 1rem;
-        border-radius: 7px;
-        object-fit: cover;
-      }
-
-      .panel-feature-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.65rem 0.9rem;
-        border: 1px solid var(--border-color);
-        border-radius: 999px;
-        color: var(--page-text);
-        font-size: 0.75rem;
-        text-decoration: none;
-        transition: border-color 200ms ease, transform 200ms ease;
-      }
-
-      .panel-feature-link:hover {
-        border-color: var(--page-text);
-        transform: translateX(3px);
-      }
-
-      .panel-article-list {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 0.75rem;
-      }
-
-      .panel-article {
-        display: flex;
-        min-width: 0;
-        flex-direction: column;
-        overflow: hidden;
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        color: var(--page-text);
-        background: var(--page-bg);
-        text-decoration: none;
-        transition:
-          transform 250ms ease,
-          border-color 250ms ease;
-      }
-
-      .panel-article:hover {
-        transform: translateY(-4px);
-        border-color: var(--page-text);
-      }
-
-      .panel-article img {
-        display: block;
-        width: 100%;
-        height: 125px;
-        object-fit: cover;
-        transition: transform 500ms ease;
-      }
-
-      .panel-article:hover img {
-        transform: scale(1.05);
-      }
-
-      .panel-article-copy {
-        padding: 0.75rem;
-      }
-
-      .panel-article-copy h3 {
-        margin: 0 0 0.4rem;
-        font-size: 0.82rem;
-        line-height: 1.35;
-      }
-
-      .panel-article-copy p {
-        margin: 0;
-        color: var(--muted);
-        font-size: 0.7rem;
-        line-height: 1.5;
-      }
-
-      .panel-empty {
-        color: var(--muted);
-        font-size: 0.8rem;
-      }
-
-      /* Latest article */
-      .latest-article-section {
-        width: min(850px, calc(100% - 3rem));
-        margin: 0 auto 5rem;
-      }
-
-      .latest-article-heading {
-        margin-bottom: 1rem;
-      }
-
-      .latest-article-heading .eyebrow {
-        margin: 0 0 0.45rem;
-        color: var(--muted);
-        font-size: 0.65rem;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-      }
-
-      .latest-article-heading h2 {
-        margin: 0;
-        font-size: clamp(1.5rem, 4vw, 2.2rem);
-        letter-spacing: -0.04em;
-      }
-
-      .latest-article-card {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        min-height: 230px;
-        overflow: hidden;
-        border: 1px solid var(--border-color);
-        border-radius: 10px;
-        background: var(--surface-bg);
-        color: var(--page-text);
-        text-decoration: none;
-        transition: transform 250ms ease, border-color 250ms ease;
-      }
-
-      .latest-article-card:hover {
-        transform: translateY(-4px);
-        border-color: var(--page-text);
-      }
-
-      .latest-article-image {
-        display: block;
-        width: 100%;
-        height: 100%;
-        min-height: 230px;
-        object-fit: cover;
-      }
-
-      .latest-article-copy {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        padding: 1.5rem;
-      }
-
-      .latest-article-copy .eyebrow {
-        margin: 0 0 0.5rem;
-        color: var(--muted);
-        font-size: 0.65rem;
-        letter-spacing: 0.15em;
-        text-transform: uppercase;
-      }
-
-      .latest-article-copy h3 {
-        margin: 0 0 0.65rem;
-        font-size: clamp(1.1rem, 3vw, 1.7rem);
-        line-height: 1.25;
-      }
-
-      .latest-article-copy p:not(.eyebrow) {
-        margin: 0;
-        color: var(--muted);
-        font-size: 0.82rem;
-        line-height: 1.6;
-      }
-
-      .latest-article-copy span {
-        margin-top: 1rem;
-        font-size: 0.75rem;
-        letter-spacing: 0.08em;
-      }
-
       body.home footer {
         padding: 1.5rem;
         color: var(--muted);
@@ -545,101 +158,9 @@ const latestArticle = allPosts
       }
 
       @media (max-width: 650px) {
-        body.home header {
-          min-height: 52px;
-        }
-
-        body.home .hero {
-          padding-top: 1rem;
-        }
-
-        body.home .home-introduction {
+        .home-introduction {
           width: calc(100% - 2rem);
           margin-bottom: 3.5rem;
-        }
-
-        .archive-navigation {
-          top: auto;
-          right: 0;
-          bottom: 0;
-          left: 0;
-          flex-direction: row;
-          justify-content: center;
-          gap: 0.4rem;
-          padding: 0.5rem;
-          transform: none;
-          background: var(--page-bg);
-          border-top: 1px solid var(--border-color);
-        }
-
-        .archive-nav-item {
-          flex: 1;
-          width: auto;
-          max-width: 150px;
-        }
-
-        .archive-nav-trigger,
-        .archive-nav-trigger:hover,
-        .archive-nav-item.is-open .archive-nav-trigger {
-          justify-content: center;
-          width: 100%;
-          min-height: 48px;
-          padding: 0.55rem 0.35rem;
-          border: 1px solid var(--border-color);
-          border-radius: 7px;
-        }
-
-        .archive-nav-number {
-          display: none;
-        }
-
-        .archive-nav-title {
-          font-size: 0.58rem;
-          letter-spacing: 0.07em;
-          opacity: 1;
-          transform: none;
-        }
-
-        .archive-nav-panel {
-          position: fixed;
-          top: auto;
-          right: 0.65rem;
-          bottom: 62px;
-          left: 0.65rem;
-          width: auto;
-          max-height: 65vh;
-          transform: translateY(10px);
-        }
-
-        .archive-nav-item:hover .archive-nav-panel,
-        .archive-nav-item:focus-within .archive-nav-panel,
-        .archive-nav-item.is-open .archive-nav-panel {
-          transform: translateY(0);
-        }
-
-        .panel-article-list {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
-        .panel-article img {
-          height: 100px;
-        }
-
-        .latest-article-section {
-          width: calc(100% - 2rem);
-        }
-
-        .latest-article-card {
-          grid-template-columns: 1fr;
-        }
-
-        .latest-article-image {
-          height: 190px;
-          min-height: 190px;
-        }
-
-        .latest-article-copy {
-          padding: 1.2rem;
         }
 
         body.home footer {
@@ -663,153 +184,15 @@ const latestArticle = allPosts
     <BackgroundPhotoFlash />
     <TurathIntro />
 
-    <nav class="archive-navigation" aria-label="Explore Turath">
-      <div class="archive-nav-item">
-        <button
-          class="archive-nav-trigger"
-          type="button"
-          aria-expanded="false"
-          aria-controls="acknowledgments-panel"
-        >
-          <span class="archive-nav-number">01</span>
-          <span class="archive-nav-title">ACKNOWLEDGMENTS</span>
-        </button>
-
-        <div class="archive-nav-panel" id="acknowledgments-panel">
-          <p class="panel-eyebrow">A personal dedication</p>
-          <h2>Acknowledgments</h2>
-          <p class="panel-description">
-            To the people, memories and lives that will forever be part of Turath.
-          </p>
-
-          {acknowledgments ? (
-            <>
-              {acknowledgments.data.thumbnail && (
-                <img
-                  class="panel-feature-image"
-                  src={acknowledgments.data.thumbnail}
-                  alt="Acknowledgments"
-                />
-              )}
-              <p class="panel-description">
-                {acknowledgments.data.description}
-              </p>
-              <a
-                class="panel-feature-link"
-                href={`/blog/${acknowledgments.slug}/`}
-              >
-                Read the dedication ↗
-              </a>
-            </>
-          ) : (
-            <p class="panel-empty">The acknowledgments article will appear here.</p>
-          )}
-        </div>
-      </div>
-
-      <div class="archive-nav-item">
-        <button
-          class="archive-nav-trigger"
-          type="button"
-          aria-expanded="false"
-          aria-controls="music-panel"
-        >
-          <span class="archive-nav-number">02</span>
-          <span class="archive-nav-title">MUSIC</span>
-        </button>
-
-        <div class="archive-nav-panel" id="music-panel">
-          <p class="panel-eyebrow">Sound & creative expression</p>
-          <h2>Music</h2>
-          <p class="panel-description">
-            Artists, sounds, perspectives and the stories behind the music.
-          </p>
-
-          {musicPosts.length > 0 ? (
-            <div class="panel-article-list">
-              {musicPosts.map((post) => (
-                <a class="panel-article" href={`/blog/${post.slug}/`}>
-                  {post.data.thumbnail && (
-                    <img
-                      src={post.data.thumbnail}
-                      alt=""
-                      loading="lazy"
-                    />
-                  )}
-                  <div class="panel-article-copy">
-                    <h3>{post.data.title}</h3>
-                    <p>{post.data.description}</p>
-                  </div>
-                </a>
-              ))}
-            </div>
-          ) : (
-            <p class="panel-empty">Music articles will appear here.</p>
-          )}
-        </div>
-      </div>
-
-      <div class="archive-nav-item">
-        <button
-          class="archive-nav-trigger"
-          type="button"
-          aria-expanded="false"
-          aria-controls="photography-panel"
-        >
-          <span class="archive-nav-number">03</span>
-          <span class="archive-nav-title">PHOTOGRAPHY</span>
-        </button>
-
-        <div class="archive-nav-panel" id="photography-panel">
-          <p class="panel-eyebrow">Images & perspectives</p>
-          <h2>Photography</h2>
-          <p class="panel-description">
-            Stories told through images, the people behind the lens and their perspectives.
-          </p>
-
-          {photographyPosts.length > 0 ? (
-            <div class="panel-article-list">
-              {photographyPosts.map((post) => (
-                <a class="panel-article" href={`/blog/${post.slug}/`}>
-                  {post.data.thumbnail && (
-                    <img
-                      src={post.data.thumbnail}
-                      alt=""
-                      loading="lazy"
-                    />
-                  )}
-                  <div class="panel-article-copy">
-                    <h3>{post.data.title}</h3>
-                    <p>{post.data.description}</p>
-                  </div>
-                </a>
-              ))}
-            </div>
-          ) : (
-            <p class="panel-empty">Photography articles will appear here.</p>
-          )}
-        </div>
-      </div>
-    </nav>
-
     <main>
-      <section class="hero">
-        <div class="hero-logo" aria-label="Turath">
-          <img
-            src="/images/newfavicon.png"
-            alt=""
-            class="hero-logo__image hero-logo__image--first"
-          />
-          <img
-            src="/images/newfavicon2.png"
-            alt=""
-            class="hero-logo__image hero-logo__image--second"
-          />
-        </div>
-      </section>
+      <TurathConstellation
+        acknowledgments={acknowledgments}
+        musicPosts={musicPosts}
+        photographyPosts={photographyPosts}
+        latestArticle={latestArticle}
+      />
 
       <section class="home-introduction" id="about">
-  
         <div class="home-introduction-details">
           <p>
             Turath (Arabic تُراث) literally means heritage, tradition, and culture.
@@ -877,35 +260,6 @@ const latestArticle = allPosts
           </p>
         </div>
       </section>
-
-      {latestArticle && (
-        <section class="latest-article-section">
-          <div class="latest-article-heading">
-            <p class="eyebrow">Fresh from Turath</p>
-            <h2>Latest article</h2>
-          </div>
-
-          <a
-            class="latest-article-card"
-            href={`/blog/${latestArticle.slug}/`}
-          >
-            {latestArticle.data.thumbnail && (
-              <img
-                class="latest-article-image"
-                src={latestArticle.data.thumbnail}
-                alt=""
-              />
-            )}
-
-            <div class="latest-article-copy">
-              <p class="eyebrow">Recently published</p>
-              <h3>{latestArticle.data.title}</h3>
-              <p>{latestArticle.data.description}</p>
-              <span>Read article →</span>
-            </div>
-          </a>
-        </section>
-      )}
     </main>
 
     <footer>
@@ -913,66 +267,5 @@ const latestArticle = allPosts
     </footer>
 
     <TurathInteractions />
-
-    <script>
-      function initializeArchiveNavigation() {
-        const items = Array.from(
-          document.querySelectorAll('.archive-nav-item')
-        );
-
-        if (!items.length) return;
-
-        items.forEach((item) => {
-          const button = item.querySelector('.archive-nav-trigger');
-
-          if (!button || button.dataset.initialized === 'true') return;
-          button.dataset.initialized = 'true';
-
-          button.addEventListener('click', () => {
-            const wasOpen = item.classList.contains('is-open');
-
-            items.forEach((other) => {
-              other.classList.remove('is-open');
-              other.querySelector('.archive-nav-trigger')
-                ?.setAttribute('aria-expanded', 'false');
-            });
-
-            if (!wasOpen) {
-              item.classList.add('is-open');
-              button.setAttribute('aria-expanded', 'true');
-            }
-          });
-        });
-
-        if (document.documentElement.dataset.archiveNavigationReady === 'true') {
-          return;
-        }
-
-        document.documentElement.dataset.archiveNavigationReady = 'true';
-
-        document.addEventListener('click', (event) => {
-          if (event.target.closest('.archive-nav-item')) return;
-
-          items.forEach((item) => {
-            item.classList.remove('is-open');
-            item.querySelector('.archive-nav-trigger')
-              ?.setAttribute('aria-expanded', 'false');
-          });
-        });
-
-        document.addEventListener('keydown', (event) => {
-          if (event.key !== 'Escape') return;
-
-          items.forEach((item) => {
-            item.classList.remove('is-open');
-            item.querySelector('.archive-nav-trigger')
-              ?.setAttribute('aria-expanded', 'false');
-          });
-        });
-      }
-
-      initializeArchiveNavigation();
-      document.addEventListener('astro:page-load', initializeArchiveNavigation);
-    </script>
   </body>
 </html>
