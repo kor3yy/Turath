@@ -7,7 +7,7 @@ const {
   latestArticle,
 } = Astro.props;
 
-const constellationData = [
+const archive = [
   {
     id: 'turath',
     title: 'TURATH',
@@ -48,28 +48,26 @@ const constellationData = [
     url: '#about',
     parent: '',
   },
-  ...(latestArticle
-    ? [{
-        id: 'latest',
-        title: 'LATEST ARTICLE',
-        description: latestArticle.data.title,
-        kind: 'feature',
-        url: `/blog/${latestArticle.slug}/`,
-        parent: '',
-      }]
-    : []),
-  ...musicPosts.map((post, index) => ({
-    id: `music-${index}`,
+  ...(latestArticle ? [{
+    id: 'latest',
+    title: 'LATEST ARTICLE',
+    description: latestArticle.data.title,
+    kind: 'feature',
+    url: `/blog/${latestArticle.slug}/`,
+    parent: '',
+  }] : []),
+  ...musicPosts.map((post, i) => ({
+    id: `music-${i}`,
     title: post.data.title,
-    description: post.data.description || 'Explore this story from the Turath music archive.',
+    description: post.data.description || 'A story from the Turath music archive.',
     kind: 'article',
     url: `/blog/${post.slug}/`,
     parent: 'music',
   })),
-  ...photographyPosts.map((post, index) => ({
-    id: `photography-${index}`,
+  ...photographyPosts.map((post, i) => ({
+    id: `photography-${i}`,
     title: post.data.title,
-    description: post.data.description || 'Explore this story from the Turath photography archive.',
+    description: post.data.description || 'A story from the Turath photography archive.',
     kind: 'article',
     url: `/blog/${post.slug}/`,
     parent: 'photography',
@@ -86,84 +84,59 @@ const constellationData = [
   </div>
 
   <div class="universe-search">
-    <span aria-hidden="true">⌕</span>
-    <input
-      id="universe-search-input"
-      type="search"
-      placeholder="Find an artist or story..."
-      aria-label="Search the Turath universe"
-    />
+    <span>⌕</span>
+    <input id="universe-search-input" type="search" placeholder="Find an artist or story..." aria-label="Search the archive" />
     <span id="universe-search-count"></span>
   </div>
 
   <div class="universe-loader" id="universe-loader">
-    <div class="loader-orbit">
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
+    <div class="loader-orbit"></div>
     <p>INITIALIZING THE UNIVERSE</p>
-    <span class="loader-subtitle">PREPARING THE TURATH ARCHIVE</span>
+    <span>PREPARING THE TURATH ARCHIVE</span>
   </div>
 
   <div class="universe-fallback" id="universe-fallback" hidden>
-    <p>THE ARCHIVE IS AVAILABLE</p>
+    <p>EXPLORE THE TURATH ARCHIVE</p>
     <div id="universe-fallback-links"></div>
   </div>
 
   <aside class="universe-detail" id="universe-detail" aria-live="polite">
-    <button
-      type="button"
-      class="universe-close"
-      id="universe-close"
-      aria-label="Close details"
-    >×</button>
-
+    <button type="button" id="universe-close" aria-label="Close details">×</button>
     <p id="universe-detail-eyebrow">DISCOVER TURATH</p>
     <h2 id="universe-detail-title">A world of stories.</h2>
-    <p id="universe-detail-description">
-      Explore the people, artists, images, and stories connected through Turath.
-    </p>
+    <p id="universe-detail-description">Explore the people, artists, images, and stories connected through Turath.</p>
     <div id="universe-detail-links"></div>
-    <a id="universe-detail-open" href="#" hidden>OPEN STORY ↗</a>
   </aside>
 
   <div class="universe-instructions">
-    <span><i></i> DRAG TO ROTATE</span>
-    <span><i></i> SCROLL TO ZOOM</span>
-    <span><i></i> SELECT A PLANET</span>
+    <span>DRAG TO ROTATE</span>
+    <span>SCROLL TO ZOOM</span>
+    <span>SELECT A PLANET</span>
   </div>
 
   <div class="universe-controls">
     <button type="button" id="universe-reset">RESET VIEW</button>
-    <span>3D ARCHIVE · 001</span>
   </div>
 </section>
 
 <style is:global>
   .turath-universe {
-    --universe-purple: #9b69ff;
-    --universe-pink: #e4a5ff;
-    --universe-blue: #8c9cff;
-
     position: relative;
     isolation: isolate;
     z-index: 3;
     width: 100%;
-    height: min(850px, calc(100svh - 65px));
+    height: min(880px, calc(100svh - 60px));
     min-height: 620px;
     overflow: hidden;
-    color: white;
+    color: #f3eaff;
     background:
-      radial-gradient(ellipse at 50% 48%, rgba(65, 25, 110, .24), transparent 53%),
-      radial-gradient(ellipse at 15% 80%, rgba(45, 20, 100, .15), transparent 50%);
+      radial-gradient(ellipse at 50% 50%, #241044 0%, #10051f 42%, #080311 78%, #05020b 100%);
   }
 
   .universe-canvas {
     position: absolute;
     inset: 0;
     z-index: 0;
-    overflow: hidden;
     cursor: grab;
     touch-action: none;
   }
@@ -187,9 +160,10 @@ const constellationData = [
     display: flex;
     justify-content: space-between;
     gap: 1rem;
+    color: #e7d6ff;
     font-size: .58rem;
     letter-spacing: .2em;
-    opacity: .72;
+    opacity: .75;
     pointer-events: none;
   }
 
@@ -203,9 +177,9 @@ const constellationData = [
     gap: 9px;
     width: min(270px, 36vw);
     padding: 10px 14px;
-    border: 1px solid rgba(190, 150, 255, .24);
+    border: 1px solid rgba(191,145,255,.3);
     border-radius: 30px;
-    background: rgba(13, 5, 29, .64);
+    background: rgba(12,4,27,.72);
     color: white;
     backdrop-filter: blur(18px);
   }
@@ -222,13 +196,13 @@ const constellationData = [
   }
 
   .universe-search input::placeholder {
-    color: rgba(255,255,255,.5);
+    color: rgba(255,255,255,.52);
   }
 
   #universe-search-count {
     white-space: nowrap;
+    color: #c9a5ff;
     font-size: .58rem;
-    color: #d2b8ff;
   }
 
   .universe-loader {
@@ -239,10 +213,10 @@ const constellationData = [
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 13px;
-    background: rgba(12, 4, 28, .28);
+    gap: 15px;
+    background: rgba(8,2,18,.35);
     backdrop-filter: blur(5px);
-    transition: opacity .6s ease, visibility .6s ease;
+    transition: opacity .8s ease, visibility .8s ease;
     pointer-events: none;
   }
 
@@ -252,65 +226,25 @@ const constellationData = [
   }
 
   .loader-orbit {
-    position: relative;
-    width: 48px;
-    height: 48px;
-    border: 1px solid rgba(179, 131, 255, .22);
+    width: 45px;
+    height: 45px;
+    border: 1px solid rgba(185,133,255,.3);
+    border-top-color: #d4aaff;
+    border-right-color: #8c4cff;
     border-radius: 50%;
-    animation: universe-spin 3s linear infinite;
+    box-shadow: 0 0 25px rgba(151,82,255,.3);
+    animation: universe-spin 2s linear infinite;
   }
 
-  .loader-orbit::before,
-  .loader-orbit::after {
-    position: absolute;
-    content: "";
-    border: 1px solid rgba(180, 130, 255, .5);
-    border-radius: 50%;
-  }
-
-  .loader-orbit::before {
-    inset: 7px -8px;
-    transform: rotate(55deg);
-  }
-
-  .loader-orbit::after {
-    inset: -8px 7px;
-    transform: rotate(-55deg);
-  }
-
-  .loader-orbit span {
-    position: absolute;
-    top: -3px;
-    left: 20px;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #d4a8ff;
-    box-shadow: 0 0 14px #a66cff;
-  }
-
-  .loader-orbit span:nth-child(2) {
-    top: 35px;
-    left: 0;
-    background: #9a8cff;
-  }
-
-  .loader-orbit span:nth-child(3) {
-    top: 15px;
-    left: 40px;
-    background: #e4a5ff;
-  }
-
-  .universe-loader p,
-  .universe-fallback > p {
-    margin: 8px 0 0;
+  .universe-loader p {
+    margin: 0;
     font-size: .65rem;
     letter-spacing: .22em;
   }
 
-  .loader-subtitle {
+  .universe-loader span {
     color: rgba(255,255,255,.5);
-    font-size: .53rem;
+    font-size: .52rem;
     letter-spacing: .17em;
   }
 
@@ -326,9 +260,7 @@ const constellationData = [
     text-align: center;
   }
 
-  .universe-fallback[hidden] {
-    display: none;
-  }
+  .universe-fallback[hidden] { display: none; }
 
   #universe-fallback-links {
     display: flex;
@@ -345,7 +277,6 @@ const constellationData = [
     color: white;
     font-size: .7rem;
     text-decoration: none;
-    background: rgba(40,20,70,.5);
   }
 
   .universe-detail {
@@ -357,25 +288,25 @@ const constellationData = [
     max-height: 65%;
     overflow-y: auto;
     padding: 26px;
-    border: 1px solid rgba(188,150,255,.28);
+    border: 1px solid rgba(188,150,255,.3);
     border-radius: 13px;
-    background: rgba(12, 5, 29, .82);
+    background: rgba(12,5,29,.86);
     color: white;
     backdrop-filter: blur(22px);
-    box-shadow: 0 15px 70px rgba(0,0,0,.35), 0 0 35px rgba(112,63,190,.12);
+    box-shadow: 0 15px 70px rgba(0,0,0,.4), 0 0 35px rgba(112,63,190,.15);
     opacity: 0;
     visibility: hidden;
-    transform: translate(15px, -45%);
-    transition: opacity .3s ease, transform .3s ease, visibility .3s ease;
+    transform: translate(15px,-45%);
+    transition: opacity .35s ease, transform .35s ease, visibility .35s ease;
   }
 
   .universe-detail.is-open {
     opacity: 1;
     visibility: visible;
-    transform: translate(0, -45%);
+    transform: translate(0,-45%);
   }
 
-  .universe-close {
+  #universe-close {
     position: absolute;
     top: 9px;
     right: 13px;
@@ -397,12 +328,11 @@ const constellationData = [
     margin: 0 0 12px;
     font-size: 1.6rem;
     line-height: 1.15;
-    letter-spacing: -.04em;
   }
 
   #universe-detail-description {
     margin: 0;
-    color: rgba(255,255,255,.7);
+    color: rgba(255,255,255,.72);
     font-size: .82rem;
     line-height: 1.7;
   }
@@ -421,22 +351,7 @@ const constellationData = [
     text-decoration: none;
   }
 
-  #universe-detail-links a:hover {
-    color: #d2b4ff;
-  }
-
-  #universe-detail-open {
-    display: inline-block;
-    margin-top: 18px;
-    color: #d2b4ff;
-    font-size: .67rem;
-    letter-spacing: .14em;
-    text-decoration: none;
-  }
-
-  #universe-detail-open[hidden] {
-    display: none;
-  }
+  #universe-detail-links a:hover { color: #d2b4ff; }
 
   .universe-instructions {
     position: absolute;
@@ -446,24 +361,11 @@ const constellationData = [
     display: flex;
     flex-wrap: wrap;
     gap: 18px;
+    color: #e7d6ff;
     font-size: .55rem;
     letter-spacing: .13em;
-    opacity: .72;
+    opacity: .75;
     pointer-events: none;
-  }
-
-  .universe-instructions span {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-  }
-
-  .universe-instructions i {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: #bd8aff;
-    box-shadow: 0 0 8px #9b69ff;
   }
 
   .universe-controls {
@@ -471,22 +373,17 @@ const constellationData = [
     z-index: 4;
     right: 30px;
     bottom: 22px;
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    font-size: .56rem;
-    letter-spacing: .13em;
-    opacity: .75;
   }
 
   .universe-controls button {
     padding: 8px 12px;
-    border: 1px solid rgba(190,150,255,.28);
+    border: 1px solid rgba(190,150,255,.3);
     border-radius: 25px;
-    background: rgba(20,8,40,.55);
+    background: rgba(20,8,40,.65);
     color: white;
     font: inherit;
-    letter-spacing: inherit;
+    font-size: .56rem;
+    letter-spacing: .13em;
     cursor: pointer;
   }
 
@@ -504,14 +401,10 @@ const constellationData = [
       letter-spacing: .1em;
     }
 
-    .universe-heading span:last-child {
-      text-align: right;
-    }
-
     .universe-search {
       top: 48px;
       right: 15px;
-      width: min(240px, calc(100% - 30px));
+      width: min(240px,calc(100% - 30px));
     }
 
     .universe-detail {
@@ -524,9 +417,7 @@ const constellationData = [
       transform: translateY(12px);
     }
 
-    .universe-detail.is-open {
-      transform: translateY(0);
-    }
+    .universe-detail.is-open { transform: translateY(0); }
 
     .universe-instructions {
       bottom: 18px;
@@ -535,30 +426,19 @@ const constellationData = [
       font-size: .43rem;
     }
 
-    .universe-instructions span {
-      gap: 4px;
-    }
-
     .universe-controls {
       right: 12px;
       bottom: 14px;
-      font-size: .45rem;
-    }
-
-    .universe-controls span {
-      display: none;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .loader-orbit {
-      animation: none;
-    }
+    .loader-orbit { animation: none; }
   }
 </style>
 
-<script is:inline type="module" define:vars={{ constellationData }}>
-  let activeCleanup = null;
+<script is:inline type="module" define:vars={{ archive }}>
+  let cleanupUniverse = null;
 
   async function initializeUniverse() {
     const section = document.querySelector('.turath-universe');
@@ -566,7 +446,7 @@ const constellationData = [
 
     section.dataset.initialized = 'true';
 
-    const canvasHost = section.querySelector('#universe-canvas');
+    const host = section.querySelector('#universe-canvas');
     const loader = section.querySelector('#universe-loader');
     const fallback = section.querySelector('#universe-fallback');
     const fallbackLinks = section.querySelector('#universe-fallback-links');
@@ -577,49 +457,49 @@ const constellationData = [
     const detailDescription = section.querySelector('#universe-detail-description');
     const detailEyebrow = section.querySelector('#universe-detail-eyebrow');
     const detailLinks = section.querySelector('#universe-detail-links');
-    const detailOpen = section.querySelector('#universe-detail-open');
 
     const hideLoader = () => loader?.classList.add('is-hidden');
 
-    const showFallback = () => {
+    function showFallback() {
       hideLoader();
-      if (fallback) fallback.hidden = false;
+      if (!fallback) return;
+      fallback.hidden = false;
+      fallbackLinks.replaceChildren();
 
-      if (fallbackLinks) {
-        fallbackLinks.replaceChildren();
+      archive.forEach((item) => {
+        if (!item.url) return;
+        const a = document.createElement('a');
+        a.href = item.url;
+        a.textContent = item.title;
+        fallbackLinks.appendChild(a);
+      });
+    }
 
-        constellationData.forEach((item) => {
-          if (!item.url) return;
-          const link = document.createElement('a');
-          link.href = item.url;
-          link.textContent = item.title;
-          fallbackLinks.appendChild(link);
-        });
-      }
-    };
-
-    const timeout = new Promise((_, reject) => {
-      window.setTimeout(() => reject(new Error('3D engine loading timeout')), 12000);
-    });
+    let timeoutId;
 
     try {
       const THREE = await Promise.race([
         import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js'),
-        timeout,
+        new Promise((_, reject) => {
+          timeoutId = window.setTimeout(
+            () => reject(new Error('3D engine timeout')),
+            12000
+          );
+        }),
       ]);
 
+      clearTimeout(timeoutId);
       if (!section.isConnected) return;
 
       const scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0x10051f, 0.009);
+      scene.fog = new THREE.FogExp2(0x10051f, .0038);
 
       const camera = new THREE.PerspectiveCamera(
         48,
-        canvasHost.clientWidth / canvasHost.clientHeight,
-        0.1,
-        250
+        host.clientWidth / host.clientHeight,
+        .1,
+        300
       );
-
       camera.position.set(0, 1, 39);
 
       const renderer = new THREE.WebGLRenderer({
@@ -628,27 +508,701 @@ const constellationData = [
         powerPreference: 'high-performance',
       });
 
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.7));
-      renderer.setSize(canvasHost.clientWidth, canvasHost.clientHeight);
-      renderer.setClearColor(0x000000, 0);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+      renderer.setSize(host.clientWidth, host.clientHeight);
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.25;
+      renderer.toneMappingExposure = 1.3;
+      renderer.setClearColor(0x000000, 0);
+      host.replaceChildren(renderer.domElement);
 
-      canvasHost.replaceChildren(renderer.domElement);
+      const world = new THREE.Group();
+      scene.add(world);
 
-      const universe = new THREE.Group();
-      scene.add(universe);
+      const random = (min, max) => Math.random() * (max - min) + min;
+      const clamp = THREE.MathUtils.clamp;
 
-      const raycaster = new THREE.Raycaster();
-      raycaster.params.Points.threshold = 0.25;
+      const ambient = new THREE.AmbientLight(0x9877c5, 1.15);
+      scene.add(ambient);
 
-      const pointer = new THREE.Vector2();
+      const sunLight = new THREE.PointLight(0xd3a5ff, 190, 100, 1.5);
+      sunLight.position.set(0, 0, 0);
+      scene.add(sunLight);
+
+      const sideLight = new THREE.PointLight(0x754dff, 110, 85, 1.8);
+      sideLight.position.set(-18, 12, -8);
+      scene.add(sideLight);
+
+      const pinkLight = new THREE.PointLight(0xb65bff, 75, 80, 2);
+      pinkLight.position.set(16, -12, 7);
+      scene.add(pinkLight);
+
+      // Procedural glow texture, reused by all glowing objects.
+      function makeGlowTexture() {
+        const c = document.createElement('canvas');
+        c.width = c.height = 256;
+        const ctx = c.getContext('2d');
+        const g = ctx.createRadialGradient(128,128,0,128,128,128);
+        g.addColorStop(0,'rgba(255,255,255,1)');
+        g.addColorStop(.12,'rgba(220,180,255,.85)');
+        g.addColorStop(.35,'rgba(150,80,255,.3)');
+        g.addColorStop(1,'rgba(60,20,130,0)');
+        ctx.fillStyle = g;
+        ctx.fillRect(0,0,256,256);
+        return new THREE.CanvasTexture(c);
+      }
+
+      const glowTexture = makeGlowTexture();
+
+      function glow(color, size, opacity = .5) {
+        const sprite = new THREE.Sprite(new THREE.SpriteMaterial({
+          map: glowTexture,
+          color,
+          transparent: true,
+          opacity,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending,
+        }));
+        sprite.scale.set(size,size,1);
+        return sprite;
+      }
+
+      // Canvas-generated planetary surfaces.
+      function makePlanetTexture(type, base, accent, seed) {
+        const c = document.createElement('canvas');
+        c.width = 1024;
+        c.height = 512;
+        const ctx = c.getContext('2d');
+
+        let hash = seed * 9301 + 49297;
+        const rand = () => {
+          hash = (hash * 233 + 49297) % 233280;
+          return hash / 233280;
+        };
+
+        const gradient = ctx.createLinearGradient(0,0,0,512);
+        gradient.addColorStop(0, accent);
+        gradient.addColorStop(.5, base);
+        gradient.addColorStop(1, '#080416');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0,0,1024,512);
+
+        if (type === 'gas') {
+          for (let i = 0; i < 115; i++) {
+            const y = rand() * 512;
+            const h = random(2,12);
+            const alpha = random(.025,.18);
+            ctx.fillStyle = `rgba(235,205,255,${alpha})`;
+            ctx.fillRect(0,y,1024,h);
+          }
+
+          for (let i = 0; i < 45; i++) {
+            const y = rand() * 512;
+            ctx.beginPath();
+            ctx.ellipse(rand()*1024,y,random(20,110),random(2,9),0,0,Math.PI*2);
+            ctx.fillStyle = `rgba(35,8,75,${random(.08,.28)})`;
+            ctx.fill();
+          }
+
+          // Large atmospheric storm.
+          ctx.save();
+          ctx.translate(710,285);
+          ctx.scale(1.8,.75);
+          const storm = ctx.createRadialGradient(0,0,4,0,0,65);
+          storm.addColorStop(0,'rgba(255,205,255,.8)');
+          storm.addColorStop(.25,'rgba(181,90,255,.8)');
+          storm.addColorStop(.65,'rgba(75,27,140,.7)');
+          storm.addColorStop(1,'rgba(35,8,75,0)');
+          ctx.fillStyle = storm;
+          ctx.beginPath();
+          ctx.arc(0,0,65,0,Math.PI*2);
+          ctx.fill();
+          ctx.restore();
+        } else {
+          for (let i = 0; i < 2200; i++) {
+            const x = rand()*1024;
+            const y = rand()*512;
+            const r = random(.5,4);
+            ctx.beginPath();
+            ctx.arc(x,y,r,0,Math.PI*2);
+            ctx.fillStyle = rand() > .5
+              ? `rgba(210,175,255,${random(.05,.35)})`
+              : `rgba(15,4,38,${random(.1,.5)})`;
+            ctx.fill();
+          }
+
+          for (let i = 0; i < 75; i++) {
+            const x = rand()*1024;
+            const y = rand()*512;
+            ctx.beginPath();
+            ctx.arc(x,y,random(2,12),0,Math.PI*2);
+            ctx.fillStyle = 'rgba(12,4,30,.5)';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(210,175,255,.18)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+          }
+        }
+
+        // Fine surface noise.
+        for (let i = 0; i < 6000; i++) {
+          ctx.fillStyle = `rgba(255,255,255,${random(.01,.07)})`;
+          ctx.fillRect(rand()*1024,rand()*512,1,1);
+        }
+
+        const texture = new THREE.CanvasTexture(c);
+        texture.colorSpace = THREE.SRGBColorSpace;
+        texture.anisotropy = Math.min(renderer.capabilities.getMaxAnisotropy(), 4);
+        return texture;
+      }
+
+      // Animated translucent cloud maps.
+      function makeCloudTexture() {
+        const c = document.createElement('canvas');
+        c.width = 512;
+        c.height = 256;
+        const ctx = c.getContext('2d');
+
+        for (let i = 0; i < 1100; i++) {
+          const x = Math.random()*512;
+          const y = Math.random()*256;
+          const r = random(3,24);
+          const g = ctx.createRadialGradient(x,y,0,x,y,r);
+          g.addColorStop(0,`rgba(245,225,255,${random(.04,.25)})`);
+          g.addColorStop(1,'rgba(245,225,255,0)');
+          ctx.fillStyle = g;
+          ctx.fillRect(x-r,y-r,r*2,r*2);
+        }
+
+        const texture = new THREE.CanvasTexture(c);
+        texture.colorSpace = THREE.SRGBColorSpace;
+        return texture;
+      }
+
+      const cloudTexture = makeCloudTexture();
+
+      // Nebula clouds, using soft procedural glow sprites.
+      const nebulaColors = [0x5520a0,0x8538ce,0x332078,0x9d48bd,0x4a278e];
+
+      for (let i = 0; i < 24; i++) {
+        const n = glow(
+          nebulaColors[i % nebulaColors.length],
+          random(10,25),
+          random(.08,.2)
+        );
+        n.position.set(random(-35,35),random(-22,22),random(-35,-12));
+        world.add(n);
+      }
+
+      // Deep space stars, with varied sizes and colours.
+      const starPositions = [];
+      const starColors = [];
+      const starSizes = [];
+
+      const starPalette = [
+        new THREE.Color(0xffffff),
+        new THREE.Color(0xd5baff),
+        new THREE.Color(0x9c8cff),
+        new THREE.Color(0xe8baff),
+        new THREE.Color(0xaaaaff),
+      ];
+
+      for (let i = 0; i < 4200; i++) {
+        const radius = random(35,125);
+        const theta = random(0,Math.PI*2);
+        const phi = Math.acos(random(-1,1));
+
+        starPositions.push(
+          radius*Math.sin(phi)*Math.cos(theta),
+          radius*Math.sin(phi)*Math.sin(theta),
+          radius*Math.cos(phi)
+        );
+
+        const color = starPalette[Math.floor(Math.random()*starPalette.length)];
+        starColors.push(color.r,color.g,color.b);
+        starSizes.push(random(.4,1.8));
+      }
+
+      const starGeometry = new THREE.BufferGeometry();
+      starGeometry.setAttribute('position',new THREE.Float32BufferAttribute(starPositions,3));
+      starGeometry.setAttribute('color',new THREE.Float32BufferAttribute(starColors,3));
+
+      const stars = new THREE.Points(
+        starGeometry,
+        new THREE.PointsMaterial({
+          size: .13,
+          vertexColors: true,
+          transparent: true,
+          opacity: .95,
+          sizeAttenuation: true,
+          depthWrite: false,
+        })
+      );
+      world.add(stars);
+
+      // Fine foreground cosmic dust.
+      const dustPositions = [];
+      for (let i = 0; i < 900; i++) {
+        dustPositions.push(random(-30,30),random(-20,20),random(-18,18));
+      }
+
+      const dustGeometry = new THREE.BufferGeometry();
+      dustGeometry.setAttribute('position',new THREE.Float32BufferAttribute(dustPositions,3));
+
+      const dust = new THREE.Points(
+        dustGeometry,
+        new THREE.PointsMaterial({
+          color: 0xc4a0ff,
+          size: .045,
+          transparent: true,
+          opacity: .55,
+          depthWrite: false,
+        })
+      );
+      world.add(dust);
+
+      // Distant miniature planetary systems.
+      const backgroundPlanets = [];
+
+      const backgroundPlanetConfigs = [
+        {pos:[-25,13,-27],r:2.1,color:0x7651bd},
+        {pos:[24,15,-34],r:3.1,color:0x4b347d},
+        {pos:[-27,-13,-22],r:1.4,color:0x9874c7},
+        {pos:[28,-15,-31],r:2.2,color:0x5d3c96},
+        {pos:[4,22,-40],r:1.1,color:0x9773c5},
+      ];
+
+      backgroundPlanetConfigs.forEach((config,i) => {
+        const group = new THREE.Group();
+        group.position.set(...config.pos);
+        world.add(group);
+
+        const planet = new THREE.Mesh(
+          new THREE.SphereGeometry(config.r,32,32),
+          new THREE.MeshStandardMaterial({
+            color:config.color,
+            roughness:.85,
+            metalness:.12,
+            emissive:config.color,
+            emissiveIntensity:.12,
+          })
+        );
+        group.add(planet);
+        group.add(glow(config.color,config.r*4,.22));
+
+        if (i === 1 || i === 3) {
+          const ring = new THREE.Mesh(
+            new THREE.RingGeometry(config.r*1.4,config.r*2.1,64),
+            new THREE.MeshBasicMaterial({
+              color:0x9a72c9,
+              transparent:true,
+              opacity:.22,
+              side:THREE.DoubleSide,
+            })
+          );
+          ring.rotation.x = 1.1;
+          group.add(ring);
+        }
+
+        backgroundPlanets.push(group);
+      });
+
+      // Main archive solar system.
+      const sun = new THREE.Group();
+      world.add(sun);
+
+      const sunSphere = new THREE.Mesh(
+        new THREE.SphereGeometry(1.7,64,64),
+        new THREE.MeshStandardMaterial({
+          color:0xe8d9ff,
+          emissive:0x9a50ff,
+          emissiveIntensity:2.8,
+          roughness:.25,
+          metalness:.08,
+        })
+      );
+      sun.add(sunSphere);
+      sun.add(glow(0x9e54ff,10,.85));
+      sun.add(glow(0xd7aaff,5,.75));
+
+      const sunLabelCanvas = document.createElement('canvas');
+      sunLabelCanvas.width = 1024;
+      sunLabelCanvas.height = 160;
+      const sunCtx = sunLabelCanvas.getContext('2d');
+      sunCtx.font = '600 66px Arial';
+      sunCtx.textAlign = 'center';
+      sunCtx.textBaseline = 'middle';
+      sunCtx.fillStyle = '#eee0ff';
+      sunCtx.shadowColor = '#ad72ff';
+      sunCtx.shadowBlur = 22;
+      sunCtx.fillText('TURATH',512,80);
+
+      const sunLabel = new THREE.Sprite(new THREE.SpriteMaterial({
+        map:new THREE.CanvasTexture(sunLabelCanvas),
+        transparent:true,
+        depthWrite:false,
+      }));
+      sunLabel.scale.set(5.5,.9,1);
+      sunLabel.position.y = -3.2;
+      sun.add(sunLabel);
+
+      // Orbit tracks.
+      function orbitLine(radius,color,opacity,tilt=0) {
+        const points = [];
+        for (let i = 0; i <= 220; i++) {
+          const a = i/220*Math.PI*2;
+          points.push(new THREE.Vector3(
+            Math.cos(a)*radius,
+            Math.sin(a)*radius,
+            0
+          ));
+        }
+
+        const line = new THREE.LineLoop(
+          new THREE.BufferGeometry().setFromPoints(points),
+          new THREE.LineBasicMaterial({
+            color,
+            transparent:true,
+            opacity,
+            depthWrite:false,
+          })
+        );
+        line.rotation.x = tilt;
+        world.add(line);
+        return line;
+      }
+
+      orbitLine(8.5,0xa77be8,.22,.08);
+      orbitLine(13,0x9b70df,.18,.16);
+      orbitLine(18,0x9b70df,.13,-.1);
+      orbitLine(23,0x9b70df,.1,.2);
+
+      const objects = new Map();
       const clickable = [];
-      const nodeObjects = new Map();
-      const satelliteGroups = [];
+      const orbitGroups = [];
 
-      let animationFrame = 0;
+      function makeLabel(text) {
+        const c = document.createElement('canvas');
+        c.width = 1024;
+        c.height = 150;
+        const ctx = c.getContext('2d');
+        ctx.font = '600 42px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#f2eaff';
+        ctx.shadowColor = '#a879ff';
+        ctx.shadowBlur = 18;
+        ctx.fillText(text.toUpperCase(),512,75);
+
+        const texture = new THREE.CanvasTexture(c);
+        texture.colorSpace = THREE.SRGBColorSpace;
+
+        const sprite = new THREE.Sprite(new THREE.SpriteMaterial({
+          map:texture,
+          transparent:true,
+          depthWrite:false,
+        }));
+        sprite.scale.set(5.8,.85,1);
+        return sprite;
+      }
+
+      const planetSettings = {
+        acknowledgments: {
+          pos:[0,10,-1],radius:1.05,type:'rocky',
+          base:'#68448e',accent:'#c39bdf',glow:0xc48bff,
+        },
+        music: {
+          pos:[12,2,0],radius:1.5,type:'gas',
+          base:'#51327e',accent:'#bd8bdb',glow:0xb38aff,ring:true,
+        },
+        photography: {
+          pos:[-12,2,-1],radius:1.35,type:'rocky',
+          base:'#34346f',accent:'#a18be5',glow:0x8e9bff,ring:true,
+        },
+        about: {
+          pos:[0,-11,1],radius:1.05,type:'rocky',
+          base:'#684078',accent:'#c58fd2',glow:0xc59aff,
+        },
+        latest: {
+          pos:[0,0,-16],radius:.9,type:'gas',
+          base:'#70406f',accent:'#e4a1dc',glow:0xff9ce6,
+        },
+      };
+
+      function makePlanet(node,config) {
+        const group = new THREE.Group();
+        group.position.set(...config.pos);
+        world.add(group);
+
+        const texture = makePlanetTexture(
+          config.type,
+          config.base,
+          config.accent,
+          node.id.length*17
+        );
+
+        const planet = new THREE.Mesh(
+          new THREE.SphereGeometry(config.radius,64,64),
+          new THREE.MeshStandardMaterial({
+            map:texture,
+            roughness:config.type === 'gas' ? .75 : .92,
+            metalness:.06,
+            emissive:config.glow,
+            emissiveIntensity:.1,
+          })
+        );
+        group.add(planet);
+
+        // Moving transparent cloud shell.
+        const clouds = new THREE.Mesh(
+          new THREE.SphereGeometry(config.radius*1.012,48,48),
+          new THREE.MeshStandardMaterial({
+            map:cloudTexture,
+            transparent:true,
+            opacity:config.type === 'gas' ? .32 : .2,
+            depthWrite:false,
+            blending:THREE.AdditiveBlending,
+          })
+        );
+        group.add(clouds);
+
+        // Atmospheric limb.
+        const atmosphere = new THREE.Mesh(
+          new THREE.SphereGeometry(config.radius*1.13,48,48),
+          new THREE.MeshBasicMaterial({
+            color:config.glow,
+            transparent:true,
+            opacity:.13,
+            side:THREE.BackSide,
+            depthWrite:false,
+          })
+        );
+        group.add(atmosphere);
+
+        group.add(glow(config.glow,config.radius*5.5,.42));
+
+        if (config.ring) {
+          const ringTextureCanvas = document.createElement('canvas');
+          ringTextureCanvas.width = 512;
+          ringTextureCanvas.height = 64;
+          const ctx = ringTextureCanvas.getContext('2d');
+
+          const grad = ctx.createLinearGradient(0,0,0,64);
+          grad.addColorStop(0,'rgba(160,120,220,0)');
+          grad.addColorStop(.2,'rgba(210,180,255,.5)');
+          grad.addColorStop(.42,'rgba(100,65,160,.75)');
+          grad.addColorStop(.6,'rgba(220,190,255,.4)');
+          grad.addColorStop(1,'rgba(100,65,160,0)');
+          ctx.fillStyle = grad;
+          ctx.fillRect(0,0,512,64);
+
+          for (let i=0;i<300;i++) {
+            ctx.fillStyle = `rgba(255,255,255,${Math.random()*.2})`;
+            ctx.fillRect(Math.random()*512,Math.random()*64,1,1);
+          }
+
+          const ringTexture = new THREE.CanvasTexture(ringTextureCanvas);
+
+          const ring = new THREE.Mesh(
+            new THREE.RingGeometry(config.radius*1.45,config.radius*2.15,128),
+            new THREE.MeshBasicMaterial({
+              map:ringTexture,
+              color:config.glow,
+              side:THREE.DoubleSide,
+              transparent:true,
+              opacity:.75,
+              depthWrite:false,
+            })
+          );
+
+          ring.rotation.x = Math.PI*.36;
+          ring.rotation.y = .16;
+          group.add(ring);
+        }
+
+        const label = makeLabel(node.title);
+        label.position.y = -config.radius-1;
+        group.add(label);
+
+        planet.userData.node = node;
+        clickable.push(planet);
+        objects.set(node.id,{group,planet,clouds,label,texture});
+      }
+
+      archive.forEach((node) => {
+        const config = planetSettings[node.id];
+        if (config) makePlanet(node,config);
+      });
+
+      // Article moons around Music and Photography.
+      function addArticleMoons(parentId,color) {
+        const parent = objects.get(parentId);
+        if (!parent) return;
+
+        const articles = archive.filter((node) => node.parent === parentId);
+        if (!articles.length) return;
+
+        const orbit = new THREE.Group();
+        parent.group.add(orbit);
+
+        const radius = 3.2;
+        const points = [];
+
+        for (let i=0;i<=120;i++) {
+          const a = i/120*Math.PI*2;
+          points.push(new THREE.Vector3(
+            Math.cos(a)*radius,
+            Math.sin(a)*radius*.72,
+            0
+          ));
+        }
+
+        const track = new THREE.LineLoop(
+          new THREE.BufferGeometry().setFromPoints(points),
+          new THREE.LineBasicMaterial({
+            color,
+            transparent:true,
+            opacity:.32,
+          })
+        );
+        orbit.add(track);
+
+        articles.forEach((node,index) => {
+          const a = index/articles.length*Math.PI*2;
+          const moonGroup = new THREE.Group();
+          moonGroup.position.set(
+            Math.cos(a)*radius,
+            Math.sin(a)*radius*.72,
+            random(-.3,.3)
+          );
+          orbit.add(moonGroup);
+
+          const moon = new THREE.Mesh(
+            new THREE.SphereGeometry(.26,32,32),
+            new THREE.MeshStandardMaterial({
+              color,
+              emissive:color,
+              emissiveIntensity:1.1,
+              roughness:.55,
+            })
+          );
+          moonGroup.add(moon);
+          moonGroup.add(glow(color,1.25,.55));
+
+          const label = makeLabel(node.title);
+          label.scale.set(4.8,.65,1);
+          label.position.y = -.7;
+          moonGroup.add(label);
+
+          moon.userData.node = node;
+          clickable.push(moon);
+          objects.set(node.id,{group:moonGroup,planet:moon,label});
+        });
+
+        orbitGroups.push({
+          group:orbit,
+          speed:parentId === 'music' ? .045 : -.035,
+        });
+      }
+
+      addArticleMoons('music',0xb68aff);
+      addArticleMoons('photography',0x8daaff);
+
+      // Asteroid belt with thousands of small purple rocks.
+      const asteroidPositions = [];
+      const asteroidColors = [];
+
+      for (let i=0;i<1800;i++) {
+        const angle = random(0,Math.PI*2);
+        const radius = random(14.5,16.8);
+        const y = random(-.55,.55);
+
+        asteroidPositions.push(
+          Math.cos(angle)*radius,
+          y,
+          Math.sin(angle)*radius
+        );
+
+        const col = new THREE.Color(
+          [0x8060a9,0x49345f,0xb18acb,0x6d5b89][Math.floor(Math.random()*4)]
+        );
+        asteroidColors.push(col.r,col.g,col.b);
+      }
+
+      const asteroidGeometry = new THREE.BufferGeometry();
+      asteroidGeometry.setAttribute(
+        'position',
+        new THREE.Float32BufferAttribute(asteroidPositions,3)
+      );
+      asteroidGeometry.setAttribute(
+        'color',
+        new THREE.Float32BufferAttribute(asteroidColors,3)
+      );
+
+      const asteroidBelt = new THREE.Points(
+        asteroidGeometry,
+        new THREE.PointsMaterial({
+          size:.09,
+          vertexColors:true,
+          transparent:true,
+          opacity:.78,
+          sizeAttenuation:true,
+        })
+      );
+      world.add(asteroidBelt);
+
+      // Comets with glowing heads and fading tails.
+      const comets = [];
+
+      for (let i=0;i<3;i++) {
+        const comet = new THREE.Group();
+        const head = new THREE.Mesh(
+          new THREE.SphereGeometry(.13,20,20),
+          new THREE.MeshBasicMaterial({color:0xf0dfff})
+        );
+        comet.add(head);
+        comet.add(glow(0xb78aff,2.5,.9));
+
+        const tailGeometry = new THREE.BufferGeometry();
+        const tailPositions = new Float32Array([
+          0,0,0,
+          0,0,0,
+          0,0,0,
+          0,0,0,
+          0,0,0,
+          0,0,0,
+        ]);
+        tailGeometry.setAttribute(
+          'position',
+          new THREE.BufferAttribute(tailPositions,3)
+        );
+
+        const tail = new THREE.Line(
+          tailGeometry,
+          new THREE.LineBasicMaterial({
+            color:0xc9a0ff,
+            transparent:true,
+            opacity:.55,
+            blending:THREE.AdditiveBlending,
+          })
+        );
+        comet.add(tail);
+
+        world.add(comet);
+
+        comets.push({
+          group:comet,
+          tail,
+          angle:random(0,Math.PI*2),
+          radius:random(20,29),
+          speed:random(.025,.055)*(i%2 ? -1 : 1),
+          height:random(-9,9),
+        });
+      }
+
+      // Interaction and selection.
+      const raycaster = new THREE.Raycaster();
+      const pointer = new THREE.Vector2();
       let dragging = false;
       let moved = false;
       let previousX = 0;
@@ -656,493 +1210,19 @@ const constellationData = [
       let velocityX = 0;
       let velocityY = 0;
       let selectedId = null;
-      let disposed = false;
 
-      const random = (min, max) => Math.random() * (max - min) + min;
-
-      const createGlowTexture = () => {
-        const canvas = document.createElement('canvas');
-        canvas.width = 256;
-        canvas.height = 256;
-
-        const ctx = canvas.getContext('2d');
-        const gradient = ctx.createRadialGradient(128, 128, 0, 128, 128, 128);
-
-        gradient.addColorStop(0, 'rgba(255,255,255,1)');
-        gradient.addColorStop(.12, 'rgba(205,160,255,.8)');
-        gradient.addColorStop(.35, 'rgba(132,75,255,.28)');
-        gradient.addColorStop(1, 'rgba(70,30,150,0)');
-
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, 256, 256);
-
-        return new THREE.CanvasTexture(canvas);
-      };
-
-      const glowTexture = createGlowTexture();
-
-      const createGlow = (color, size, opacity = .5) => {
-        const material = new THREE.SpriteMaterial({
-          map: glowTexture,
-          color,
-          transparent: true,
-          opacity,
-          depthWrite: false,
-          blending: THREE.AdditiveBlending,
-        });
-
-        const sprite = new THREE.Sprite(material);
-        sprite.scale.set(size, size, 1);
-        return sprite;
-      };
-
-      const createLabel = (text, color = '#ffffff', size = 48) => {
-        const canvas = document.createElement('canvas');
-        canvas.width = 1024;
-        canvas.height = 160;
-
-        const ctx = canvas.getContext('2d');
-        ctx.font = `600 ${size}px Arial, sans-serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.shadowColor = color;
-        ctx.shadowBlur = 18;
-        ctx.fillStyle = color;
-        ctx.fillText(text.toUpperCase(), 512, 80);
-
-        const texture = new THREE.CanvasTexture(canvas);
-        texture.colorSpace = THREE.SRGBColorSpace;
-
-        const sprite = new THREE.Sprite(
-          new THREE.SpriteMaterial({
-            map: texture,
-            transparent: true,
-            depthWrite: false,
-          })
-        );
-
-        sprite.scale.set(5.5, .86, 1);
-        return sprite;
-      };
-
-      const ambient = new THREE.AmbientLight(0x8b6bb8, 1.3);
-      scene.add(ambient);
-
-      const centralLight = new THREE.PointLight(0xc69aff, 170, 75, 1.7);
-      centralLight.position.set(0, 0, 0);
-      scene.add(centralLight);
-
-      const blueLight = new THREE.PointLight(0x617cff, 75, 55, 2);
-      blueLight.position.set(-15, 9, -8);
-      scene.add(blueLight);
-
-      const pinkLight = new THREE.PointLight(0xe19aff, 65, 50, 2);
-      pinkLight.position.set(15, -9, 7);
-      scene.add(pinkLight);
-
-      // Nebula clouds.
-      const nebulaColors = [0x5923a8, 0x8a39cb, 0x312f9c, 0x9b4cae, 0x4a277e];
-
-      for (let i = 0; i < 13; i++) {
-        const nebula = createGlow(
-          nebulaColors[i % nebulaColors.length],
-          random(10, 23),
-          random(.09, .2)
-        );
-
-        nebula.position.set(
-          random(-23, 23),
-          random(-15, 15),
-          random(-20, -5)
-        );
-
-        universe.add(nebula);
+      function closePanel() {
+        detail.classList.remove('is-open');
+        selectedId = null;
       }
 
-      // Distant starfield.
-      const starPositions = [];
-      const starColors = [];
-      const starCount = 2600;
-
-      const palette = [
-        new THREE.Color(0xffffff),
-        new THREE.Color(0xc8a5ff),
-        new THREE.Color(0x8caaff),
-        new THREE.Color(0xf2c8ff),
-      ];
-
-      for (let i = 0; i < starCount; i++) {
-        const radius = random(24, 95);
-        const theta = random(0, Math.PI * 2);
-        const phi = Math.acos(random(-1, 1));
-
-        starPositions.push(
-          radius * Math.sin(phi) * Math.cos(theta),
-          radius * Math.sin(phi) * Math.sin(theta),
-          radius * Math.cos(phi)
-        );
-
-        const color = palette[Math.floor(Math.random() * palette.length)];
-        starColors.push(color.r, color.g, color.b);
-      }
-
-      const starGeometry = new THREE.BufferGeometry();
-      starGeometry.setAttribute(
-        'position',
-        new THREE.Float32BufferAttribute(starPositions, 3)
-      );
-      starGeometry.setAttribute(
-        'color',
-        new THREE.Float32BufferAttribute(starColors, 3)
-      );
-
-      const starMaterial = new THREE.PointsMaterial({
-        size: .12,
-        vertexColors: true,
-        transparent: true,
-        opacity: .92,
-        sizeAttenuation: true,
-        depthWrite: false,
-      });
-
-      const stars = new THREE.Points(starGeometry, starMaterial);
-      universe.add(stars);
-
-      // Smaller foreground particles.
-      const dustPositions = [];
-
-      for (let i = 0; i < 650; i++) {
-        dustPositions.push(
-          random(-25, 25),
-          random(-17, 17),
-          random(-12, 12)
-        );
-      }
-
-      const dustGeometry = new THREE.BufferGeometry();
-      dustGeometry.setAttribute(
-        'position',
-        new THREE.Float32BufferAttribute(dustPositions, 3)
-      );
-
-      const dust = new THREE.Points(
-        dustGeometry,
-        new THREE.PointsMaterial({
-          color: 0xc5a0ff,
-          size: .045,
-          transparent: true,
-          opacity: .65,
-          depthWrite: false,
-        })
-      );
-
-      universe.add(dust);
-
-      // Main orbital system.
-      const center = new THREE.Group();
-      universe.add(center);
-
-      // Central Turath star.
-      const sun = new THREE.Mesh(
-        new THREE.SphereGeometry(1.75, 64, 64),
-        new THREE.MeshStandardMaterial({
-          color: 0xe8d5ff,
-          emissive: 0x9b55ff,
-          emissiveIntensity: 2.4,
-          roughness: .24,
-          metalness: .12,
-        })
-      );
-
-      center.add(sun);
-      sun.add(createGlow(0x9e54ff, 9, .85));
-      sun.add(createGlow(0xd7aaff, 5, .75));
-
-      const sunLabel = createLabel('TURATH', '#e7d6ff', 66);
-      sunLabel.position.set(0, -3.2, 0);
-      center.add(sunLabel);
-
-      const createOrbit = (radius, color = 0x8e65d6, opacity = .25, parent = universe) => {
-        const points = [];
-
-        for (let i = 0; i <= 180; i++) {
-          const angle = (i / 180) * Math.PI * 2;
-          points.push(
-            new THREE.Vector3(
-              Math.cos(angle) * radius,
-              Math.sin(angle) * radius,
-              0
-            )
-          );
-        }
-
-        const geometry = new THREE.BufferGeometry().setFromPoints(points);
-        const line = new THREE.LineLoop(
-          geometry,
-          new THREE.LineBasicMaterial({
-            color,
-            transparent: true,
-            opacity,
-            depthWrite: false,
-          })
-        );
-
-        parent.add(line);
-        return line;
-      };
-
-      createOrbit(8.5, 0x9d70db, .19);
-      createOrbit(13, 0x9d70db, .16);
-      createOrbit(18, 0x9d70db, .12);
-      createOrbit(23, 0x9d70db, .09);
-
-      const planetConfigs = {
-        acknowledgments: {
-          position: [0, 10, -1],
-          radius: 1.05,
-          color: 0xe0aaff,
-          emissive: 0x8e36bd,
-          glow: 0xc57cff,
-        },
-        music: {
-          position: [12, 2, 0],
-          radius: 1.5,
-          color: 0x9671ff,
-          emissive: 0x392078,
-          glow: 0x9b69ff,
-          ring: true,
-        },
-        photography: {
-          position: [-12, 2, -1],
-          radius: 1.35,
-          color: 0x83aaff,
-          emissive: 0x203b91,
-          glow: 0x779dff,
-          ring: true,
-        },
-        about: {
-          position: [0, -11, 1],
-          radius: 1.05,
-          color: 0xc4a0e8,
-          emissive: 0x643e91,
-          glow: 0xc59aff,
-        },
-        latest: {
-          position: [0, 0, -16],
-          radius: .9,
-          color: 0xffc5ed,
-          emissive: 0x8b387e,
-          glow: 0xff9ce6,
-        },
-      };
-
-      const makePlanet = (config, node) => {
-        const group = new THREE.Group();
-
-        group.position.set(...config.position);
-        universe.add(group);
-
-        const geometry = new THREE.SphereGeometry(config.radius, 48, 48);
-
-        const material = new THREE.MeshStandardMaterial({
-          color: config.color,
-          emissive: config.emissive,
-          emissiveIntensity: .65,
-          roughness: .65,
-          metalness: .18,
-        });
-
-        const planet = new THREE.Mesh(geometry, material);
-        group.add(planet);
-
-        const atmosphere = new THREE.Mesh(
-          new THREE.SphereGeometry(config.radius * 1.12, 48, 48),
-          new THREE.MeshBasicMaterial({
-            color: config.glow,
-            transparent: true,
-            opacity: .11,
-            side: THREE.BackSide,
-          })
-        );
-
-        group.add(atmosphere);
-        group.add(createGlow(config.glow, config.radius * 5.5, .45));
-
-        if (config.ring) {
-          const ring = new THREE.Mesh(
-            new THREE.RingGeometry(config.radius * 1.45, config.radius * 2.05, 96),
-            new THREE.MeshBasicMaterial({
-              color: config.glow,
-              side: THREE.DoubleSide,
-              transparent: true,
-              opacity: .42,
-            })
-          );
-
-          ring.rotation.x = Math.PI * .34;
-          ring.rotation.y = .22;
-          group.add(ring);
-        }
-
-        const label = createLabel(node.title, '#eee0ff', 43);
-        label.position.y = -config.radius - .95;
-        group.add(label);
-
-        planet.userData.node = node;
-        clickable.push(planet);
-        nodeObjects.set(node.id, { group, planet, label });
-
-        return group;
-      };
-
-      const nodesById = new Map(constellationData.map((node) => [node.id, node]));
-
-      Object.entries(planetConfigs).forEach(([id, config]) => {
-        const node = nodesById.get(id);
-        if (node) makePlanet(config, node);
-      });
-
-      // Article satellites orbit their category planets.
-      const addSatellites = (parentId, color) => {
-        const parent = nodeObjects.get(parentId);
-        if (!parent) return;
-
-        const articles = constellationData.filter((node) => node.parent === parentId);
-        if (!articles.length) return;
-
-        const orbitGroup = new THREE.Group();
-        parent.group.add(orbitGroup);
-
-        const orbitRadius = 3.1;
-
-        const orbitPoints = [];
-
-        for (let i = 0; i <= 120; i++) {
-          const angle = (i / 120) * Math.PI * 2;
-          orbitPoints.push(
-            new THREE.Vector3(
-              Math.cos(angle) * orbitRadius,
-              Math.sin(angle) * orbitRadius * .72,
-              0
-            )
-          );
-        }
-
-        const orbitLine = new THREE.LineLoop(
-          new THREE.BufferGeometry().setFromPoints(orbitPoints),
-          new THREE.LineBasicMaterial({
-            color,
-            transparent: true,
-            opacity: .28,
-          })
-        );
-
-        orbitGroup.add(orbitLine);
-
-        articles.forEach((node, index) => {
-          const angle = (index / articles.length) * Math.PI * 2;
-          const moonGroup = new THREE.Group();
-
-          moonGroup.position.set(
-            Math.cos(angle) * orbitRadius,
-            Math.sin(angle) * orbitRadius * .72,
-            random(-.35, .35)
-          );
-
-          orbitGroup.add(moonGroup);
-
-          const moon = new THREE.Mesh(
-            new THREE.SphereGeometry(.27, 24, 24),
-            new THREE.MeshStandardMaterial({
-              color,
-              emissive: color,
-              emissiveIntensity: 1.5,
-              roughness: .4,
-            })
-          );
-
-          moonGroup.add(moon);
-          moon.add(createGlow(color, 1.45, .7));
-
-          const label = createLabel(node.title, '#ffffff', 29);
-          label.position.y = -.68;
-          label.scale.set(4.4, .58, 1);
-          moonGroup.add(label);
-
-          moon.userData.node = node;
-          clickable.push(moon);
-          nodeObjects.set(node.id, { group: moonGroup, planet: moon, label });
-
-          satelliteGroups.push({
-            group: orbitGroup,
-            speed: parentId === 'music' ? .055 : -.045,
-          });
-        });
-      };
-
-      addSatellites('music', 0xb68aff);
-      addSatellites('photography', 0x8daaff);
-
-      // Extra small moons and distant orbiting objects.
-      for (let i = 0; i < 24; i++) {
-        const orbit = new THREE.Group();
-        orbit.position.set(0, 0, random(-8, 8));
-
-        const radius = random(8, 21);
-        const angle = random(0, Math.PI * 2);
-
-        const moon = new THREE.Mesh(
-          new THREE.SphereGeometry(random(.025, .09), 8, 8),
-          new THREE.MeshBasicMaterial({
-            color: palette[Math.floor(Math.random() * palette.length)],
-          })
-        );
-
-        moon.position.set(Math.cos(angle) * radius, Math.sin(angle) * radius, 0);
-        orbit.add(moon);
-        universe.add(orbit);
-
-        satelliteGroups.push({
-          group: orbit,
-          speed: random(-.12, .12),
-        });
-      }
-
-      // Shooting star streaks.
-      const shootingStars = [];
-
-      for (let i = 0; i < 4; i++) {
-        const geometry = new THREE.BufferGeometry().setFromPoints([
-          new THREE.Vector3(0, 0, 0),
-          new THREE.Vector3(-1.8, .35, 0),
-        ]);
-
-        const streak = new THREE.Line(
-          geometry,
-          new THREE.LineBasicMaterial({
-            color: 0xd6b5ff,
-            transparent: true,
-            opacity: 0,
-          })
-        );
-
-        streak.position.set(random(-20, 20), random(-12, 12), random(-8, 8));
-        universe.add(streak);
-
-        shootingStars.push({
-          object: streak,
-          timer: random(1, 8),
-          velocity: new THREE.Vector3(random(-.16, -.08), random(-.06, -.02), 0),
-        });
-      }
-
-      const openNode = (node) => {
+      function openNode(node) {
         if (!node) return;
 
         if (node.kind === 'about') {
           document.querySelector('#about')?.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start',
+            behavior:'smooth',
+            block:'start',
           });
           return;
         }
@@ -1153,237 +1233,214 @@ const constellationData = [
         }
 
         selectedId = node.id;
-
         detailTitle.textContent = node.title;
         detailDescription.textContent = node.description;
         detailEyebrow.textContent =
           node.kind === 'center' ? 'THE ARCHIVE' : 'EXPLORE THE COLLECTION';
 
         detailLinks.replaceChildren();
-        detailOpen.hidden = true;
 
         if (node.kind === 'category') {
-          const children = constellationData.filter((item) => item.parent === node.id);
+          const children = archive.filter((item) => item.parent === node.id);
 
           children.forEach((child) => {
-            const link = document.createElement('a');
-            link.href = child.url || '#';
-            link.textContent = `${child.title} ↗`;
-            detailLinks.appendChild(link);
+            const a = document.createElement('a');
+            a.href = child.url || '#';
+            a.textContent = `${child.title} ↗`;
+            detailLinks.appendChild(a);
           });
 
           if (!children.length) {
             const empty = document.createElement('p');
             empty.textContent = 'More stories coming soon.';
-            empty.style.color = 'rgba(255,255,255,.6)';
-            empty.style.fontSize = '.8rem';
             detailLinks.appendChild(empty);
           }
         }
 
         if (node.kind === 'center') {
-          const link = document.createElement('a');
-          link.href = '#about';
-          link.textContent = 'Discover the story behind Turath ↗';
-          link.addEventListener('click', (event) => {
+          const a = document.createElement('a');
+          a.href = '#about';
+          a.textContent = 'Discover the story behind Turath ↗';
+          a.addEventListener('click',(event) => {
             event.preventDefault();
-            document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' });
+            document.querySelector('#about')?.scrollIntoView({behavior:'smooth'});
           });
-          detailLinks.appendChild(link);
+          detailLinks.appendChild(a);
         }
 
         detail.classList.add('is-open');
-      };
+      }
 
-      const closePanel = () => {
-        detail.classList.remove('is-open');
-        selectedId = null;
-      };
+      section.querySelector('#universe-close')?.addEventListener('click',closePanel);
 
-      section.querySelector('#universe-close')?.addEventListener('click', closePanel);
+      const canvas = renderer.domElement;
 
-      // Pointer and raycasting.
-      const updatePointer = (event) => {
-        const rect = renderer.domElement.getBoundingClientRect();
+      function setPointer(event) {
+        const rect = canvas.getBoundingClientRect();
+        pointer.x = ((event.clientX-rect.left)/rect.width)*2-1;
+        pointer.y = -((event.clientY-rect.top)/rect.height)*2+1;
+      }
 
-        pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-        pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-      };
-
-      renderer.domElement.addEventListener('pointerdown', (event) => {
+      canvas.addEventListener('pointerdown',(event) => {
         dragging = true;
         moved = false;
         previousX = event.clientX;
         previousY = event.clientY;
-        renderer.domElement.setPointerCapture(event.pointerId);
+        canvas.setPointerCapture(event.pointerId);
       });
 
-      renderer.domElement.addEventListener('pointermove', (event) => {
+      canvas.addEventListener('pointermove',(event) => {
         if (!dragging) return;
 
-        const dx = event.clientX - previousX;
-        const dy = event.clientY - previousY;
+        const dx = event.clientX-previousX;
+        const dy = event.clientY-previousY;
 
-        if (Math.abs(dx) + Math.abs(dy) > 2) moved = true;
+        if (Math.abs(dx)+Math.abs(dy)>2) moved = true;
 
-        velocityY = dx * .003;
-        velocityX = dy * .003;
-
-        universe.rotation.y += velocityY;
-        universe.rotation.x += velocityX;
+        velocityY = dx*.003;
+        velocityX = dy*.003;
+        world.rotation.y += velocityY;
+        world.rotation.x += velocityX;
 
         previousX = event.clientX;
         previousY = event.clientY;
       });
 
-      const stopDragging = () => {
-        dragging = false;
-      };
+      const stopDrag = () => { dragging = false; };
+      canvas.addEventListener('pointerup',stopDrag);
+      canvas.addEventListener('pointercancel',stopDrag);
 
-      renderer.domElement.addEventListener('pointerup', stopDragging);
-      renderer.domElement.addEventListener('pointercancel', stopDragging);
-
-      renderer.domElement.addEventListener('click', (event) => {
+      canvas.addEventListener('click',(event) => {
         if (moved) {
           moved = false;
           return;
         }
 
-        updatePointer(event);
-        raycaster.setFromCamera(pointer, camera);
+        setPointer(event);
+        raycaster.setFromCamera(pointer,camera);
+        const hits = raycaster.intersectObjects(clickable,false);
 
-        const hits = raycaster.intersectObjects(clickable, false);
-
-        if (hits.length) {
-          openNode(hits[0].object.userData.node);
-        }
+        if (hits.length) openNode(hits[0].object.userData.node);
       });
 
-      renderer.domElement.addEventListener('wheel', (event) => {
+      canvas.addEventListener('wheel',(event) => {
         event.preventDefault();
-        camera.position.z = THREE.MathUtils.clamp(
-          camera.position.z + event.deltaY * .018,
-          19,
-          65
-        );
-      }, { passive: false });
+        camera.position.z = clamp(camera.position.z+event.deltaY*.018,20,68);
+      },{passive:false});
 
-      // Search across planets and article satellites.
-      search?.addEventListener('input', () => {
+      search?.addEventListener('input',() => {
         const query = search.value.trim().toLowerCase();
         let matches = 0;
 
-        constellationData.forEach((node) => {
+        archive.forEach((node) => {
           const match =
             node.title.toLowerCase().includes(query) ||
             node.description.toLowerCase().includes(query);
 
           if (!query || match) matches++;
 
-          const object = nodeObjects.get(node.id);
-          if (object) {
-            object.planet.material.transparent = Boolean(query && !match);
-            object.planet.material.opacity = query && !match ? .13 : 1;
-
-            if (object.label) {
-              object.label.material.opacity = query && !match ? .12 : 1;
-            }
+          const item = objects.get(node.id);
+          if (item) {
+            item.planet.material.transparent = Boolean(query && !match);
+            item.planet.material.opacity = query && !match ? .15 : 1;
+            item.label.material.opacity = query && !match ? .12 : 1;
           }
         });
 
-        if (searchCount) {
-          searchCount.textContent = query ? `${matches} FOUND` : '';
-        }
+        searchCount.textContent = query ? `${matches} FOUND` : '';
       });
 
-      section.querySelector('#universe-reset')?.addEventListener('click', () => {
-        universe.rotation.set(0, 0, 0);
-        camera.position.set(0, 1, 39);
-        if (search) {
-          search.value = '';
-          search.dispatchEvent(new Event('input'));
-        }
+      section.querySelector('#universe-reset')?.addEventListener('click',() => {
+        world.rotation.set(0,0,0);
+        camera.position.set(0,1,39);
+        search.value = '';
+        search.dispatchEvent(new Event('input'));
         closePanel();
       });
 
-      const resize = () => {
+      function resize() {
         if (!section.isConnected) return;
-
-        const width = canvasHost.clientWidth;
-        const height = canvasHost.clientHeight;
-
+        const width = host.clientWidth;
+        const height = host.clientHeight;
         if (!width || !height) return;
 
-        camera.aspect = width / height;
+        camera.aspect = width/height;
         camera.updateProjectionMatrix();
-        renderer.setSize(width, height);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.7));
-      };
+        renderer.setSize(width,height);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1,1.5));
+      }
 
-      window.addEventListener('resize', resize);
+      window.addEventListener('resize',resize);
 
       const clock = new THREE.Clock();
+      let animationFrame = 0;
+      let disposed = false;
 
-      const animate = () => {
+      function animate() {
         if (disposed || !section.isConnected) return;
-
         animationFrame = requestAnimationFrame(animate);
 
-        const elapsed = clock.getElapsedTime();
-        const delta = Math.min(clock.getDelta(), .05);
+        const delta = Math.min(clock.getDelta(),.04);
+        const elapsed = clock.elapsedTime;
 
-        stars.rotation.y += delta * .003;
-        stars.rotation.x += delta * .001;
-        dust.rotation.y -= delta * .008;
+        stars.rotation.y += delta*.0025;
+        stars.rotation.x += delta*.0007;
+        dust.rotation.y -= delta*.006;
+        asteroidBelt.rotation.y += delta*.009;
 
-        sun.rotation.y += delta * .1;
-        sun.rotation.x += delta * .025;
+        sunSphere.rotation.y += delta*.09;
+        sunSphere.rotation.x += delta*.02;
 
-        centralLight.intensity = 155 + Math.sin(elapsed * 1.4) * 15;
+        sunLight.intensity = 185+Math.sin(elapsed*1.1)*12;
 
-        satelliteGroups.forEach((item) => {
-          item.group.rotation.z += delta * item.speed;
+        objects.forEach((item) => {
+          item.planet.rotation.y += delta*.07;
+          if (item.clouds) item.clouds.rotation.y += delta*.095;
         });
 
-        universe.rotation.y += dragging ? 0 : velocityY * .12;
-        universe.rotation.x += dragging ? 0 : velocityX * .12;
+        orbitGroups.forEach((item) => {
+          item.group.rotation.z += delta*item.speed;
+        });
+
+        backgroundPlanets.forEach((planet,i) => {
+          planet.rotation.y += delta*(.018+i*.006);
+        });
+
+        comets.forEach((comet) => {
+          comet.angle += delta*comet.speed;
+
+          const x = Math.cos(comet.angle)*comet.radius;
+          const y = Math.sin(comet.angle)*comet.radius*.45+comet.height;
+          const z = Math.sin(comet.angle)*9-12;
+
+          comet.group.position.set(x,y,z);
+
+          const positions = comet.tail.geometry.attributes.position;
+          for (let i=0;i<6;i++) {
+            const t = i/5;
+            positions.setXYZ(i,-t*3.2,t*1.1,0);
+          }
+          positions.needsUpdate = true;
+        });
 
         if (!dragging) {
-          velocityX *= .96;
-          velocityY *= .96;
+          world.rotation.y += velocityY*.12;
+          world.rotation.x += velocityX*.12;
+          velocityX *= .965;
+          velocityY *= .965;
         }
 
-        shootingStars.forEach((item) => {
-          item.timer -= delta;
-
-          if (item.timer <= 0) {
-            item.object.position.set(random(-22, 22), random(-13, 13), random(-10, 10));
-            item.timer = random(5, 12);
-            item.object.material.opacity = .9;
-          }
-
-          if (item.object.material.opacity > 0) {
-            item.object.position.addScaledVector(item.velocity, delta * 12);
-            item.object.material.opacity -= delta * .4;
-          }
-        });
-
-        renderer.render(scene, camera);
-      };
+        renderer.render(scene,camera);
+      }
 
       hideLoader();
       animate();
 
-      activeCleanup = () => {
+      cleanupUniverse = () => {
         disposed = true;
         cancelAnimationFrame(animationFrame);
-        window.removeEventListener('resize', resize);
-
+        window.removeEventListener('resize',resize);
         renderer.dispose();
-        starGeometry.dispose();
-        starMaterial.dispose();
-        dustGeometry.dispose();
-        glowTexture.dispose();
 
         scene.traverse((object) => {
           if (object.geometry) object.geometry.dispose();
@@ -1394,9 +1451,7 @@ const constellationData = [
               : [object.material];
 
             materials.forEach((material) => {
-              if (material.map && material.map !== glowTexture) {
-                material.map.dispose();
-              }
+              if (material.map) material.map.dispose();
               material.dispose();
             });
           }
@@ -1406,16 +1461,18 @@ const constellationData = [
       };
 
     } catch (error) {
-      console.error('Turath universe could not initialize:', error);
+      clearTimeout(timeoutId);
+      console.error('Turath universe initialization failed:',error);
       showFallback();
     }
   }
 
-  document.addEventListener('astro:page-load', initializeUniverse);
-  document.addEventListener('astro:before-swap', () => {
-    if (activeCleanup) {
-      activeCleanup();
-      activeCleanup = null;
+  document.addEventListener('astro:page-load',initializeUniverse);
+
+  document.addEventListener('astro:before-swap',() => {
+    if (cleanupUniverse) {
+      cleanupUniverse();
+      cleanupUniverse = null;
     }
   });
 
