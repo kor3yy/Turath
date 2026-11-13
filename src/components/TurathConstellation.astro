@@ -550,11 +550,34 @@ const nodes = [
   }
 </style>
 
-<script>
-import * as THREE from 'three';(() => {
+<script is:inline>
+(async () => {
+  let THREE;
+
+  try {
+    THREE = await import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js');
+  } catch (error) {
+    console.error('TURATH THREE.JS LOAD ERROR:', error);
+
+    const loading = document.querySelector('#universe-loading');
+    const fallback = document.querySelector('#universe-fallback');
+
+    if (loading) loading.classList.add('finished');
+
+    if (fallback) {
+      fallback.hidden = false;
+      fallback.querySelector('span').textContent =
+        'THREE.JS LOAD ERROR: ' + error.message;
+    }
+
+    return;
+  }
+
   const initialize = async () => {
     const section = document.querySelector('#turath-universe');
+
     if (!section || section.dataset.initialized === 'true') return;
+
     section.dataset.initialized = 'true';
 
     const stage = section.querySelector('#universe-stage');
@@ -579,22 +602,20 @@ import * as THREE from 'three';(() => {
     camera.position.set(0, 0, 43);
 
     let renderer;
+
     try {
-} catch (error) {
-  console.error('TURATH WEBGL ERROR:', error);
-  loading.classList.add('finished');
-  fallback.hidden = false;
-  fallback.querySelector('span').textContent =
-    'WEBGL ERROR: ' + error.message;
-  return;
-}        canvas,
+      renderer = new THREE.WebGLRenderer({
+        canvas,
         alpha: false,
         antialias: true,
         powerPreference: 'high-performance',
       });
     } catch (error) {
+      console.error('TURATH WEBGL ERROR:', error);
       loading.classList.add('finished');
       fallback.hidden = false;
+      fallback.querySelector('span').textContent =
+        'WEBGL ERROR: ' + error.message;
       return;
     }
 
@@ -629,16 +650,20 @@ import * as THREE from 'three';(() => {
 
     function makeSurface(seed, palette, style = 'rocky') {
       const [c, ctx] = textureCanvas(512, 256);
+
       let seedValue = seed * 92821 + 31;
+
       const random = () => {
         seedValue = (seedValue * 16807) % 2147483647;
         return seedValue / 2147483647;
       };
 
       const gradient = ctx.createLinearGradient(0, 0, 512, 256);
+
       palette.forEach((color, index) => {
         gradient.addColorStop(index / (palette.length - 1), color);
       });
+
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, 512, 256);
 
@@ -649,10 +674,20 @@ import * as THREE from 'three';(() => {
         const alpha = .025 + random() * .16;
 
         ctx.beginPath();
-        ctx.ellipse(x, y, r * (1 + random()), r * .55, random() * 3, 0, Math.PI * 2);
+        ctx.ellipse(
+          x,
+          y,
+          r * (1 + random()),
+          r * .55,
+          random() * 3,
+          0,
+          Math.PI * 2
+        );
+
         ctx.fillStyle = random() > .5
           ? `rgba(230,210,255,${alpha})`
           : `rgba(10,4,25,${alpha})`;
+
         ctx.fill();
       }
 
@@ -669,10 +704,20 @@ import * as THREE from 'three';(() => {
           const x = random() * 512;
           const y = random() * 256;
           const r = 1 + random() * 7;
-          const g = ctx.createRadialGradient(x - r * .25, y - r * .25, 0, x, y, r);
+
+          const g = ctx.createRadialGradient(
+            x - r * .25,
+            y - r * .25,
+            0,
+            x,
+            y,
+            r
+          );
+
           g.addColorStop(0, 'rgba(245,225,255,.22)');
           g.addColorStop(.65, 'rgba(20,10,40,.12)');
           g.addColorStop(1, 'rgba(5,2,15,.25)');
+
           ctx.fillStyle = g;
           ctx.beginPath();
           ctx.arc(x, y, r, 0, Math.PI * 2);
@@ -683,18 +728,23 @@ import * as THREE from 'three';(() => {
       const texture = new THREE.CanvasTexture(c);
       texture.colorSpace = THREE.SRGBColorSpace;
       texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+
       return texture;
     }
 
     function makeGlowTexture() {
       const [c, ctx] = textureCanvas(128, 128);
+
       const g = ctx.createRadialGradient(64, 64, 2, 64, 64, 64);
+
       g.addColorStop(0, 'rgba(255,255,255,.85)');
       g.addColorStop(.12, 'rgba(213,160,255,.42)');
       g.addColorStop(.38, 'rgba(145,73,255,.17)');
       g.addColorStop(1, 'rgba(80,25,150,0)');
+
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, 128, 128);
+
       return new THREE.CanvasTexture(c);
     }
 
@@ -709,9 +759,11 @@ import * as THREE from 'three';(() => {
         depthWrite: false,
         blending: THREE.AdditiveBlending,
       });
+
       const sprite = new THREE.Sprite(material);
       sprite.position.set(x, y, z);
       sprite.scale.set(size, size * .65, 1);
+
       universe.add(sprite);
     }
 
@@ -729,24 +781,40 @@ import * as THREE from 'three';(() => {
 
     for (let i = 0; i < starCount; i++) {
       const i3 = i * 3;
+
       starPositions[i3] = (Math.random() - .5) * 150;
       starPositions[i3 + 1] = (Math.random() - .5) * 100;
       starPositions[i3 + 2] = -Math.random() * 95 - 15;
 
       const tint = Math.random();
+
       const color = new THREE.Color(
         tint > .84 ? '#d6b2ff' : tint > .55 ? '#9f9bff' : '#ffffff'
       );
+
       starColors[i3] = color.r;
       starColors[i3 + 1] = color.g;
       starColors[i3 + 2] = color.b;
+
       starSizes[i] = .5 + Math.random() * 1.7;
     }
 
     const starGeometry = new THREE.BufferGeometry();
-    starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
-    starGeometry.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
-    starGeometry.setAttribute('size', new THREE.BufferAttribute(starSizes, 1));
+
+    starGeometry.setAttribute(
+      'position',
+      new THREE.BufferAttribute(starPositions, 3)
+    );
+
+    starGeometry.setAttribute(
+      'color',
+      new THREE.BufferAttribute(starColors, 3)
+    );
+
+    starGeometry.setAttribute(
+      'size',
+      new THREE.BufferAttribute(starSizes, 1)
+    );
 
     const starMaterial = new THREE.PointsMaterial({
       size: .11,
@@ -762,13 +830,20 @@ import * as THREE from 'three';(() => {
 
     // A second, closer star layer adds depth.
     const nearStarPositions = new Float32Array(400 * 3);
+
     for (let i = 0; i < 400; i++) {
       nearStarPositions[i * 3] = (Math.random() - .5) * 75;
       nearStarPositions[i * 3 + 1] = (Math.random() - .5) * 50;
       nearStarPositions[i * 3 + 2] = (Math.random() - .5) * 30 - 8;
     }
+
     const nearStarGeometry = new THREE.BufferGeometry();
-    nearStarGeometry.setAttribute('position', new THREE.BufferAttribute(nearStarPositions, 3));
+
+    nearStarGeometry.setAttribute(
+      'position',
+      new THREE.BufferAttribute(nearStarPositions, 3)
+    );
+
     const nearStars = new THREE.Points(
       nearStarGeometry,
       new THREE.PointsMaterial({
@@ -779,6 +854,7 @@ import * as THREE from 'three';(() => {
         depthWrite: false,
       })
     );
+
     universe.add(nearStars);
 
     // Main celestial object positions.
@@ -807,8 +883,10 @@ import * as THREE from 'three';(() => {
 
     function addOrbit(parent, radiusX, radiusY, color = '#a77adf') {
       const points = [];
+
       for (let i = 0; i <= 160; i++) {
         const a = (i / 160) * Math.PI * 2;
+
         points.push(new THREE.Vector3(
           Math.cos(a) * radiusX,
           Math.sin(a) * radiusY,
@@ -817,6 +895,7 @@ import * as THREE from 'three';(() => {
       }
 
       const geometry = new THREE.BufferGeometry().setFromPoints(points);
+
       const line = new THREE.LineLoop(
         geometry,
         new THREE.LineBasicMaterial({
@@ -826,8 +905,10 @@ import * as THREE from 'three';(() => {
           depthWrite: false,
         })
       );
+
       line.position.copy(parent.position);
       universe.add(line);
+
       return line;
     }
 
@@ -860,6 +941,7 @@ import * as THREE from 'three';(() => {
           depthWrite: false,
         })
       );
+
       group.add(atmosphere);
 
       const glow = new THREE.Sprite(new THREE.SpriteMaterial({
@@ -870,7 +952,13 @@ import * as THREE from 'three';(() => {
         depthWrite: false,
         blending: THREE.AdditiveBlending,
       }));
-      glow.scale.set(radius * (node.id === 'turath' ? 5.5 : 4), radius * 4, 1);
+
+      glow.scale.set(
+        radius * (node.id === 'turath' ? 5.5 : 4),
+        radius * 4,
+        1
+      );
+
       group.add(glow);
 
       // A soft atmospheric rim, layered outside the sphere.
@@ -885,6 +973,7 @@ import * as THREE from 'three';(() => {
           depthWrite: false,
         })
       );
+
       group.add(rim);
 
       const body = {
@@ -910,6 +999,7 @@ import * as THREE from 'three';(() => {
             depthWrite: false,
           })
         );
+
         ring.rotation.x = Math.PI * .34;
         ring.rotation.y = .15;
         group.add(ring);
@@ -924,6 +1014,7 @@ import * as THREE from 'three';(() => {
             depthWrite: false,
           })
         );
+
         secondRing.rotation.x = Math.PI * .34;
         secondRing.rotation.y = .15;
         group.add(secondRing);
@@ -934,10 +1025,19 @@ import * as THREE from 'three';(() => {
 
     // Central Turath star.
     const centerNode = data.find(n => n.id === 'turath');
-    createPlanet(centerNode, positions.turath, 3.15, palettes.turath, 'gas', 17);
+
+    createPlanet(
+      centerNode,
+      positions.turath,
+      3.15,
+      palettes.turath,
+      'gas',
+      17
+    );
 
     // Main orbit paths.
     const center = new THREE.Vector3(0, 0, 0);
+
     addOrbit(center, 13, 8, '#9b64d4');
     addOrbit(center, 18, 12, '#6b4c9b');
 
@@ -945,6 +1045,7 @@ import * as THREE from 'three';(() => {
 
     mainPlanets.forEach((node, index) => {
       const position = positions[node.id] || [0, 0, 0];
+
       const radius = node.id === 'acknowledgments' ? 1.65
         : node.id === 'music' ? 2.35
         : node.id === 'photography' ? 2.1
@@ -977,12 +1078,15 @@ import * as THREE from 'three';(() => {
     // Article worlds orbit their parent category planets.
     data.filter(n => n.parent).forEach((node, index) => {
       const parent = bodyById.get(node.parent);
+
       if (!parent) return;
 
       const count = data.filter(n => n.parent === node.parent).length;
       const radius = node.parent === 'music' ? 0.55 : 0.48;
       const orbitRadius = node.parent === 'music' ? 4.2 : 3.5;
-      const angle = (index % Math.max(count, 1)) / Math.max(count, 1) * Math.PI * 2;
+
+      const angle =
+        (index % Math.max(count, 1)) / Math.max(count, 1) * Math.PI * 2;
 
       const group = new THREE.Group();
       universe.add(group);
@@ -990,11 +1094,16 @@ import * as THREE from 'three';(() => {
       const moon = new THREE.Mesh(
         new THREE.SphereGeometry(radius, 32, 24),
         new THREE.MeshStandardMaterial({
-          map: makeSurface(index + 70, ['#171027', '#60428c', '#c8a8ec'], 'moon'),
+          map: makeSurface(
+            index + 70,
+            ['#171027', '#60428c', '#c8a8ec'],
+            'moon'
+          ),
           roughness: .95,
           metalness: .05,
         })
       );
+
       group.add(moon);
 
       const moonGlow = new THREE.Sprite(new THREE.SpriteMaterial({
@@ -1005,6 +1114,7 @@ import * as THREE from 'three';(() => {
         depthWrite: false,
         blending: THREE.AdditiveBlending,
       }));
+
       moonGlow.scale.set(2.5, 2.5, 1);
       group.add(moonGlow);
 
@@ -1026,6 +1136,7 @@ import * as THREE from 'three';(() => {
 
     // Comet particles with glowing heads and trailing paths.
     const comets = [];
+
     for (let i = 0; i < 3; i++) {
       const cometGroup = new THREE.Group();
       universe.add(cometGroup);
@@ -1034,6 +1145,7 @@ import * as THREE from 'three';(() => {
         new THREE.SphereGeometry(.12, 12, 8),
         new THREE.MeshBasicMaterial({ color: '#f1dcff' })
       );
+
       cometGroup.add(head);
 
       const tailMaterial = new THREE.MeshBasicMaterial({
@@ -1048,6 +1160,7 @@ import * as THREE from 'three';(() => {
         new THREE.ConeGeometry(.18, 4.5, 12, 1, true),
         tailMaterial
       );
+
       tail.rotation.z = Math.PI / 2;
       tail.position.x = -2.2;
       cometGroup.add(tail);
@@ -1061,6 +1174,7 @@ import * as THREE from 'three';(() => {
 
     // A few distant sparkling points.
     const sparkles = [];
+
     for (let i = 0; i < 28; i++) {
       const star = new THREE.Sprite(new THREE.SpriteMaterial({
         map: glowTexture,
@@ -1070,13 +1184,17 @@ import * as THREE from 'three';(() => {
         depthWrite: false,
         blending: THREE.AdditiveBlending,
       }));
+
       const size = .3 + Math.random() * .8;
+
       star.scale.set(size, size, 1);
+
       star.position.set(
         (Math.random() - .5) * 50,
         (Math.random() - .5) * 35,
         -Math.random() * 30
       );
+
       universe.add(star);
       sparkles.push(star);
     }
@@ -1084,11 +1202,14 @@ import * as THREE from 'three';(() => {
     // Build accessible HTML labels.
     data.forEach(node => {
       const button = document.createElement('button');
+
       button.type = 'button';
       button.className = 'planet-label';
       button.textContent = node.title;
       button.dataset.id = node.id;
+
       button.addEventListener('click', () => selectNode(node));
+
       labelsContainer.appendChild(button);
       labelElements.set(node.id, button);
     });
@@ -1102,7 +1223,10 @@ import * as THREE from 'three';(() => {
       if (!node) return;
 
       detailTitle.textContent = node.title;
-      detailDescription.textContent = node.description || 'Explore this part of the Turath universe.';
+
+      detailDescription.textContent =
+        node.description || 'Explore this part of the Turath universe.';
+
       detailLinks.replaceChildren();
 
       const children = data.filter(item => item.parent === node.id);
@@ -1110,8 +1234,10 @@ import * as THREE from 'three';(() => {
       if (children.length) {
         children.forEach(child => {
           const link = document.createElement('a');
+
           link.href = child.url || '#';
           link.textContent = '↗  ' + child.title;
+
           detailLinks.appendChild(link);
         });
       }
@@ -1122,7 +1248,10 @@ import * as THREE from 'three';(() => {
         detailOpen.style.display = 'inline-block';
       } else if (node.url) {
         detailOpen.href = node.url;
-        detailOpen.textContent = node.id === 'about' ? 'DISCOVER TURATH  ↗' : 'EXPLORE  ↗';
+
+        detailOpen.textContent =
+          node.id === 'about' ? 'DISCOVER TURATH  ↗' : 'EXPLORE  ↗';
+
         detailOpen.style.display = 'inline-block';
       } else {
         detailOpen.style.display = 'none';
@@ -1137,7 +1266,10 @@ import * as THREE from 'three';(() => {
 
     section.querySelector('#detail-close').addEventListener('click', () => {
       detail.classList.remove('visible');
-      labelElements.forEach(label => label.classList.remove('active'));
+
+      labelElements.forEach(label => {
+        label.classList.remove('active');
+      });
     });
 
     search.addEventListener('input', () => {
@@ -1145,6 +1277,7 @@ import * as THREE from 'three';(() => {
 
       data.forEach(node => {
         const label = labelElements.get(node.id);
+
         const matches = !query ||
           node.title.toLowerCase().includes(query) ||
           (node.description || '').toLowerCase().includes(query);
@@ -1157,37 +1290,50 @@ import * as THREE from 'three';(() => {
     let dragging = false;
     let lastX = 0;
     let lastY = 0;
+
     let rotationX = 0;
     let rotationY = 0;
+
     let targetRotationX = 0;
     let targetRotationY = 0;
+
     let zoom = 43;
 
     canvas.addEventListener('pointerdown', event => {
       dragging = true;
+
       lastX = event.clientX;
       lastY = event.clientY;
+
       canvas.setPointerCapture(event.pointerId);
     });
 
     canvas.addEventListener('pointermove', event => {
       if (!dragging) return;
+
       const dx = event.clientX - lastX;
       const dy = event.clientY - lastY;
+
       targetRotationY += dx * .004;
       targetRotationX += dy * .003;
+
       targetRotationX = Math.max(-.7, Math.min(.7, targetRotationX));
+
       lastX = event.clientX;
       lastY = event.clientY;
     });
 
-    const stopDragging = () => { dragging = false; };
+    const stopDragging = () => {
+      dragging = false;
+    };
+
     canvas.addEventListener('pointerup', stopDragging);
     canvas.addEventListener('pointercancel', stopDragging);
     canvas.addEventListener('lostpointercapture', stopDragging);
 
     canvas.addEventListener('wheel', event => {
       event.preventDefault();
+
       zoom = Math.max(27, Math.min(65, zoom + event.deltaY * .025));
     }, { passive: false });
 
@@ -1195,8 +1341,10 @@ import * as THREE from 'three';(() => {
       targetRotationX = 0;
       targetRotationY = 0;
       zoom = 43;
+
       search.value = '';
       search.dispatchEvent(new Event('input'));
+
       detail.classList.remove('visible');
     });
 
@@ -1204,19 +1352,23 @@ import * as THREE from 'three';(() => {
     function resize() {
       const width = stage.clientWidth;
       const height = stage.clientHeight;
+
       if (!width || !height) return;
 
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
+
       renderer.setSize(width, height, false);
     }
 
     const resizeObserver = new ResizeObserver(resize);
+
     resizeObserver.observe(stage);
     resize();
 
     const clock = new THREE.Clock();
     const projected = new THREE.Vector3();
+
     let animationFrame;
     let lastRender = 0;
 
@@ -1232,6 +1384,7 @@ import * as THREE from 'three';(() => {
 
       // Limit rendering on reduced-motion settings.
       if (reducedMotion && now - lastRender < 100) return;
+
       lastRender = now;
 
       const elapsed = clock.getElapsedTime();
@@ -1248,11 +1401,16 @@ import * as THREE from 'three';(() => {
 
         bodyById.forEach(body => {
           if (body.planet) body.planet.rotation.y += .0015;
-          if (body.glow) body.glow.material.opacity = .32 + Math.sin(elapsed * .7) * .035;
+
+          if (body.glow) {
+            body.glow.material.opacity =
+              .32 + Math.sin(elapsed * .7) * .035;
+          }
         });
 
         articleBodies.forEach(body => {
           const angle = body.angle + elapsed * body.orbitSpeed;
+
           body.group.position.set(
             body.parent.basePosition.x + Math.cos(angle) * body.orbitRadius,
             body.parent.basePosition.y + Math.sin(angle) * body.orbitRadius * .62,
@@ -1262,11 +1420,13 @@ import * as THREE from 'three';(() => {
 
         comets.forEach(comet => {
           const t = (elapsed * comet.speed + comet.phase) % (Math.PI * 2);
+
           comet.group.position.set(
             Math.cos(t) * 25,
             Math.sin(t * 1.3) * 13,
             -10 - Math.sin(t) * 10
           );
+
           comet.group.rotation.z = Math.atan2(
             Math.cos(t * 1.3) * 13,
             -Math.sin(t) * 25
@@ -1274,7 +1434,8 @@ import * as THREE from 'three';(() => {
         });
 
         sparkles.forEach((star, index) => {
-          star.material.opacity = .15 + (Math.sin(elapsed * (1 + index % 4) + index) + 1) * .2;
+          star.material.opacity =
+            .15 + (Math.sin(elapsed * (1 + index % 4) + index) + 1) * .2;
         });
       }
 
@@ -1284,16 +1445,22 @@ import * as THREE from 'three';(() => {
       data.forEach(node => {
         const body = bodyById.get(node.id);
         const label = labelElements.get(node.id);
+
         if (!body || !label) return;
 
-        projected.copy(body.group.position);
+        projected.set(0, 0, 0);
         body.group.localToWorld(projected);
         projected.project(camera);
 
         const x = (projected.x * .5 + .5) * stage.clientWidth;
         const y = (-projected.y * .5 + .5) * stage.clientHeight;
-        const visible = projected.z < 1 && x > -100 && x < stage.clientWidth + 100 &&
-          y > -50 && y < stage.clientHeight + 50;
+
+        const visible =
+          projected.z < 1 &&
+          x > -100 &&
+          x < stage.clientWidth + 100 &&
+          y > -50 &&
+          y < stage.clientHeight + 50;
 
         label.style.left = `${x}px`;
         label.style.top = `${y - (body.radius || .5) * 15 - 12}px`;
@@ -1309,7 +1476,10 @@ import * as THREE from 'three';(() => {
     // Fade the loading screen away after the first render.
     requestAnimationFrame(() => {
       loading.classList.add('finished');
-      setTimeout(() => loading.remove(), 900);
+
+      setTimeout(() => {
+        loading.remove();
+      }, 900);
     });
 
     // Click directly on a 3D planet.
@@ -1320,14 +1490,19 @@ import * as THREE from 'three';(() => {
       if (dragging) return;
 
       const rect = canvas.getBoundingClientRect();
+
       pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
       raycaster.setFromCamera(pointer, camera);
+
       const hits = raycaster.intersectObjects(bodyMeshes, false);
 
       if (hits.length) {
-        const selected = [...bodyById.values()].find(body => body.planet === hits[0].object);
+        const selected = [...bodyById.values()].find(
+          body => body.planet === hits[0].object
+        );
+
         if (selected) selectNode(selected.node);
       }
     });
