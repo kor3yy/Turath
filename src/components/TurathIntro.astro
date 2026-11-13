@@ -1,3 +1,4 @@
+
 <script is:inline>
   try {
     if (sessionStorage.getItem('turath-intro-seen') === 'yes') {
@@ -11,18 +12,14 @@
 </script>
 
 <div class="turath-intro" aria-hidden="true">
-  <div class="turath-intro__word" lang="en" dir="ltr">turath</div>
+  <img
+    class="turath-intro__image"
+    src="/images/newfavicon.png"
+    alt="Turath"
+  />
 </div>
 
 <style is:global>
-  @font-face {
-    font-family: "Queen Sheila Free";
-    src: url("/fonts/queen-sheila-free.ttf") format("truetype");
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-  }
-
   .turath-intro {
     display: none;
     position: fixed;
@@ -44,20 +41,16 @@
     animation: turath-intro-background 3.6s ease-in-out forwards;
   }
 
-  .turath-intro__word {
-    font-family: "Queen Sheila Free", serif;
-    font-size: clamp(5rem, 17vw, 15rem);
-    font-weight: 400;
-    line-height: 1.2;
-    color: #fff;
+  .turath-intro__image {
+    display: block;
+    width: clamp(180px, 35vw, 480px);
+    max-width: 75vw;
+    height: auto;
+    object-fit: contain;
     opacity: 0;
     filter: blur(18px);
     transform: scale(0.97);
     animation: turath-intro-word 3.6s ease-in-out forwards;
-  }
-
-  html[data-theme="light"] .turath-intro__word {
-    color: #000;
   }
 
   @keyframes turath-intro-background {
