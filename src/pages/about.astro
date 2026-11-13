@@ -17,10 +17,20 @@ import BackgroundPhotoFlash from '../components/backgroundphotoflash.astro';
     <link rel="stylesheet" href="/styles/global.css" />
     <link rel="icon" type="image/png" href="/images/favicon2.png" />
 
-        <style is:global>
+    <style is:global>
+      header {
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+      }
+
       header nav {
         position: relative;
+        display: flex;
+        align-items: center;
         justify-content: center;
+        width: 100%;
+        min-height: 60px;
       }
 
       header nav .nav-links {
