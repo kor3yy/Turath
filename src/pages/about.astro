@@ -38,6 +38,20 @@ import BackgroundPhotoFlash from '../components/backgroundphotoflash.astro';
         }
       }
     </style>
+header nav {
+  position: relative;
+  justify-content: center;
+}
+
+header nav .nav-links {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+}
 
     <script is:inline>
       function updateFavicon() {
