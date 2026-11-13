@@ -26,20 +26,6 @@ const findPost = (identity) => {
   );
 };
 
-const photographyPosts = [
-  findPost('will abbass'),
-  findPost('ian armata'),
-].filter(Boolean);
-
-const musicPosts = [
-  findPost('savia'),
-  findPost('razi'),
-  findPost('jenna'),
-  findPost('toren'),
-  findPost('onyx'),
-  findPost('pr0crastn8'),
-].filter(Boolean);
-
 const uniquePosts = (posts) => {
   const seen = new Set();
 
@@ -50,32 +36,26 @@ const uniquePosts = (posts) => {
   });
 };
 
-const uniquePhotographyPosts = uniquePosts(photographyPosts);
-const uniqueMusicPosts = uniquePosts(musicPosts);
+const photographyPosts = uniquePosts([
+  findPost('will abbass'),
+  findPost('ian armata'),
+]);
 
-// Keep Music articles in their collection instead of repeating them
-// in the standalone latest-article feature.
+const musicPosts = uniquePosts([
+  findPost('savia'),
+  findPost('razi'),
+  findPost('jenna'),
+  findPost('toren'),
+  findPost('onyx'),
+  findPost('pr0crastn8'),
+]);
+
 const latestArticle = allPosts
   .filter((post) =>
     post.slug !== acknowledgments?.slug &&
-    !uniqueMusicPosts.some((musicPost) => musicPost.slug === post.slug)
+    !musicPosts.some((item) => item.slug === post.slug)
   )
   .sort(newestFirst)[0];
-
-const sections = [
-  {
-    id: 'photography',
-    title: 'Photography',
-    subtitle: 'Images, perspectives & the people behind them',
-    posts: uniquePhotographyPosts,
-  },
-  {
-    id: 'music',
-    title: 'Music',
-    subtitle: 'Sound, artists & creative expression',
-    posts: uniqueMusicPosts,
-  },
-];
 ---
 
 <!doctype html>
@@ -84,7 +64,7 @@ const sections = [
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta name="description" content="Turath — culture, art, expression, history, and the people behind them." />
+    <meta name="description" content="Turath — heritage, culture, art, expression, and the people behind them." />
     <link rel="icon" type="image/png" href="/images/newfavicon.png" />
 
     <script is:inline>
@@ -103,7 +83,6 @@ const sections = [
       updateFavicon();
 
       const observer = new MutationObserver(updateFavicon);
-
       observer.observe(document.documentElement, {
         attributes: true,
         attributeFilter: ['data-theme']
@@ -111,7 +90,6 @@ const sections = [
     </script>
 
     <title>Turath</title>
-
     <ClientRouter />
 
     <style is:global>
@@ -122,21 +100,6 @@ const sections = [
         font-style: normal;
         font-display: swap;
       }
-
-header nav {
-  position: relative;
-  justify-content: center;
-}
-
-header nav .nav-links {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1.5rem;
-}
 
       html,
       body {
@@ -156,197 +119,372 @@ header nav .nav-links {
         color: var(--page-text);
       }
 
-   body.home .hero {
-  padding: 1.25rem 0.5rem 0.75rem;
-  text-align: center;
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
-}
-
-body.home .hero-logo {
-  position: relative;
-  width: clamp(180px, 35vw, 480px);
-  height: clamp(100px, 18vw, 220px);
-  max-width: 100%;
-  margin: 0 auto;
-}
-
-body.home .hero-logo__image {
-  position: absolute;
-  inset: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  opacity: 0;
-  will-change: opacity;
-}
-
-body.home .hero-logo__image--first {
-  animation: hero-logo-first 4s ease-in-out infinite;
-}
-
-body.home .hero-logo__image--second {
-  animation: hero-logo-second 4s ease-in-out infinite;
-}
-
-@keyframes hero-logo-first {
-  0%, 35% {
-    opacity: 1;
-  }
-  50%, 85% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-@keyframes hero-logo-second {
-  0%, 35% {
-    opacity: 0;
-  }
-  50%, 85% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
-      body.home .nav-links a {
-        color: var(--page-text);
-        transition: color 0.25s ease;
-      }
-
-      body.home header nav .logo {
-        display: inline-flex;
-        align-items: center;
-        text-decoration: none;
-      }
-
-      body.home .site-logo {
-        display: block;
-        width: 57.6px;
-        height: auto;
-        object-fit: contain;
-      }
-
-      .turath-marquee {
-        width: 100%;
-        overflow: hidden;
-        padding: 1rem 0;
-        margin: 0 0 0.5rem;
-        border-top: 1px solid var(--border-color);
-        border-bottom: 1px solid var(--border-color);
-      }
-
-      .turath-marquee-track {
-        display: flex;
-        width: max-content;
-        animation: turath-scroll 20s linear infinite;
-      }
-
-      .turath-marquee-track span {
-        flex-shrink: 0;
-        white-space: nowrap;
-        padding-right: 1rem;
-        font-size: 0.75rem;
-        letter-spacing: 0.2em;
-        color: var(--page-text);
-        opacity: 0.75;
-      }
-
-      .turath-tagline {
-        margin: 0 auto 3rem;
-        padding: 0.5rem 1rem;
-        text-align: center;
-        font-size: 0.85rem;
-        font-style: italic;
-        color: var(--muted);
-      }
-
-      /* Featured acknowledgments */
-      .featured-wrap {
+      /* Header */
+      body.home header {
+        position: relative;
+        z-index: 20;
         display: flex;
         justify-content: center;
-        margin: 0 auto 4rem;
+        align-items: center;
+        min-height: 65px;
+        padding: 0 1.5rem;
       }
 
-      .featured-card {
-        display: block;
-        width: min(100%, 470px);
-        overflow: hidden;
+      .home-header-mark {
         color: var(--page-text);
-        background: var(--surface-bg);
-        border: 1px solid var(--border-color);
-        border-radius: 12px;
+        font-size: 0.7rem;
+        letter-spacing: 0.28em;
         text-decoration: none;
-        transition: transform 250ms ease, border-color 250ms ease;
+        opacity: 0.8;
       }
 
-      .featured-card:hover {
-        transform: translateY(-4px);
-        border-color: var(--page-text);
+      /* Hero */
+      body.home .hero {
+        padding: 1.5rem 0.5rem 1rem;
+        text-align: center;
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
       }
 
-      .featured-image {
+      body.home .hero-logo {
+        position: relative;
+        width: clamp(180px, 35vw, 480px);
+        height: clamp(100px, 18vw, 220px);
+        max-width: 100%;
+        margin: 0 auto;
+      }
+
+      body.home .hero-logo__image {
+        position: absolute;
+        inset: 0;
         display: block;
         width: 100%;
-        height: 240px;
-        object-fit: cover;
+        height: 100%;
+        object-fit: contain;
+        opacity: 0;
+        will-change: opacity;
       }
 
-      .featured-copy {
-        padding: 1.2rem 1.3rem 1.4rem;
+      body.home .hero-logo__image--first {
+        animation: hero-logo-first 4s ease-in-out infinite;
+      }
+
+      body.home .hero-logo__image--second {
+        animation: hero-logo-second 4s ease-in-out infinite;
+      }
+
+      @keyframes hero-logo-first {
+        0%, 35% { opacity: 1; }
+        50%, 85% { opacity: 0; }
+        100% { opacity: 1; }
+      }
+
+      @keyframes hero-logo-second {
+        0%, 35% { opacity: 0; }
+        50%, 85% { opacity: 1; }
+        100% { opacity: 0; }
+      }
+
+      /* Main introduction */
+      .home-introduction {
+        width: min(760px, calc(100% - 3rem));
+        margin: 0 auto 5rem;
         text-align: center;
       }
 
-      .eyebrow {
-        margin: 0 0 0.5rem;
+      .home-introduction .intro-eyebrow {
+        margin: 0 0 1.2rem;
         color: var(--muted);
         font-size: 0.68rem;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+      }
+
+      .home-introduction h1 {
+        margin: 0 auto 1.5rem;
+        font-size: clamp(2rem, 5vw, 3.8rem);
+        line-height: 1.1;
+        letter-spacing: -0.055em;
+        font-weight: 500;
+      }
+
+      .home-introduction .intro-lead {
+        max-width: 650px;
+        margin: 0 auto 1.5rem;
+        color: var(--muted);
+        font-size: clamp(0.95rem, 2vw, 1.08rem);
+        line-height: 1.8;
+      }
+
+      .home-introduction-details {
+        max-width: 690px;
+        margin: 0 auto;
+        text-align: left;
+      }
+
+      .home-introduction-details p {
+        margin: 0 0 1.15rem;
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.85;
+      }
+
+      .home-introduction-details p:last-child {
+        margin-bottom: 0;
+      }
+
+      .dedication-line {
+        color: var(--page-text) !important;
+        font-weight: 600;
+      }
+
+      /* Left-side expandable navigation */
+      .archive-navigation {
+        position: fixed;
+        z-index: 50;
+        top: 50%;
+        left: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
+        transform: translateY(-50%);
+        padding: 0.7rem 0.65rem 0.7rem 0;
+        pointer-events: none;
+      }
+
+      .archive-nav-item {
+        position: relative;
+        width: 58px;
+        pointer-events: auto;
+      }
+
+      .archive-nav-trigger {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 58px;
+        min-height: 76px;
+        padding: 0.8rem 0.7rem;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+        border-left: 0;
+        border-radius: 0 9px 9px 0;
+        background: var(--surface-bg);
+        color: var(--page-text);
+        cursor: pointer;
+        text-align: left;
+        transition:
+          width 450ms cubic-bezier(.2, .8, .2, 1),
+          background 250ms ease,
+          border-color 250ms ease;
+      }
+
+      .archive-nav-trigger:hover,
+      .archive-nav-item.is-open .archive-nav-trigger {
+        width: 230px;
+        border-color: var(--page-text);
+        background: var(--page-bg);
+      }
+
+      .archive-nav-number {
+        flex: 0 0 30px;
+        color: var(--muted);
+        font-size: 0.65rem;
+        letter-spacing: 0.1em;
+      }
+
+      .archive-nav-title {
+        display: block;
+        white-space: nowrap;
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.13em;
+        opacity: 0;
+        transform: translateX(-8px);
+        transition:
+          opacity 250ms ease,
+          transform 350ms ease;
+      }
+
+      .archive-nav-trigger:hover .archive-nav-title,
+      .archive-nav-item.is-open .archive-nav-title {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      .archive-nav-panel {
+        position: absolute;
+        top: 0;
+        left: calc(100% + 12px);
+        width: min(520px, calc(100vw - 105px));
+        max-height: min(72vh, 650px);
+        padding: 1.3rem;
+        overflow-y: auto;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        background: var(--surface-bg);
+        color: var(--page-text);
+        box-shadow: 0 18px 55px rgb(0 0 0 / 18%);
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transform: translateX(-12px);
+        transition:
+          opacity 250ms ease,
+          transform 350ms ease,
+          visibility 250ms ease;
+      }
+
+      .archive-nav-item:hover .archive-nav-panel,
+      .archive-nav-item:focus-within .archive-nav-panel,
+      .archive-nav-item.is-open .archive-nav-panel {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: translateX(0);
+      }
+
+      .panel-eyebrow {
+        margin: 0 0 0.55rem;
+        color: var(--muted);
+        font-size: 0.64rem;
         letter-spacing: 0.2em;
         text-transform: uppercase;
       }
 
-      .featured-copy h2 {
-        margin: 0 0 0.65rem;
-        color: var(--page-text);
-        font-size: 1.5rem;
+      .archive-nav-panel h2 {
+        margin: 0 0 0.5rem;
+        font-size: clamp(1.5rem, 4vw, 2.1rem);
+        letter-spacing: -0.045em;
       }
 
-      .featured-copy p:last-child {
+      .panel-description {
+        margin: 0 0 1.2rem;
+        color: var(--muted);
+        font-size: 0.82rem;
+        line-height: 1.6;
+      }
+
+      .panel-feature-image {
+        display: block;
+        width: 100%;
+        max-height: 210px;
+        margin: 0 0 1rem;
+        border-radius: 7px;
+        object-fit: cover;
+      }
+
+      .panel-feature-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.65rem 0.9rem;
+        border: 1px solid var(--border-color);
+        border-radius: 999px;
+        color: var(--page-text);
+        font-size: 0.75rem;
+        text-decoration: none;
+        transition: border-color 200ms ease, transform 200ms ease;
+      }
+
+      .panel-feature-link:hover {
+        border-color: var(--page-text);
+        transform: translateX(3px);
+      }
+
+      .panel-article-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.75rem;
+      }
+
+      .panel-article {
+        display: flex;
+        min-width: 0;
+        flex-direction: column;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        color: var(--page-text);
+        background: var(--page-bg);
+        text-decoration: none;
+        transition:
+          transform 250ms ease,
+          border-color 250ms ease;
+      }
+
+      .panel-article:hover {
+        transform: translateY(-4px);
+        border-color: var(--page-text);
+      }
+
+      .panel-article img {
+        display: block;
+        width: 100%;
+        height: 125px;
+        object-fit: cover;
+        transition: transform 500ms ease;
+      }
+
+      .panel-article:hover img {
+        transform: scale(1.05);
+      }
+
+      .panel-article-copy {
+        padding: 0.75rem;
+      }
+
+      .panel-article-copy h3 {
+        margin: 0 0 0.4rem;
+        font-size: 0.82rem;
+        line-height: 1.35;
+      }
+
+      .panel-article-copy p {
         margin: 0;
         color: var(--muted);
-        font-size: 0.88rem;
+        font-size: 0.7rem;
+        line-height: 1.5;
+      }
+
+      .panel-empty {
+        color: var(--muted);
+        font-size: 0.8rem;
       }
 
       /* Latest article */
       .latest-article-section {
-        width: min(100% - 2rem, 900px);
+        width: min(850px, calc(100% - 3rem));
         margin: 0 auto 5rem;
       }
 
       .latest-article-heading {
-        margin-bottom: 1.2rem;
+        margin-bottom: 1rem;
+      }
+
+      .latest-article-heading .eyebrow {
+        margin: 0 0 0.45rem;
+        color: var(--muted);
+        font-size: 0.65rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
       }
 
       .latest-article-heading h2 {
         margin: 0;
-        font-size: clamp(1.7rem, 4vw, 2.4rem);
+        font-size: clamp(1.5rem, 4vw, 2.2rem);
         letter-spacing: -0.04em;
       }
 
       .latest-article-card {
         display: grid;
-        grid-template-columns: 1.1fr 1fr;
-        min-height: 280px;
+        grid-template-columns: 1fr 1fr;
+        min-height: 230px;
         overflow: hidden;
         border: 1px solid var(--border-color);
-        border-radius: 12px;
+        border-radius: 10px;
         background: var(--surface-bg);
         color: var(--page-text);
         text-decoration: none;
@@ -362,7 +500,7 @@ body.home .hero-logo__image--second {
         display: block;
         width: 100%;
         height: 100%;
-        min-height: 280px;
+        min-height: 230px;
         object-fit: cover;
       }
 
@@ -370,347 +508,126 @@ body.home .hero-logo__image--second {
         display: flex;
         flex-direction: column;
         justify-content: center;
-        padding: 2rem;
+        padding: 1.5rem;
+      }
+
+      .latest-article-copy .eyebrow {
+        margin: 0 0 0.5rem;
+        color: var(--muted);
+        font-size: 0.65rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
       }
 
       .latest-article-copy h3 {
-        margin: 0 0 0.8rem;
-        font-size: clamp(1.4rem, 3vw, 2rem);
-        line-height: 1.2;
+        margin: 0 0 0.65rem;
+        font-size: clamp(1.1rem, 3vw, 1.7rem);
+        line-height: 1.25;
       }
 
       .latest-article-copy p:not(.eyebrow) {
+        margin: 0;
         color: var(--muted);
-        font-size: 0.9rem;
+        font-size: 0.82rem;
         line-height: 1.6;
       }
 
       .latest-article-copy span {
         margin-top: 1rem;
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         letter-spacing: 0.08em;
       }
 
-      /* Category sections */
-      .archive {
-        margin: 0 auto 4rem;
-      }
-
-      .archive-heading {
-        display: flex;
-        align-items: end;
-        justify-content: space-between;
-        gap: 1rem;
-        margin-bottom: 1rem;
-      }
-
-      .archive-heading h2 {
-        margin: 0;
-        font-size: clamp(1.7rem, 4vw, 2.4rem);
-        letter-spacing: -0.04em;
-      }
-
-      .archive-heading p {
-        margin: 0.35rem 0 0;
+      body.home footer {
+        padding: 1.5rem;
         color: var(--muted);
-        font-size: 0.85rem;
-      }
-
-      .open-archive {
-        flex-shrink: 0;
-        padding: 0.65rem 0.9rem;
-        border: 1px solid var(--border-color);
-        border-radius: 999px;
-        color: var(--page-text);
-        background: var(--surface-bg);
-        cursor: pointer;
-        transition: border-color 200ms ease;
-      }
-
-      .open-archive:hover,
-      .open-archive[aria-expanded="true"] {
-        border-color: var(--page-text);
-      }
-
-      .category-cover {
-        position: relative;
-        display: block;
-        width: 100%;
-        height: clamp(250px, 39vw, 430px);
-        padding: 0;
-        overflow: hidden;
-        isolation: isolate;
-        border: 1px solid var(--border-color);
-        border-radius: 14px;
-        background: var(--surface-bg);
-        color: white;
-        text-align: left;
-        cursor: pointer;
-      }
-
-      .cover-image {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        opacity: 0;
-        transform: scale(1.025);
-        transition: opacity 1.8s ease, transform 7s ease;
-      }
-
-      .cover-image.is-current {
-        opacity: 1;
-        transform: scale(1.09);
-      }
-
-      .cover-shade {
-        position: absolute;
-        inset: 0;
-        z-index: 1;
-        background: linear-gradient(
-          0deg,
-          rgb(0 0 0 / 83%) 0%,
-          rgb(0 0 0 / 25%) 50%,
-          rgb(0 0 0 / 8%) 100%
-        );
-        pointer-events: none;
-      }
-
-      .cover-copy {
-        position: absolute;
-        inset: auto 1.5rem 1.5rem;
-        z-index: 2;
-        pointer-events: none;
-      }
-
-      .cover-copy .eyebrow {
-        color: rgb(255 255 255 / 75%);
-      }
-
-      .cover-copy h3 {
-        margin: 0;
-        color: white;
-        font-size: clamp(2rem, 5vw, 3.5rem);
-        letter-spacing: -0.05em;
-      }
-
-      .cover-copy p {
-        max-width: 520px;
-        margin: 0.4rem 0 0;
-        color: rgb(255 255 255 / 80%);
-        font-size: 0.9rem;
-      }
-
-      .cover-index {
-        position: absolute;
-        top: 1.2rem;
-        right: 1.2rem;
-        z-index: 2;
-        color: white;
-        font-size: 0.75rem;
-        letter-spacing: 0.12em;
-        pointer-events: none;
-      }
-
-      /* Open section carousel */
-      .section-view {
-        display: none;
-        margin-top: 1.5rem;
-      }
-
-      .section-view.is-open {
-        display: block;
-        animation: reveal-section 400ms ease both;
-      }
-
-      @keyframes reveal-section {
-        from {
-          opacity: 0;
-          transform: translateY(10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .section-view-top {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
-        margin-bottom: 1rem;
-      }
-
-      .section-view-top p {
-        margin: 0;
-        color: var(--muted);
-        font-size: 0.8rem;
-      }
-
-      /* Article carousel and full descriptions */
-      .article-stage {
-        position: relative;
-        height: clamp(460px, 55vw, 560px);
-        overflow: hidden;
-        isolation: isolate;
-        touch-action: pan-y;
-        -webkit-mask-image: linear-gradient(
-          to right, transparent, #000 12%, #000 88%, transparent
-        );
-        mask-image: linear-gradient(
-          to right, transparent, #000 12%, #000 88%, transparent
-        );
-      }
-
-      .article-card {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        display: flex;
-        flex-direction: column;
-        width: clamp(190px, 27vw, 290px);
-        height: 430px;
-        overflow: hidden;
-        border: 1px solid var(--border-color);
-        border-radius: 12px;
-        color: var(--page-text);
-        background: var(--surface-bg);
-        text-decoration: none;
-        opacity: var(--opacity, 0);
-        z-index: var(--z, 0);
-        pointer-events: none;
-        transform: translate(
-          calc(-50% + var(--x, 0px)),
-          -50%
-        ) scale(var(--scale, 1));
-        transition:
-          transform 500ms cubic-bezier(.2, .8, .2, 1),
-          opacity 400ms ease;
-      }
-
-      .article-card.is-visible {
-        pointer-events: auto;
-      }
-
-      .article-card.is-active {
-        border-color: var(--page-text);
-        box-shadow: 0 14px 35px rgb(0 0 0 / 20%);
-        animation: gentle-float 5s ease-in-out infinite;
-      }
-
-      .article-card-image-wrap {
-        flex: 0 0 48%;
-        min-height: 0;
-        overflow: hidden;
-        background: var(--surface-bg);
-      }
-
-      .article-card img {
-        display: block;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: filter 300ms ease, transform 300ms ease;
-      }
-
-      .article-card:hover img {
-        filter: blur(4px);
-        transform: scale(1.05);
-      }
-
-      .article-card-copy {
-        flex: 1;
-        min-height: 0;
-        padding: 0.9rem 1rem 1rem;
-        overflow-y: auto;
-        overflow-wrap: anywhere;
-      }
-
-      .article-card-copy h4 {
-        margin: 0 0 0.5rem;
-        font-size: 1rem;
-        line-height: 1.4;
-      }
-
-      .article-card-copy p {
-        display: block;
-        margin: 0;
-        overflow: visible;
-        color: var(--muted);
-        font-size: 0.78rem;
-        line-height: 1.55;
-        overflow-wrap: anywhere;
-      }
-
-      .section-controls {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.9rem;
-        width: min(100%, 430px);
-        margin: 0.5rem auto 0;
-      }
-
-      .section-arrow {
-        display: grid;
-        flex: 0 0 38px;
-        width: 38px;
-        height: 38px;
-        place-items: center;
-        border: 1px solid var(--border-color);
-        border-radius: 50%;
-        background: var(--surface-bg);
-        color: var(--page-text);
-        font-size: 1.1rem;
-        cursor: pointer;
-      }
-
-      .section-slider-wrap {
-        flex: 1;
-      }
-
-      .section-slider {
-        width: 100%;
-        accent-color: var(--page-text);
-        cursor: pointer;
-      }
-
-      .section-count {
-        color: var(--muted);
-        font-size: 0.7rem;
         text-align: center;
-        letter-spacing: 0.12em;
-      }
-
-      @keyframes turath-scroll {
-        to {
-          transform: translateX(-50%);
-        }
-      }
-
-      @keyframes gentle-float {
-        0%, 100% {
-          margin-top: 0;
-        }
-        50% {
-          margin-top: -5px;
-        }
+        font-size: 0.75rem;
       }
 
       @media (max-width: 650px) {
-        body.home .site-logo {
-          width: 50.4px;
+        body.home header {
+          min-height: 52px;
         }
 
-        .turath-marquee-track span {
-          font-size: 0.7rem;
-          letter-spacing: 0.14em;
+        body.home .hero {
+          padding-top: 1rem;
         }
 
-        .featured-image {
-          height: 205px;
+        body.home .home-introduction {
+          width: calc(100% - 2rem);
+          margin-bottom: 3.5rem;
+        }
+
+        .archive-navigation {
+          top: auto;
+          right: 0;
+          bottom: 0;
+          left: 0;
+          flex-direction: row;
+          justify-content: center;
+          gap: 0.4rem;
+          padding: 0.5rem;
+          transform: none;
+          background: var(--page-bg);
+          border-top: 1px solid var(--border-color);
+        }
+
+        .archive-nav-item {
+          flex: 1;
+          width: auto;
+          max-width: 150px;
+        }
+
+        .archive-nav-trigger,
+        .archive-nav-trigger:hover,
+        .archive-nav-item.is-open .archive-nav-trigger {
+          justify-content: center;
+          width: 100%;
+          min-height: 48px;
+          padding: 0.55rem 0.35rem;
+          border: 1px solid var(--border-color);
+          border-radius: 7px;
+        }
+
+        .archive-nav-number {
+          display: none;
+        }
+
+        .archive-nav-title {
+          font-size: 0.58rem;
+          letter-spacing: 0.07em;
+          opacity: 1;
+          transform: none;
+        }
+
+        .archive-nav-panel {
+          position: fixed;
+          top: auto;
+          right: 0.65rem;
+          bottom: 62px;
+          left: 0.65rem;
+          width: auto;
+          max-height: 65vh;
+          transform: translateY(10px);
+        }
+
+        .archive-nav-item:hover .archive-nav-panel,
+        .archive-nav-item:focus-within .archive-nav-panel,
+        .archive-nav-item.is-open .archive-nav-panel {
+          transform: translateY(0);
+        }
+
+        .panel-article-list {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .panel-article img {
+          height: 100px;
+        }
+
+        .latest-article-section {
+          width: calc(100% - 2rem);
         }
 
         .latest-article-card {
@@ -718,55 +635,26 @@ body.home .hero-logo__image--second {
         }
 
         .latest-article-image {
-          height: 220px;
-          min-height: 220px;
+          height: 190px;
+          min-height: 190px;
         }
 
         .latest-article-copy {
-          padding: 1.4rem;
+          padding: 1.2rem;
         }
 
-        .archive-heading {
-          align-items: start;
-        }
-
-        .archive-heading p {
-          max-width: 230px;
-        }
-
-        .category-cover {
-          height: 300px;
-        }
-
-        .cover-copy {
-          inset: auto 1rem 1rem;
-        }
-
-        .article-stage {
-          height: 440px;
-        }
-
-        .article-card {
-          width: min(66vw, 260px);
-          height: 390px;
-        }
-
-        .article-card-image-wrap {
-          flex-basis: 44%;
+        body.home footer {
+          padding-bottom: 5rem;
         }
       }
 
       @media (prefers-reduced-motion: reduce) {
-        .turath-marquee-track,
-        .article-card.is-active {
-          animation: none !important;
-        }
-
-        .cover-image,
-        .article-card,
-        .featured-card,
-        .latest-article-card {
-          transition: none !important;
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
         }
       }
     </style>
@@ -778,15 +666,137 @@ body.home .hero-logo__image--second {
     <LiquidCursor />
 
     <header>
-        <nav>
-        <div class="nav-links">
-          <a href="/">Home</a>
-          <a href="/about">About</a>
-        </div>
-
-       
-      </nav>
+      <a class="home-header-mark" href="/">AN ARCHIVE OF CULTURE & EXPRESSION</a>
     </header>
+
+    <nav class="archive-navigation" aria-label="Explore Turath">
+      <div class="archive-nav-item">
+        <button
+          class="archive-nav-trigger"
+          type="button"
+          aria-expanded="false"
+          aria-controls="acknowledgments-panel"
+        >
+          <span class="archive-nav-number">01</span>
+          <span class="archive-nav-title">ACKNOWLEDGMENTS</span>
+        </button>
+
+        <div class="archive-nav-panel" id="acknowledgments-panel">
+          <p class="panel-eyebrow">A personal dedication</p>
+          <h2>Acknowledgments</h2>
+          <p class="panel-description">
+            To the people, memories and lives that will forever be part of Turath.
+          </p>
+
+          {acknowledgments ? (
+            <>
+              {acknowledgments.data.thumbnail && (
+                <img
+                  class="panel-feature-image"
+                  src={acknowledgments.data.thumbnail}
+                  alt="Acknowledgments"
+                />
+              )}
+              <p class="panel-description">
+                {acknowledgments.data.description}
+              </p>
+              <a
+                class="panel-feature-link"
+                href={`/blog/${acknowledgments.slug}/`}
+              >
+                Read the dedication ↗
+              </a>
+            </>
+          ) : (
+            <p class="panel-empty">The acknowledgments article will appear here.</p>
+          )}
+        </div>
+      </div>
+
+      <div class="archive-nav-item">
+        <button
+          class="archive-nav-trigger"
+          type="button"
+          aria-expanded="false"
+          aria-controls="music-panel"
+        >
+          <span class="archive-nav-number">02</span>
+          <span class="archive-nav-title">MUSIC</span>
+        </button>
+
+        <div class="archive-nav-panel" id="music-panel">
+          <p class="panel-eyebrow">Sound & creative expression</p>
+          <h2>Music</h2>
+          <p class="panel-description">
+            Artists, sounds, perspectives and the stories behind the music.
+          </p>
+
+          {musicPosts.length > 0 ? (
+            <div class="panel-article-list">
+              {musicPosts.map((post) => (
+                <a class="panel-article" href={`/blog/${post.slug}/`}>
+                  {post.data.thumbnail && (
+                    <img
+                      src={post.data.thumbnail}
+                      alt=""
+                      loading="lazy"
+                    />
+                  )}
+                  <div class="panel-article-copy">
+                    <h3>{post.data.title}</h3>
+                    <p>{post.data.description}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          ) : (
+            <p class="panel-empty">Music articles will appear here.</p>
+          )}
+        </div>
+      </div>
+
+      <div class="archive-nav-item">
+        <button
+          class="archive-nav-trigger"
+          type="button"
+          aria-expanded="false"
+          aria-controls="photography-panel"
+        >
+          <span class="archive-nav-number">03</span>
+          <span class="archive-nav-title">PHOTOGRAPHY</span>
+        </button>
+
+        <div class="archive-nav-panel" id="photography-panel">
+          <p class="panel-eyebrow">Images & perspectives</p>
+          <h2>Photography</h2>
+          <p class="panel-description">
+            Stories told through images, the people behind the lens and their perspectives.
+          </p>
+
+          {photographyPosts.length > 0 ? (
+            <div class="panel-article-list">
+              {photographyPosts.map((post) => (
+                <a class="panel-article" href={`/blog/${post.slug}/`}>
+                  {post.data.thumbnail && (
+                    <img
+                      src={post.data.thumbnail}
+                      alt=""
+                      loading="lazy"
+                    />
+                  )}
+                  <div class="panel-article-copy">
+                    <h3>{post.data.title}</h3>
+                    <p>{post.data.description}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          ) : (
+            <p class="panel-empty">Photography articles will appear here.</p>
+          )}
+        </div>
+      </div>
+    </nav>
 
     <main>
       <section class="hero">
@@ -804,25 +814,77 @@ body.home .hero-logo__image--second {
         </div>
       </section>
 
-      {acknowledgments && (
-        <div class="featured-wrap">
-          <a class="featured-card" href={`/blog/${acknowledgments.slug}/`}>
-            {acknowledgments.data.thumbnail && (
-              <img
-                class="featured-image"
-                src={acknowledgments.data.thumbnail}
-                alt=""
-              />
-            )}
+      <section class="home-introduction" id="about">
+        <p class="intro-eyebrow">The meaning · The purpose · The people</p>
+        <h1>About Turath</h1>
 
-            <div class="featured-copy">
-              <p class="eyebrow">A personal dedication</p>
-              <h2>Acknowledgments</h2>
-              <p>{acknowledgments.data.description}</p>
-            </div>
-          </a>
+        <div class="home-introduction-details">
+          <p>
+            Turath (Arabic تُراث) literally means heritage, tradition, and culture.
+          </p>
+
+          <p>
+            The word comes from the Arabic root w-r-th (وَرث), meaning “to inherit”
+            or “to receive as a legacy.” Over time, its meaning grew beyond material
+            inheritance to represent the cultural, intellectual, and spiritual legacies
+            passed from one generation to the next — language, art, customs, stories,
+            beliefs, knowledge, and traditions.
+          </p>
+
+          <p>
+            Turath originally began as an idea for a clothing brand: a way to display
+            culture, art, and expression while creating a voice for people and
+            communities whose stories are often overlooked, misunderstood, or unheard.
+          </p>
+
+          <p>
+            The cultures intended to shape Turath include Congo, Iran, Algeria,
+            Palestine, Sudan, Lebanon, Kurdistan, Iraq, Ethiopia, Afghanistan,
+            South Africa, Somalia, Yemen, Haiti, and many others. These places represent
+            incredibly rich and diverse histories — cultures shaped by faith, migration,
+            creativity, colonialism, war, struggle, resilience, oppression, resistance,
+            and survival.
+          </p>
+
+          <p>The idea for Turath began with myself and Leen.</p>
+
+          <p>
+            Leen was, and remains, one of the dearest people to my soul. She was my
+            sister in everything but blood, my friend, and a divine expression of art,
+            humour, feeling, elegance, and strength. She was a fighter — someone whose
+            presence carried a warmth and spirit that is difficult to put into words.
+          </p>
+
+          <p>
+            On October 29th, Leen’s life was cut short in Gaza when an Israeli missile
+            struck the building where she and her family were residing. Leen, alongside
+            her sister Sara, her brother Ibrahim, and her mother Enas, did not survive.
+          </p>
+
+          <p>
+            There are some losses that change the shape of your life. For me, this was
+            the biggest one.
+          </p>
+
+          <p class="dedication-line">
+            Turath is dedicated to Leen, Sara, Ibrahim, and Enas.
+          </p>
+
+          <p>
+            What began as an idea between two people became something I now carry
+            forward alone, but never without her. Turath was one of Leen’s last wishes
+            for me — and fulfilling it is more than a project or a creative pursuit.
+            It is a promise.
+          </p>
+
+          <p>
+            Turath is a collection of ideas, stories, and perspectives across different
+            subgenres of art, ranging from music, photography, creative directing,
+            athletes, clothing brands, visual artists, entrepreneurs, business owners,
+            music producers, and many more creatives.
+          </p>
         </div>
-      )}
+      </section>
 
       {latestArticle && (
         <section class="latest-article-section">
@@ -852,145 +914,6 @@ body.home .hero-logo__image--second {
           </a>
         </section>
       )}
-
-      {sections.map((section) => (
-        <section class="archive" id={`${section.id}-archive`}>
-          <div class="archive-heading">
-            <div>
-              <h2>{section.title}</h2>
-              <p>{section.subtitle}</p>
-            </div>
-
-            <button
-              class="open-archive"
-              type="button"
-              data-open-section={section.id}
-              aria-controls={`${section.id}-view`}
-              aria-expanded="false"
-            >
-              Explore →
-            </button>
-          </div>
-
-          <button
-            class="category-cover"
-            type="button"
-            data-open-section={section.id}
-            aria-label={`Explore ${section.title} articles`}
-            aria-controls={`${section.id}-view`}
-            aria-expanded="false"
-          >
-            {section.posts
-              .filter((post) => post.data.thumbnail)
-              .map((post, index) => (
-                <img
-                  class:list={['cover-image', index === 0 && 'is-current']}
-                  src={post.data.thumbnail}
-                  alt=""
-                  data-cover-index={index}
-                  loading="lazy"
-                />
-              ))}
-
-            <span class="cover-shade"></span>
-
-            <span class="cover-index">
-              {String(section.posts.length).padStart(2, '0')} ARTICLES
-            </span>
-
-            <span class="cover-copy">
-              <span class="eyebrow">Explore the archive</span>
-              <h3>{section.title}</h3>
-              <p>Open the collection to browse its stories.</p>
-            </span>
-          </button>
-
-          <div
-            class="section-view"
-            id={`${section.id}-view`}
-            aria-label={`${section.title} collection`}
-          >
-            <div class="section-view-top">
-              <p>Move through the collection</p>
-              <p>{section.posts.length} articles</p>
-            </div>
-
-            {section.posts.length > 0 ? (
-              <>
-                <div
-                  class="article-stage"
-                  data-stage={section.id}
-                  tabindex="0"
-                  aria-label={`${section.title} article carousel`}
-                >
-                  {section.posts.map((post, index) => (
-                    <a
-                      class="article-card"
-                      href={`/blog/${post.slug}/`}
-                      data-card-index={index}
-                      aria-label={`Open ${post.data.title}`}
-                    >
-                      <div class="article-card-image-wrap">
-                        {post.data.thumbnail && (
-                          <img
-                            src={post.data.thumbnail}
-                            alt={post.data.title}
-                            loading="lazy"
-                          />
-                        )}
-                      </div>
-
-                      <div class="article-card-copy">
-                        <h4>{post.data.title}</h4>
-                        <p>{post.data.description}</p>
-                      </div>
-                    </a>
-                  ))}
-                </div>
-
-                <div class="section-controls">
-                  <button
-                    class="section-arrow"
-                    type="button"
-                    data-prev={section.id}
-                    aria-label="Previous article"
-                  >
-                    ←
-                  </button>
-
-                  <div class="section-slider-wrap">
-                    <input
-                      class="section-slider"
-                      type="range"
-                      min="0"
-                      max={section.posts.length - 1}
-                      value="0"
-                      step="1"
-                      data-slider={section.id}
-                      aria-label={`Choose ${section.title} article`}
-                    />
-
-                    <div class="section-count" data-count={section.id}>
-                      {`01 / ${String(section.posts.length).padStart(2, '0')}`}
-                    </div>
-                  </div>
-
-                  <button
-                    class="section-arrow"
-                    type="button"
-                    data-next={section.id}
-                    aria-label="Next article"
-                  >
-                    →
-                  </button>
-                </div>
-              </>
-            ) : (
-              <p>No articles have been added to this collection yet.</p>
-            )}
-          </div>
-        </section>
-      ))}
     </main>
 
     <footer>
@@ -1000,267 +923,64 @@ body.home .hero-logo__image--second {
     <TurathInteractions />
 
     <script>
-      let cleanupArchives = () => {};
+      function initializeArchiveNavigation() {
+        const items = Array.from(
+          document.querySelectorAll('.archive-nav-item')
+        );
 
-      const wrapAround = (value, length) =>
-        length ? ((value % length) + length) % length : 0;
+        if (!items.length) return;
 
-      function initializeArchives() {
-        // Clean up anything left from the previous page.
-        cleanupArchives();
+        items.forEach((item) => {
+          const button = item.querySelector('.archive-nav-trigger');
 
-        const controller = new AbortController();
-        const { signal } = controller;
-        const intervals = [];
-        const observers = [];
+          if (!button || button.dataset.initialized === 'true') return;
+          button.dataset.initialized = 'true';
 
-        document.querySelectorAll('.archive').forEach((archive) => {
-          const view = archive.querySelector('.section-view');
-          const openButtons = Array.from(
-            archive.querySelectorAll('[data-open-section]')
-          );
+          button.addEventListener('click', () => {
+            const wasOpen = item.classList.contains('is-open');
 
-          const syncOpenState = (isOpen) => {
-            view?.classList.toggle('is-open', isOpen);
-
-            openButtons.forEach((button) => {
-              button.setAttribute('aria-expanded', String(isOpen));
-
-              if (button.classList.contains('open-archive')) {
-                button.textContent = isOpen ? 'Close ↑' : 'Explore →';
-              }
+            items.forEach((other) => {
+              other.classList.remove('is-open');
+              other.querySelector('.archive-nav-trigger')
+                ?.setAttribute('aria-expanded', 'false');
             });
-          };
 
-          openButtons.forEach((button) => {
-            button.addEventListener('click', () => {
-              const opening = !view?.classList.contains('is-open');
-
-              syncOpenState(opening);
-
-              if (opening) {
-                requestAnimationFrame(() => {
-                  view?.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'nearest',
-                  });
-                });
-              }
-            }, { signal });
+            if (!wasOpen) {
+              item.classList.add('is-open');
+              button.setAttribute('aria-expanded', 'true');
+            }
           });
-
-          // Rotate the category cover images.
-          const images = Array.from(
-            archive.querySelectorAll('.cover-image')
-          );
-
-          if (images.length > 0) {
-            let current = 0;
-
-            images.forEach((image, index) => {
-              image.classList.toggle('is-current', index === 0);
-            });
-
-            if (images.length > 1) {
-              const interval = window.setInterval(() => {
-                images[current].classList.remove('is-current');
-                current = (current + 1) % images.length;
-                images[current].classList.add('is-current');
-              }, 2000);
-
-              intervals.push(interval);
-            }
-          }
-
-          // Initialize the article carousel.
-          const stage = archive.querySelector('.article-stage');
-          const cards = Array.from(
-            archive.querySelectorAll('.article-card')
-          );
-          const slider = archive.querySelector('.section-slider');
-          const count = archive.querySelector('.section-count');
-          const previous = archive.querySelector('[data-prev]');
-          const next = archive.querySelector('[data-next]');
-
-          if (!stage || !slider || !count || cards.length === 0) {
-            return;
-          }
-
-          let active = 0;
-          let pointerStart = null;
-
-          function distanceFrom(index) {
-            let distance = index - active;
-
-            if (distance > cards.length / 2) {
-              distance -= cards.length;
-            }
-
-            if (distance < -cards.length / 2) {
-              distance += cards.length;
-            }
-
-            return distance;
-          }
-
-          function render() {
-            const stageWidth = stage.clientWidth;
-            const cardWidth =
-              cards[0].getBoundingClientRect().width || 230;
-
-            const gap = Math.min(cardWidth * 0.82, stageWidth * 0.25);
-
-            cards.forEach((card, index) => {
-              const distance = distanceFrom(index);
-              const absolute = Math.abs(distance);
-              const visible = absolute <= 2;
-
-              card.style.setProperty('--x', `${distance * gap}px`);
-
-              card.style.setProperty(
-                '--scale',
-                String(
-                  absolute === 0
-                    ? 1
-                    : absolute === 1
-                      ? 0.83
-                      : 0.68
-                )
-              );
-
-              card.style.setProperty(
-                '--opacity',
-                String(
-                  absolute === 0
-                    ? 1
-                    : absolute === 1
-                      ? 0.78
-                      : absolute === 2
-                        ? 0.3
-                        : 0
-                )
-              );
-
-              card.style.setProperty('--z', String(10 - absolute));
-
-              card.classList.toggle('is-active', distance === 0);
-              card.classList.toggle('is-visible', visible);
-
-              card.setAttribute('aria-hidden', String(!visible));
-              card.setAttribute('tabindex', visible ? '0' : '-1');
-            });
-
-            slider.value = String(active);
-
-            count.textContent =
-              `${String(active + 1).padStart(2, '0')} / ${String(cards.length).padStart(2, '0')}`;
-          }
-
-          function goTo(index) {
-            active = wrapAround(index, cards.length);
-            render();
-          }
-
-          previous?.addEventListener(
-            'click',
-            () => goTo(active - 1),
-            { signal }
-          );
-
-          next?.addEventListener(
-            'click',
-            () => goTo(active + 1),
-            { signal }
-          );
-
-          slider.addEventListener(
-            'input',
-            () => goTo(Number(slider.value)),
-            { signal }
-          );
-
-          cards.forEach((card, index) => {
-            card.addEventListener('click', (event) => {
-              if (distanceFrom(index) !== 0) {
-                event.preventDefault();
-                goTo(index);
-              }
-            }, { signal });
-          });
-
-          stage.addEventListener('keydown', (event) => {
-            if (event.key === 'ArrowLeft') {
-              event.preventDefault();
-              goTo(active - 1);
-            }
-
-            if (event.key === 'ArrowRight') {
-              event.preventDefault();
-              goTo(active + 1);
-            }
-          }, { signal });
-
-          stage.addEventListener('pointerdown', (event) => {
-            pointerStart = {
-              x: event.clientX,
-              y: event.clientY,
-            };
-          }, { signal });
-
-          stage.addEventListener('pointerup', (event) => {
-            if (!pointerStart) return;
-
-            const dx = event.clientX - pointerStart.x;
-            const dy = event.clientY - pointerStart.y;
-
-            pointerStart = null;
-
-            if (
-              Math.abs(dx) > 45 &&
-              Math.abs(dx) > Math.abs(dy)
-            ) {
-              goTo(active + (dx < 0 ? 1 : -1));
-            }
-          }, { signal });
-
-          stage.addEventListener('pointercancel', () => {
-            pointerStart = null;
-          }, { signal });
-
-          render();
-
-          if ('ResizeObserver' in window) {
-            const observer = new ResizeObserver(render);
-            observer.observe(stage);
-            observers.push(observer);
-          } else {
-            window.addEventListener('resize', render, { signal });
-          }
         });
 
-        cleanupArchives = () => {
-          controller.abort();
+        if (document.documentElement.dataset.archiveNavigationReady === 'true') {
+          return;
+        }
 
-          intervals.forEach((interval) => {
-            window.clearInterval(interval);
-          });
+        document.documentElement.dataset.archiveNavigationReady = 'true';
 
-          observers.forEach((observer) => {
-            observer.disconnect();
+        document.addEventListener('click', (event) => {
+          if (event.target.closest('.archive-nav-item')) return;
+
+          items.forEach((item) => {
+            item.classList.remove('is-open');
+            item.querySelector('.archive-nav-trigger')
+              ?.setAttribute('aria-expanded', 'false');
           });
-        };
+        });
+
+        document.addEventListener('keydown', (event) => {
+          if (event.key !== 'Escape') return;
+
+          items.forEach((item) => {
+            item.classList.remove('is-open');
+            item.querySelector('.archive-nav-trigger')
+              ?.setAttribute('aria-expanded', 'false');
+          });
+        });
       }
 
-      // Initialize the homepage.
-      initializeArchives();
-
-      // Reinitialize after Astro navigation.
-      document.addEventListener('astro:page-load', initializeArchives);
-
-      // Clean up before leaving the current page.
-      document.addEventListener('astro:before-swap', () => {
-        cleanupArchives();
-      });
+      initializeArchiveNavigation();
+      document.addEventListener('astro:page-load', initializeArchiveNavigation);
     </script>
   </body>
 </html>
