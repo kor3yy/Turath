@@ -7,14 +7,23 @@ const {
   latestArticle,
 } = Astro.props;
 
-const archive = [
+function orbitPosts(posts, parent) {
+  return posts.map((post, index) => ({
+    id: `${parent}-${index}`,
+    parent,
+    title: post.data.title,
+    description: post.data.description || '',
+    url: `/blog/${post.slug}/`,
+    kind: 'article',
+  }));
+}
+
+const nodes = [
   {
     id: 'turath',
     title: 'TURATH',
     description: 'An archive of culture, art, expression, and the people behind them.',
     kind: 'center',
-    url: '',
-    parent: '',
   },
   {
     id: 'acknowledgments',
@@ -22,23 +31,18 @@ const archive = [
     description: 'A personal dedication to the people and memories that will forever be part of Turath.',
     kind: 'feature',
     url: acknowledgments ? `/blog/${acknowledgments.slug}/` : '',
-    parent: '',
   },
   {
     id: 'music',
     title: 'MUSIC',
     description: 'Artists, sounds, perspectives, and the stories behind the music.',
     kind: 'category',
-    url: '',
-    parent: '',
   },
   {
     id: 'photography',
     title: 'PHOTOGRAPHY',
     description: 'Stories told through images and the people behind the lens.',
     kind: 'category',
-    url: '',
-    parent: '',
   },
   {
     id: 'about',
@@ -46,1435 +50,1305 @@ const archive = [
     description: 'The meaning, origins, and story behind Turath.',
     kind: 'about',
     url: '#about',
-    parent: '',
   },
-  ...(latestArticle ? [{
-    id: 'latest',
-    title: 'LATEST ARTICLE',
-    description: latestArticle.data.title,
-    kind: 'feature',
-    url: `/blog/${latestArticle.slug}/`,
-    parent: '',
-  }] : []),
-  ...musicPosts.map((post, i) => ({
-    id: `music-${i}`,
-    title: post.data.title,
-    description: post.data.description || 'A story from the Turath music archive.',
-    kind: 'article',
-    url: `/blog/${post.slug}/`,
-    parent: 'music',
-  })),
-  ...photographyPosts.map((post, i) => ({
-    id: `photography-${i}`,
-    title: post.data.title,
-    description: post.data.description || 'A story from the Turath photography archive.',
-    kind: 'article',
-    url: `/blog/${post.slug}/`,
-    parent: 'photography',
-  })),
+  ...(latestArticle
+    ? [{
+        id: 'latest',
+        title: 'LATEST ARTICLE',
+        description: latestArticle.data.title,
+        kind: 'feature',
+        url: `/blog/${latestArticle.slug}/`,
+      }]
+    : []),
+  ...orbitPosts(musicPosts, 'music'),
+  ...orbitPosts(photographyPosts, 'photography'),
 ];
 ---
 
-<section class="turath-universe" aria-label="Explore the Turath universe">
-  <div class="universe-canvas" id="universe-canvas"></div>
-
-  <div class="universe-heading">
-    <span>AN INTERACTIVE ARCHIVE</span>
-    <span>EXPLORE THE UNIVERSE OF TURATH</span>
-  </div>
-
-  <div class="universe-search">
-    <span>⌕</span>
-    <input id="universe-search-input" type="search" placeholder="Find an artist or story..." aria-label="Search the archive" />
-    <span id="universe-search-count"></span>
-  </div>
-
-  <div class="universe-loader" id="universe-loader">
-    <div class="loader-orbit"></div>
-    <p>INITIALIZING THE UNIVERSE</p>
-    <span>PREPARING THE TURATH ARCHIVE</span>
-  </div>
-
-  <div class="universe-fallback" id="universe-fallback" hidden>
-    <p>EXPLORE THE TURATH ARCHIVE</p>
-    <div id="universe-fallback-links"></div>
-  </div>
-
-  <aside class="universe-detail" id="universe-detail" aria-live="polite">
-    <button type="button" id="universe-close" aria-label="Close details">×</button>
-    <p id="universe-detail-eyebrow">DISCOVER TURATH</p>
-    <h2 id="universe-detail-title">A world of stories.</h2>
-    <p id="universe-detail-description">Explore the people, artists, images, and stories connected through Turath.</p>
-    <div id="universe-detail-links"></div>
-  </aside>
-
-  <div class="universe-instructions">
-    <span>DRAG TO ROTATE</span>
-    <span>SCROLL TO ZOOM</span>
-    <span>SELECT A PLANET</span>
+<section
+  class="turath-universe"
+  id="turath-universe"
+  data-archive={JSON.stringify(nodes)}
+>
+  <div class="universe-topline">
+    <div>
+      <span class="universe-eyebrow">TURATH ARCHIVE / DEEP SPACE</span>
+      <h2>THE UNIVERSE</h2>
+      <p>Explore the worlds, stories, and people within Turath.</p>
+    </div>
+    <div class="universe-status">
+      <span class="status-light"></span>
+      DEEP SPACE OBSERVATION
+    </div>
   </div>
 
   <div class="universe-controls">
+    <div class="universe-search">
+      <span>⌕</span>
+      <input
+        type="search"
+        id="universe-search"
+        placeholder="Search planets, artists, stories..."
+        autocomplete="off"
+        aria-label="Search the Turath universe"
+      />
+    </div>
     <button type="button" id="universe-reset">RESET VIEW</button>
+  </div>
+
+  <div class="universe-stage" id="universe-stage">
+    <canvas id="universe-canvas" aria-label="Interactive 3D planetary universe"></canvas>
+
+    <div class="universe-loading" id="universe-loading">
+      <div class="loading-orbit"><span></span></div>
+      <p>INITIALIZING DEEP SPACE</p>
+    </div>
+
+    <div class="universe-labels" id="universe-labels"></div>
+
+    <div class="universe-corner universe-corner-left">
+      <span>SECTOR 001</span>
+      <span>THE TURATH SYSTEM</span>
+    </div>
+    <div class="universe-corner universe-corner-right">
+      <span>3D ORBITAL VIEW</span>
+      <span>DRAG TO ROTATE · SCROLL TO ZOOM</span>
+    </div>
+
+    <div class="universe-detail" id="universe-detail" aria-live="polite">
+      <button type="button" class="detail-close" id="detail-close" aria-label="Close details">×</button>
+      <span class="detail-eyebrow">CELESTIAL OBJECT</span>
+      <h3 id="detail-title">TURATH</h3>
+      <p id="detail-description">An archive of culture, art, expression, and the people behind them.</p>
+      <div id="detail-links"></div>
+      <a id="detail-open" href="#about">EXPLORE <span>↗</span></a>
+    </div>
+
+    <div class="universe-fallback" id="universe-fallback" hidden>
+      <p>THE OBSERVATORY IS UNAVAILABLE</p>
+      <span>Your browser could not initialize the 3D environment. Try enabling hardware acceleration or using a WebGL-compatible browser.</span>
+    </div>
+  </div>
+
+  <div class="universe-bottomline">
+    <span><i></i> LIVE ORBITAL SYSTEM</span>
+    <span>SELECT A PLANET TO EXPLORE ITS STORIES</span>
   </div>
 </section>
 
-<style is:global>
+<style>
   .turath-universe {
+    --space-purple: #160a2b;
+    --space-violet: #a78bfa;
     position: relative;
-    isolation: isolate;
-    z-index: 3;
     width: 100%;
-    height: min(880px, calc(100svh - 60px));
-    min-height: 620px;
+    padding: 100px 5vw 55px;
     overflow: hidden;
-    color: #f3eaff;
+    color: #f1eaff;
     background:
-      radial-gradient(ellipse at 50% 50%, #241044 0%, #10051f 42%, #080311 78%, #05020b 100%);
+      radial-gradient(ellipse at 50% 48%, rgba(68, 29, 117, .17), transparent 58%),
+      linear-gradient(180deg, #080510 0%, #0d0719 48%, #080510 100%);
+    font-family: inherit;
   }
 
-  .universe-canvas {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    cursor: grab;
-    touch-action: none;
-  }
-
-  .universe-canvas:active {
-    cursor: grabbing;
-  }
-
-  .universe-canvas canvas {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-
-  .universe-heading {
-    position: absolute;
-    z-index: 3;
-    top: 24px;
-    left: 30px;
-    right: 30px;
+  .universe-topline {
     display: flex;
+    align-items: flex-end;
     justify-content: space-between;
-    gap: 1rem;
-    color: #e7d6ff;
-    font-size: .58rem;
-    letter-spacing: .2em;
-    opacity: .75;
-    pointer-events: none;
+    gap: 25px;
+    max-width: 1500px;
+    margin: 0 auto 30px;
   }
 
-  .universe-search {
-    position: absolute;
-    z-index: 5;
-    top: 58px;
-    right: 30px;
+  .universe-eyebrow,
+  .detail-eyebrow {
+    color: #a98bd8;
+    font-size: 9px;
+    letter-spacing: .28em;
+  }
+
+  .universe-topline h2 {
+    margin: 12px 0 8px;
+    color: #f5edff;
+    font-size: clamp(32px, 5vw, 58px);
+    font-weight: 400;
+    letter-spacing: .16em;
+  }
+
+  .universe-topline p {
+    margin: 0;
+    color: #a69ab8;
+    font-size: 12px;
+    letter-spacing: .05em;
+  }
+
+  .universe-status {
     display: flex;
     align-items: center;
     gap: 9px;
-    width: min(270px, 36vw);
-    padding: 10px 14px;
-    border: 1px solid rgba(191,145,255,.3);
-    border-radius: 30px;
-    background: rgba(12,4,27,.72);
-    color: white;
-    backdrop-filter: blur(18px);
+    padding-bottom: 8px;
+    color: #b7a8cd;
+    font-size: 9px;
+    letter-spacing: .16em;
+  }
+
+  .status-light,
+  .universe-bottomline i {
+    width: 6px;
+    height: 6px;
+    display: inline-block;
+    border-radius: 50%;
+    background: #bd8bff;
+    box-shadow: 0 0 12px #a855f7;
+    animation: statusPulse 2s infinite;
+  }
+
+  .universe-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    max-width: 1500px;
+    margin: 0 auto 12px;
+  }
+
+  .universe-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: min(330px, 70%);
+    padding: 10px 13px;
+    border: 1px solid rgba(183, 145, 239, .2);
+    background: rgba(23, 13, 39, .75);
+    color: #cbb4f5;
+  }
+
+  .universe-search span {
+    font-size: 19px;
   }
 
   .universe-search input {
     width: 100%;
-    min-width: 0;
     border: 0;
     outline: 0;
+    color: #f3eaff;
     background: transparent;
-    color: white;
     font: inherit;
-    font-size: .72rem;
+    font-size: 11px;
   }
 
   .universe-search input::placeholder {
-    color: rgba(255,255,255,.52);
+    color: #776987;
   }
 
-  #universe-search-count {
-    white-space: nowrap;
-    color: #c9a5ff;
-    font-size: .58rem;
+  #universe-reset {
+    border: 1px solid rgba(183, 145, 239, .2);
+    padding: 11px 15px;
+    color: #cbb4f5;
+    background: rgba(23, 13, 39, .75);
+    font: inherit;
+    font-size: 9px;
+    letter-spacing: .15em;
+    cursor: pointer;
+    transition: .25s;
   }
 
-  .universe-loader {
+  #universe-reset:hover {
+    border-color: #b68aff;
+    background: rgba(116, 66, 173, .2);
+  }
+
+  .universe-stage {
+    position: relative;
+    width: 100%;
+    height: clamp(500px, 68vw, 790px);
+    min-height: 500px;
+    overflow: hidden;
+    border: 1px solid rgba(168, 119, 224, .16);
+    background:
+      radial-gradient(ellipse at 50% 50%, rgba(74, 32, 119, .16), transparent 65%),
+      #080510;
+    isolation: isolate;
+  }
+
+  #universe-canvas {
     position: absolute;
-    z-index: 4;
     inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: grab;
+    touch-action: pan-y;
+  }
+
+  #universe-canvas:active {
+    cursor: grabbing;
+  }
+
+  .universe-labels {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .planet-label {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    border: 0;
+    padding: 5px 8px;
+    color: #e9dcff;
+    background: rgba(12, 6, 23, .65);
+    text-shadow: 0 0 12px #b58aff;
+    font: inherit;
+    font-size: 9px;
+    letter-spacing: .17em;
+    white-space: nowrap;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: opacity .3s, color .3s, background .3s;
+  }
+
+  .planet-label:hover,
+  .planet-label.active {
+    color: white;
+    background: rgba(113, 65, 170, .48);
+  }
+
+  .planet-label.dimmed {
+    opacity: .12;
+  }
+
+  .universe-loading {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 15px;
-    background: rgba(8,2,18,.35);
-    backdrop-filter: blur(5px);
-    transition: opacity .8s ease, visibility .8s ease;
+    gap: 18px;
+    background: #080510;
+    transition: opacity .8s;
     pointer-events: none;
   }
 
-  .universe-loader.is-hidden {
-    opacity: 0;
-    visibility: hidden;
+  .universe-loading p {
+    color: #bba0df;
+    font-size: 9px;
+    letter-spacing: .28em;
   }
 
-  .loader-orbit {
+  .loading-orbit {
     width: 45px;
     height: 45px;
-    border: 1px solid rgba(185,133,255,.3);
-    border-top-color: #d4aaff;
-    border-right-color: #8c4cff;
+    border: 1px solid rgba(180, 130, 255, .3);
+    border-top-color: #d9baff;
     border-radius: 50%;
-    box-shadow: 0 0 25px rgba(151,82,255,.3);
-    animation: universe-spin 2s linear infinite;
+    animation: orbitSpin 1.5s linear infinite;
+    display: grid;
+    place-items: center;
   }
 
-  .universe-loader p {
-    margin: 0;
-    font-size: .65rem;
-    letter-spacing: .22em;
+  .loading-orbit span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #c49aff;
+    box-shadow: 0 0 15px #bd8bff;
   }
 
-  .universe-loader span {
-    color: rgba(255,255,255,.5);
-    font-size: .52rem;
-    letter-spacing: .17em;
+  .universe-loading.finished {
+    opacity: 0;
   }
 
-  @keyframes universe-spin {
-    to { transform: rotate(360deg); }
-  }
-
-  .universe-fallback {
+  .universe-corner {
     position: absolute;
-    z-index: 2;
-    inset: 120px 20px 90px;
-    align-content: center;
-    text-align: center;
-  }
-
-  .universe-fallback[hidden] { display: none; }
-
-  #universe-fallback-links {
+    bottom: 17px;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 22px;
+    flex-direction: column;
+    gap: 5px;
+    color: rgba(194, 169, 224, .65);
+    font-size: 8px;
+    letter-spacing: .16em;
+    pointer-events: none;
   }
 
-  #universe-fallback-links a {
-    padding: 10px 15px;
-    border: 1px solid rgba(190,150,255,.35);
-    border-radius: 30px;
-    color: white;
-    font-size: .7rem;
-    text-decoration: none;
+  .universe-corner-left {
+    left: 18px;
+  }
+
+  .universe-corner-right {
+    right: 18px;
+    text-align: right;
   }
 
   .universe-detail {
     position: absolute;
-    z-index: 6;
-    top: 50%;
-    right: 30px;
-    width: min(320px, calc(100% - 60px));
-    max-height: 65%;
-    overflow-y: auto;
-    padding: 26px;
-    border: 1px solid rgba(188,150,255,.3);
-    border-radius: 13px;
-    background: rgba(12,5,29,.86);
-    color: white;
-    backdrop-filter: blur(22px);
-    box-shadow: 0 15px 70px rgba(0,0,0,.4), 0 0 35px rgba(112,63,190,.15);
+    z-index: 5;
+    top: 18px;
+    right: 18px;
+    width: min(280px, calc(100% - 36px));
+    padding: 23px;
+    border: 1px solid rgba(187, 143, 245, .35);
+    background: rgba(12, 7, 24, .91);
+    backdrop-filter: blur(18px);
     opacity: 0;
-    visibility: hidden;
-    transform: translate(15px,-45%);
-    transition: opacity .35s ease, transform .35s ease, visibility .35s ease;
+    transform: translateY(8px);
+    pointer-events: none;
+    transition: .35s;
   }
 
-  .universe-detail.is-open {
+  .universe-detail.visible {
     opacity: 1;
-    visibility: visible;
-    transform: translate(0,-45%);
+    transform: translateY(0);
+    pointer-events: auto;
   }
 
-  #universe-close {
+  .detail-close {
     position: absolute;
-    top: 9px;
-    right: 13px;
+    top: 8px;
+    right: 12px;
     border: 0;
+    color: #cdb5ed;
     background: transparent;
-    color: white;
-    font-size: 1.5rem;
+    font-size: 23px;
     cursor: pointer;
   }
 
-  #universe-detail-eyebrow {
-    margin: 0 0 12px;
-    color: #c6a1ff;
-    font-size: .58rem;
-    letter-spacing: .2em;
+  .universe-detail h3 {
+    margin: 12px 0;
+    color: #f4eaff;
+    font-size: 19px;
+    font-weight: 400;
+    letter-spacing: .12em;
   }
 
-  .universe-detail h2 {
-    margin: 0 0 12px;
-    font-size: 1.6rem;
-    line-height: 1.15;
+  .universe-detail p {
+    color: #b8a9ca;
+    font-size: 11px;
+    line-height: 1.8;
   }
 
-  #universe-detail-description {
-    margin: 0;
-    color: rgba(255,255,255,.72);
-    font-size: .82rem;
-    line-height: 1.7;
+  #detail-links {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    margin: 15px 0;
   }
 
-  #universe-detail-links {
-    display: grid;
-    gap: 8px;
-    margin-top: 17px;
-  }
-
-  #universe-detail-links a {
-    padding: 9px 0;
-    border-bottom: 1px solid rgba(255,255,255,.13);
-    color: white;
-    font-size: .75rem;
+  #detail-links a {
+    color: #c6a3f5;
+    font-size: 10px;
+    line-height: 1.5;
     text-decoration: none;
   }
 
-  #universe-detail-links a:hover { color: #d2b4ff; }
-
-  .universe-instructions {
-    position: absolute;
-    z-index: 3;
-    bottom: 25px;
-    left: 30px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 18px;
-    color: #e7d6ff;
-    font-size: .55rem;
-    letter-spacing: .13em;
-    opacity: .75;
-    pointer-events: none;
-  }
-
-  .universe-controls {
-    position: absolute;
-    z-index: 4;
-    right: 30px;
-    bottom: 22px;
-  }
-
-  .universe-controls button {
-    padding: 8px 12px;
-    border: 1px solid rgba(190,150,255,.3);
-    border-radius: 25px;
-    background: rgba(20,8,40,.65);
+  #detail-links a:hover {
     color: white;
-    font: inherit;
-    font-size: .56rem;
-    letter-spacing: .13em;
-    cursor: pointer;
+  }
+
+  #detail-open {
+    display: inline-block;
+    margin-top: 8px;
+    color: #e2caff;
+    font-size: 9px;
+    letter-spacing: .18em;
+    text-decoration: none;
+  }
+
+  #detail-open span {
+    margin-left: 8px;
+  }
+
+  .universe-fallback {
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 30px;
+    text-align: center;
+    background: #0b0614;
+  }
+
+  .universe-fallback p {
+    color: #d8baff;
+    letter-spacing: .2em;
+    font-size: 12px;
+  }
+
+  .universe-fallback span {
+    max-width: 400px;
+    color: #a99ab9;
+    font-size: 11px;
+    line-height: 1.8;
+  }
+
+  .universe-bottomline {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    max-width: 1500px;
+    margin: 13px auto 0;
+    color: #8e7b9f;
+    font-size: 8px;
+    letter-spacing: .16em;
+  }
+
+  .universe-bottomline span:first-child {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  @keyframes orbitSpin {
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes statusPulse {
+    50% { opacity: .35; }
   }
 
   @media (max-width: 650px) {
     .turath-universe {
-      height: 690px;
-      min-height: 620px;
+      padding: 65px 4vw 35px;
     }
 
-    .universe-heading {
-      top: 17px;
-      left: 15px;
-      right: 15px;
-      font-size: .46rem;
-      letter-spacing: .1em;
+    .universe-topline {
+      align-items: flex-start;
+      flex-direction: column;
     }
 
-    .universe-search {
-      top: 48px;
-      right: 15px;
-      width: min(240px,calc(100% - 30px));
+    .universe-status {
+      padding: 0;
     }
 
-    .universe-detail {
-      top: auto;
-      right: 12px;
-      bottom: 65px;
-      left: 12px;
-      width: auto;
-      max-height: 43%;
-      transform: translateY(12px);
+    .universe-stage {
+      height: 580px;
     }
 
-    .universe-detail.is-open { transform: translateY(0); }
-
-    .universe-instructions {
-      bottom: 18px;
-      left: 12px;
-      gap: 8px;
-      font-size: .43rem;
+    .universe-corner {
+      font-size: 7px;
     }
 
-    .universe-controls {
-      right: 12px;
-      bottom: 14px;
+    .universe-bottomline {
+      font-size: 7px;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .loader-orbit { animation: none; }
+    .turath-universe *,
+    .turath-universe *::before,
+    .turath-universe *::after {
+      animation-duration: .01ms !important;
+      transition-duration: .01ms !important;
+    }
   }
 </style>
 
-<script is:inline type="module" define:vars={{ archive }}>
-  let cleanupUniverse = null;
-
-  async function initializeUniverse() {
-    const section = document.querySelector('.turath-universe');
+<script is:inline>
+(() => {
+  const initialize = async () => {
+    const section = document.querySelector('#turath-universe');
     if (!section || section.dataset.initialized === 'true') return;
-
     section.dataset.initialized = 'true';
 
-    const host = section.querySelector('#universe-canvas');
-    const loader = section.querySelector('#universe-loader');
+    const stage = section.querySelector('#universe-stage');
+    const canvas = section.querySelector('#universe-canvas');
+    const labelsContainer = section.querySelector('#universe-labels');
+    const loading = section.querySelector('#universe-loading');
     const fallback = section.querySelector('#universe-fallback');
-    const fallbackLinks = section.querySelector('#universe-fallback-links');
-    const search = section.querySelector('#universe-search-input');
-    const searchCount = section.querySelector('#universe-search-count');
     const detail = section.querySelector('#universe-detail');
-    const detailTitle = section.querySelector('#universe-detail-title');
-    const detailDescription = section.querySelector('#universe-detail-description');
-    const detailEyebrow = section.querySelector('#universe-detail-eyebrow');
-    const detailLinks = section.querySelector('#universe-detail-links');
+    const search = section.querySelector('#universe-search');
+    const reset = section.querySelector('#universe-reset');
 
-    const hideLoader = () => loader?.classList.add('is-hidden');
+    const data = JSON.parse(section.dataset.archive || '[]');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    function showFallback() {
-      hideLoader();
-      if (!fallback) return;
+    let THREE;
+    try {
+      THREE = await import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js');
+    } catch (error) {
+      loading.classList.add('finished');
       fallback.hidden = false;
-      fallbackLinks.replaceChildren();
-
-      archive.forEach((item) => {
-        if (!item.url) return;
-        const a = document.createElement('a');
-        a.href = item.url;
-        a.textContent = item.title;
-        fallbackLinks.appendChild(a);
-      });
+      return;
     }
 
-    let timeoutId;
+    if (!section.isConnected) return;
 
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color('#080510');
+    scene.fog = new THREE.FogExp2('#080510', 0.006);
+
+    const camera = new THREE.PerspectiveCamera(43, 1, 0.1, 250);
+    camera.position.set(0, 0, 43);
+
+    let renderer;
     try {
-      const THREE = await Promise.race([
-        import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js'),
-        new Promise((_, reject) => {
-          timeoutId = window.setTimeout(
-            () => reject(new Error('3D engine timeout')),
-            12000
-          );
-        }),
-      ]);
-
-      clearTimeout(timeoutId);
-      if (!section.isConnected) return;
-
-      const scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0x10051f, .0038);
-
-      const camera = new THREE.PerspectiveCamera(
-        48,
-        host.clientWidth / host.clientHeight,
-        .1,
-        300
-      );
-      camera.position.set(0, 1, 39);
-
-      const renderer = new THREE.WebGLRenderer({
-        alpha: true,
+      renderer = new THREE.WebGLRenderer({
+        canvas,
+        alpha: false,
         antialias: true,
         powerPreference: 'high-performance',
       });
+    } catch (error) {
+      loading.classList.add('finished');
+      fallback.hidden = false;
+      return;
+    }
 
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
-      renderer.setSize(host.clientWidth, host.clientHeight);
-      renderer.outputColorSpace = THREE.SRGBColorSpace;
-      renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.3;
-      renderer.setClearColor(0x000000, 0);
-      host.replaceChildren(renderer.domElement);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.25;
 
-      const world = new THREE.Group();
-      scene.add(world);
+    const universe = new THREE.Group();
+    scene.add(universe);
 
-      const random = (min, max) => Math.random() * (max - min) + min;
-      const clamp = THREE.MathUtils.clamp;
+    scene.add(new THREE.AmbientLight('#8870b5', 0.8));
 
-      const ambient = new THREE.AmbientLight(0x9877c5, 1.15);
-      scene.add(ambient);
+    const keyLight = new THREE.PointLight('#d8baff', 240, 120, 1.5);
+    keyLight.position.set(-8, 12, 20);
+    scene.add(keyLight);
 
-      const sunLight = new THREE.PointLight(0xd3a5ff, 190, 100, 1.5);
-      sunLight.position.set(0, 0, 0);
-      scene.add(sunLight);
+    const violetLight = new THREE.PointLight('#823cff', 130, 100, 2);
+    violetLight.position.set(14, -8, -12);
+    scene.add(violetLight);
 
-      const sideLight = new THREE.PointLight(0x754dff, 110, 85, 1.8);
-      sideLight.position.set(-18, 12, -8);
-      scene.add(sideLight);
+    const blueLight = new THREE.PointLight('#526dff', 90, 90, 2);
+    blueLight.position.set(-20, -12, -10);
+    scene.add(blueLight);
 
-      const pinkLight = new THREE.PointLight(0xb65bff, 75, 80, 2);
-      pinkLight.position.set(16, -12, 7);
-      scene.add(pinkLight);
+    const textureCanvas = (width, height) => {
+      const c = document.createElement('canvas');
+      c.width = width;
+      c.height = height;
+      return [c, c.getContext('2d')];
+    };
 
-      // Procedural glow texture, reused by all glowing objects.
-      function makeGlowTexture() {
-        const c = document.createElement('canvas');
-        c.width = c.height = 256;
-        const ctx = c.getContext('2d');
-        const g = ctx.createRadialGradient(128,128,0,128,128,128);
-        g.addColorStop(0,'rgba(255,255,255,1)');
-        g.addColorStop(.12,'rgba(220,180,255,.85)');
-        g.addColorStop(.35,'rgba(150,80,255,.3)');
-        g.addColorStop(1,'rgba(60,20,130,0)');
-        ctx.fillStyle = g;
-        ctx.fillRect(0,0,256,256);
-        return new THREE.CanvasTexture(c);
+    function makeSurface(seed, palette, style = 'rocky') {
+      const [c, ctx] = textureCanvas(512, 256);
+      let seedValue = seed * 92821 + 31;
+      const random = () => {
+        seedValue = (seedValue * 16807) % 2147483647;
+        return seedValue / 2147483647;
+      };
+
+      const gradient = ctx.createLinearGradient(0, 0, 512, 256);
+      palette.forEach((color, index) => {
+        gradient.addColorStop(index / (palette.length - 1), color);
+      });
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, 512, 256);
+
+      for (let i = 0; i < 950; i++) {
+        const x = random() * 512;
+        const y = random() * 256;
+        const r = 2 + random() * (style === 'gas' ? 20 : 11);
+        const alpha = .025 + random() * .16;
+
+        ctx.beginPath();
+        ctx.ellipse(x, y, r * (1 + random()), r * .55, random() * 3, 0, Math.PI * 2);
+        ctx.fillStyle = random() > .5
+          ? `rgba(230,210,255,${alpha})`
+          : `rgba(10,4,25,${alpha})`;
+        ctx.fill();
       }
 
-      const glowTexture = makeGlowTexture();
+      if (style === 'gas') {
+        for (let i = 0; i < 38; i++) {
+          const y = random() * 256;
+          ctx.fillStyle = `rgba(230,205,255,${.025 + random() * .1})`;
+          ctx.fillRect(0, y, 512, 2 + random() * 10);
+        }
+      }
 
-      function glow(color, size, opacity = .5) {
-        const sprite = new THREE.Sprite(new THREE.SpriteMaterial({
-          map: glowTexture,
+      if (style === 'rocky' || style === 'moon') {
+        for (let i = 0; i < 180; i++) {
+          const x = random() * 512;
+          const y = random() * 256;
+          const r = 1 + random() * 7;
+          const g = ctx.createRadialGradient(x - r * .25, y - r * .25, 0, x, y, r);
+          g.addColorStop(0, 'rgba(245,225,255,.22)');
+          g.addColorStop(.65, 'rgba(20,10,40,.12)');
+          g.addColorStop(1, 'rgba(5,2,15,.25)');
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.arc(x, y, r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      const texture = new THREE.CanvasTexture(c);
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+      return texture;
+    }
+
+    function makeGlowTexture() {
+      const [c, ctx] = textureCanvas(128, 128);
+      const g = ctx.createRadialGradient(64, 64, 2, 64, 64, 64);
+      g.addColorStop(0, 'rgba(255,255,255,.85)');
+      g.addColorStop(.12, 'rgba(213,160,255,.42)');
+      g.addColorStop(.38, 'rgba(145,73,255,.17)');
+      g.addColorStop(1, 'rgba(80,25,150,0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, 128, 128);
+      return new THREE.CanvasTexture(c);
+    }
+
+    const glowTexture = makeGlowTexture();
+
+    function makeNebula(x, y, z, size, color, opacity) {
+      const material = new THREE.SpriteMaterial({
+        map: glowTexture,
+        color,
+        transparent: true,
+        opacity,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+      });
+      const sprite = new THREE.Sprite(material);
+      sprite.position.set(x, y, z);
+      sprite.scale.set(size, size * .65, 1);
+      universe.add(sprite);
+    }
+
+    makeNebula(-17, 9, -24, 24, '#7433bd', .26);
+    makeNebula(18, -8, -27, 29, '#4126a5', .22);
+    makeNebula(0, 17, -35, 22, '#a34dce', .12);
+    makeNebula(-4, -18, -30, 26, '#5522a0', .15);
+    makeNebula(22, 12, -40, 18, '#bd73ff', .11);
+
+    // Distant stars
+    const starCount = 2400;
+    const starPositions = new Float32Array(starCount * 3);
+    const starColors = new Float32Array(starCount * 3);
+    const starSizes = new Float32Array(starCount);
+
+    for (let i = 0; i < starCount; i++) {
+      const i3 = i * 3;
+      starPositions[i3] = (Math.random() - .5) * 150;
+      starPositions[i3 + 1] = (Math.random() - .5) * 100;
+      starPositions[i3 + 2] = -Math.random() * 95 - 15;
+
+      const tint = Math.random();
+      const color = new THREE.Color(
+        tint > .84 ? '#d6b2ff' : tint > .55 ? '#9f9bff' : '#ffffff'
+      );
+      starColors[i3] = color.r;
+      starColors[i3 + 1] = color.g;
+      starColors[i3 + 2] = color.b;
+      starSizes[i] = .5 + Math.random() * 1.7;
+    }
+
+    const starGeometry = new THREE.BufferGeometry();
+    starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+    starGeometry.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
+    starGeometry.setAttribute('size', new THREE.BufferAttribute(starSizes, 1));
+
+    const starMaterial = new THREE.PointsMaterial({
+      size: .11,
+      vertexColors: true,
+      transparent: true,
+      opacity: .9,
+      sizeAttenuation: true,
+      depthWrite: false,
+    });
+
+    const stars = new THREE.Points(starGeometry, starMaterial);
+    universe.add(stars);
+
+    // A second, closer star layer adds depth.
+    const nearStarPositions = new Float32Array(400 * 3);
+    for (let i = 0; i < 400; i++) {
+      nearStarPositions[i * 3] = (Math.random() - .5) * 75;
+      nearStarPositions[i * 3 + 1] = (Math.random() - .5) * 50;
+      nearStarPositions[i * 3 + 2] = (Math.random() - .5) * 30 - 8;
+    }
+    const nearStarGeometry = new THREE.BufferGeometry();
+    nearStarGeometry.setAttribute('position', new THREE.BufferAttribute(nearStarPositions, 3));
+    const nearStars = new THREE.Points(
+      nearStarGeometry,
+      new THREE.PointsMaterial({
+        color: '#d9c4ff',
+        size: .09,
+        transparent: true,
+        opacity: .75,
+        depthWrite: false,
+      })
+    );
+    universe.add(nearStars);
+
+    // Main celestial object positions.
+    const positions = {
+      turath: [0, 0, 0],
+      acknowledgments: [0, 12, -3],
+      music: [13, 3, -3],
+      photography: [-13, 2, -3],
+      about: [0, -12, -3],
+      latest: [17, -9, -5],
+    };
+
+    const palettes = {
+      turath: ['#10051f', '#53217f', '#a85de5', '#e3b9ff'],
+      acknowledgments: ['#1a0b2b', '#553074', '#a978c8', '#e9d9ff'],
+      music: ['#09071d', '#35206f', '#7e56c5', '#d6a8ff'],
+      photography: ['#0c102c', '#263b77', '#716ed0', '#d4c5ff'],
+      about: ['#1a0b2d', '#61348e', '#a66fce', '#edcaff'],
+      latest: ['#0b0d25', '#2c3675', '#7269c6', '#c8baff'],
+    };
+
+    const bodyMeshes = [];
+    const bodyById = new Map();
+    const labelElements = new Map();
+    const articleBodies = [];
+
+    function addOrbit(parent, radiusX, radiusY, color = '#a77adf') {
+      const points = [];
+      for (let i = 0; i <= 160; i++) {
+        const a = (i / 160) * Math.PI * 2;
+        points.push(new THREE.Vector3(
+          Math.cos(a) * radiusX,
+          Math.sin(a) * radiusY,
+          0
+        ));
+      }
+
+      const geometry = new THREE.BufferGeometry().setFromPoints(points);
+      const line = new THREE.LineLoop(
+        geometry,
+        new THREE.LineBasicMaterial({
           color,
           transparent: true,
-          opacity,
-          depthWrite: false,
-          blending: THREE.AdditiveBlending,
-        }));
-        sprite.scale.set(size,size,1);
-        return sprite;
-      }
-
-      // Canvas-generated planetary surfaces.
-      function makePlanetTexture(type, base, accent, seed) {
-        const c = document.createElement('canvas');
-        c.width = 1024;
-        c.height = 512;
-        const ctx = c.getContext('2d');
-
-        let hash = seed * 9301 + 49297;
-        const rand = () => {
-          hash = (hash * 233 + 49297) % 233280;
-          return hash / 233280;
-        };
-
-        const gradient = ctx.createLinearGradient(0,0,0,512);
-        gradient.addColorStop(0, accent);
-        gradient.addColorStop(.5, base);
-        gradient.addColorStop(1, '#080416');
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0,0,1024,512);
-
-        if (type === 'gas') {
-          for (let i = 0; i < 115; i++) {
-            const y = rand() * 512;
-            const h = random(2,12);
-            const alpha = random(.025,.18);
-            ctx.fillStyle = `rgba(235,205,255,${alpha})`;
-            ctx.fillRect(0,y,1024,h);
-          }
-
-          for (let i = 0; i < 45; i++) {
-            const y = rand() * 512;
-            ctx.beginPath();
-            ctx.ellipse(rand()*1024,y,random(20,110),random(2,9),0,0,Math.PI*2);
-            ctx.fillStyle = `rgba(35,8,75,${random(.08,.28)})`;
-            ctx.fill();
-          }
-
-          // Large atmospheric storm.
-          ctx.save();
-          ctx.translate(710,285);
-          ctx.scale(1.8,.75);
-          const storm = ctx.createRadialGradient(0,0,4,0,0,65);
-          storm.addColorStop(0,'rgba(255,205,255,.8)');
-          storm.addColorStop(.25,'rgba(181,90,255,.8)');
-          storm.addColorStop(.65,'rgba(75,27,140,.7)');
-          storm.addColorStop(1,'rgba(35,8,75,0)');
-          ctx.fillStyle = storm;
-          ctx.beginPath();
-          ctx.arc(0,0,65,0,Math.PI*2);
-          ctx.fill();
-          ctx.restore();
-        } else {
-          for (let i = 0; i < 2200; i++) {
-            const x = rand()*1024;
-            const y = rand()*512;
-            const r = random(.5,4);
-            ctx.beginPath();
-            ctx.arc(x,y,r,0,Math.PI*2);
-            ctx.fillStyle = rand() > .5
-              ? `rgba(210,175,255,${random(.05,.35)})`
-              : `rgba(15,4,38,${random(.1,.5)})`;
-            ctx.fill();
-          }
-
-          for (let i = 0; i < 75; i++) {
-            const x = rand()*1024;
-            const y = rand()*512;
-            ctx.beginPath();
-            ctx.arc(x,y,random(2,12),0,Math.PI*2);
-            ctx.fillStyle = 'rgba(12,4,30,.5)';
-            ctx.fill();
-            ctx.strokeStyle = 'rgba(210,175,255,.18)';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-          }
-        }
-
-        // Fine surface noise.
-        for (let i = 0; i < 6000; i++) {
-          ctx.fillStyle = `rgba(255,255,255,${random(.01,.07)})`;
-          ctx.fillRect(rand()*1024,rand()*512,1,1);
-        }
-
-        const texture = new THREE.CanvasTexture(c);
-        texture.colorSpace = THREE.SRGBColorSpace;
-        texture.anisotropy = Math.min(renderer.capabilities.getMaxAnisotropy(), 4);
-        return texture;
-      }
-
-      // Animated translucent cloud maps.
-      function makeCloudTexture() {
-        const c = document.createElement('canvas');
-        c.width = 512;
-        c.height = 256;
-        const ctx = c.getContext('2d');
-
-        for (let i = 0; i < 1100; i++) {
-          const x = Math.random()*512;
-          const y = Math.random()*256;
-          const r = random(3,24);
-          const g = ctx.createRadialGradient(x,y,0,x,y,r);
-          g.addColorStop(0,`rgba(245,225,255,${random(.04,.25)})`);
-          g.addColorStop(1,'rgba(245,225,255,0)');
-          ctx.fillStyle = g;
-          ctx.fillRect(x-r,y-r,r*2,r*2);
-        }
-
-        const texture = new THREE.CanvasTexture(c);
-        texture.colorSpace = THREE.SRGBColorSpace;
-        return texture;
-      }
-
-      const cloudTexture = makeCloudTexture();
-
-      // Nebula clouds, using soft procedural glow sprites.
-      const nebulaColors = [0x5520a0,0x8538ce,0x332078,0x9d48bd,0x4a278e];
-
-      for (let i = 0; i < 24; i++) {
-        const n = glow(
-          nebulaColors[i % nebulaColors.length],
-          random(10,25),
-          random(.08,.2)
-        );
-        n.position.set(random(-35,35),random(-22,22),random(-35,-12));
-        world.add(n);
-      }
-
-      // Deep space stars, with varied sizes and colours.
-      const starPositions = [];
-      const starColors = [];
-      const starSizes = [];
-
-      const starPalette = [
-        new THREE.Color(0xffffff),
-        new THREE.Color(0xd5baff),
-        new THREE.Color(0x9c8cff),
-        new THREE.Color(0xe8baff),
-        new THREE.Color(0xaaaaff),
-      ];
-
-      for (let i = 0; i < 4200; i++) {
-        const radius = random(35,125);
-        const theta = random(0,Math.PI*2);
-        const phi = Math.acos(random(-1,1));
-
-        starPositions.push(
-          radius*Math.sin(phi)*Math.cos(theta),
-          radius*Math.sin(phi)*Math.sin(theta),
-          radius*Math.cos(phi)
-        );
-
-        const color = starPalette[Math.floor(Math.random()*starPalette.length)];
-        starColors.push(color.r,color.g,color.b);
-        starSizes.push(random(.4,1.8));
-      }
-
-      const starGeometry = new THREE.BufferGeometry();
-      starGeometry.setAttribute('position',new THREE.Float32BufferAttribute(starPositions,3));
-      starGeometry.setAttribute('color',new THREE.Float32BufferAttribute(starColors,3));
-
-      const stars = new THREE.Points(
-        starGeometry,
-        new THREE.PointsMaterial({
-          size: .13,
-          vertexColors: true,
-          transparent: true,
-          opacity: .95,
-          sizeAttenuation: true,
+          opacity: .22,
           depthWrite: false,
         })
       );
-      world.add(stars);
-
-      // Fine foreground cosmic dust.
-      const dustPositions = [];
-      for (let i = 0; i < 900; i++) {
-        dustPositions.push(random(-30,30),random(-20,20),random(-18,18));
-      }
-
-      const dustGeometry = new THREE.BufferGeometry();
-      dustGeometry.setAttribute('position',new THREE.Float32BufferAttribute(dustPositions,3));
-
-      const dust = new THREE.Points(
-        dustGeometry,
-        new THREE.PointsMaterial({
-          color: 0xc4a0ff,
-          size: .045,
-          transparent: true,
-          opacity: .55,
-          depthWrite: false,
-        })
-      );
-      world.add(dust);
-
-      // Distant miniature planetary systems.
-      const backgroundPlanets = [];
-
-      const backgroundPlanetConfigs = [
-        {pos:[-25,13,-27],r:2.1,color:0x7651bd},
-        {pos:[24,15,-34],r:3.1,color:0x4b347d},
-        {pos:[-27,-13,-22],r:1.4,color:0x9874c7},
-        {pos:[28,-15,-31],r:2.2,color:0x5d3c96},
-        {pos:[4,22,-40],r:1.1,color:0x9773c5},
-      ];
-
-      backgroundPlanetConfigs.forEach((config,i) => {
-        const group = new THREE.Group();
-        group.position.set(...config.pos);
-        world.add(group);
-
-        const planet = new THREE.Mesh(
-          new THREE.SphereGeometry(config.r,32,32),
-          new THREE.MeshStandardMaterial({
-            color:config.color,
-            roughness:.85,
-            metalness:.12,
-            emissive:config.color,
-            emissiveIntensity:.12,
-          })
-        );
-        group.add(planet);
-        group.add(glow(config.color,config.r*4,.22));
-
-        if (i === 1 || i === 3) {
-          const ring = new THREE.Mesh(
-            new THREE.RingGeometry(config.r*1.4,config.r*2.1,64),
-            new THREE.MeshBasicMaterial({
-              color:0x9a72c9,
-              transparent:true,
-              opacity:.22,
-              side:THREE.DoubleSide,
-            })
-          );
-          ring.rotation.x = 1.1;
-          group.add(ring);
-        }
-
-        backgroundPlanets.push(group);
-      });
-
-      // Main archive solar system.
-      const sun = new THREE.Group();
-      world.add(sun);
-
-      const sunSphere = new THREE.Mesh(
-        new THREE.SphereGeometry(1.7,64,64),
-        new THREE.MeshStandardMaterial({
-          color:0xe8d9ff,
-          emissive:0x9a50ff,
-          emissiveIntensity:2.8,
-          roughness:.25,
-          metalness:.08,
-        })
-      );
-      sun.add(sunSphere);
-      sun.add(glow(0x9e54ff,10,.85));
-      sun.add(glow(0xd7aaff,5,.75));
-
-      const sunLabelCanvas = document.createElement('canvas');
-      sunLabelCanvas.width = 1024;
-      sunLabelCanvas.height = 160;
-      const sunCtx = sunLabelCanvas.getContext('2d');
-      sunCtx.font = '600 66px Arial';
-      sunCtx.textAlign = 'center';
-      sunCtx.textBaseline = 'middle';
-      sunCtx.fillStyle = '#eee0ff';
-      sunCtx.shadowColor = '#ad72ff';
-      sunCtx.shadowBlur = 22;
-      sunCtx.fillText('TURATH',512,80);
-
-      const sunLabel = new THREE.Sprite(new THREE.SpriteMaterial({
-        map:new THREE.CanvasTexture(sunLabelCanvas),
-        transparent:true,
-        depthWrite:false,
-      }));
-      sunLabel.scale.set(5.5,.9,1);
-      sunLabel.position.y = -3.2;
-      sun.add(sunLabel);
-
-      // Orbit tracks.
-      function orbitLine(radius,color,opacity,tilt=0) {
-        const points = [];
-        for (let i = 0; i <= 220; i++) {
-          const a = i/220*Math.PI*2;
-          points.push(new THREE.Vector3(
-            Math.cos(a)*radius,
-            Math.sin(a)*radius,
-            0
-          ));
-        }
-
-        const line = new THREE.LineLoop(
-          new THREE.BufferGeometry().setFromPoints(points),
-          new THREE.LineBasicMaterial({
-            color,
-            transparent:true,
-            opacity,
-            depthWrite:false,
-          })
-        );
-        line.rotation.x = tilt;
-        world.add(line);
-        return line;
-      }
-
-      orbitLine(8.5,0xa77be8,.22,.08);
-      orbitLine(13,0x9b70df,.18,.16);
-      orbitLine(18,0x9b70df,.13,-.1);
-      orbitLine(23,0x9b70df,.1,.2);
-
-      const objects = new Map();
-      const clickable = [];
-      const orbitGroups = [];
-
-      function makeLabel(text) {
-        const c = document.createElement('canvas');
-        c.width = 1024;
-        c.height = 150;
-        const ctx = c.getContext('2d');
-        ctx.font = '600 42px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillStyle = '#f2eaff';
-        ctx.shadowColor = '#a879ff';
-        ctx.shadowBlur = 18;
-        ctx.fillText(text.toUpperCase(),512,75);
-
-        const texture = new THREE.CanvasTexture(c);
-        texture.colorSpace = THREE.SRGBColorSpace;
-
-        const sprite = new THREE.Sprite(new THREE.SpriteMaterial({
-          map:texture,
-          transparent:true,
-          depthWrite:false,
-        }));
-        sprite.scale.set(5.8,.85,1);
-        return sprite;
-      }
-
-      const planetSettings = {
-        acknowledgments: {
-          pos:[0,10,-1],radius:1.05,type:'rocky',
-          base:'#68448e',accent:'#c39bdf',glow:0xc48bff,
-        },
-        music: {
-          pos:[12,2,0],radius:1.5,type:'gas',
-          base:'#51327e',accent:'#bd8bdb',glow:0xb38aff,ring:true,
-        },
-        photography: {
-          pos:[-12,2,-1],radius:1.35,type:'rocky',
-          base:'#34346f',accent:'#a18be5',glow:0x8e9bff,ring:true,
-        },
-        about: {
-          pos:[0,-11,1],radius:1.05,type:'rocky',
-          base:'#684078',accent:'#c58fd2',glow:0xc59aff,
-        },
-        latest: {
-          pos:[0,0,-16],radius:.9,type:'gas',
-          base:'#70406f',accent:'#e4a1dc',glow:0xff9ce6,
-        },
-      };
-
-      function makePlanet(node,config) {
-        const group = new THREE.Group();
-        group.position.set(...config.pos);
-        world.add(group);
-
-        const texture = makePlanetTexture(
-          config.type,
-          config.base,
-          config.accent,
-          node.id.length*17
-        );
-
-        const planet = new THREE.Mesh(
-          new THREE.SphereGeometry(config.radius,64,64),
-          new THREE.MeshStandardMaterial({
-            map:texture,
-            roughness:config.type === 'gas' ? .75 : .92,
-            metalness:.06,
-            emissive:config.glow,
-            emissiveIntensity:.1,
-          })
-        );
-        group.add(planet);
-
-        // Moving transparent cloud shell.
-        const clouds = new THREE.Mesh(
-          new THREE.SphereGeometry(config.radius*1.012,48,48),
-          new THREE.MeshStandardMaterial({
-            map:cloudTexture,
-            transparent:true,
-            opacity:config.type === 'gas' ? .32 : .2,
-            depthWrite:false,
-            blending:THREE.AdditiveBlending,
-          })
-        );
-        group.add(clouds);
-
-        // Atmospheric limb.
-        const atmosphere = new THREE.Mesh(
-          new THREE.SphereGeometry(config.radius*1.13,48,48),
-          new THREE.MeshBasicMaterial({
-            color:config.glow,
-            transparent:true,
-            opacity:.13,
-            side:THREE.BackSide,
-            depthWrite:false,
-          })
-        );
-        group.add(atmosphere);
-
-        group.add(glow(config.glow,config.radius*5.5,.42));
-
-        if (config.ring) {
-          const ringTextureCanvas = document.createElement('canvas');
-          ringTextureCanvas.width = 512;
-          ringTextureCanvas.height = 64;
-          const ctx = ringTextureCanvas.getContext('2d');
-
-          const grad = ctx.createLinearGradient(0,0,0,64);
-          grad.addColorStop(0,'rgba(160,120,220,0)');
-          grad.addColorStop(.2,'rgba(210,180,255,.5)');
-          grad.addColorStop(.42,'rgba(100,65,160,.75)');
-          grad.addColorStop(.6,'rgba(220,190,255,.4)');
-          grad.addColorStop(1,'rgba(100,65,160,0)');
-          ctx.fillStyle = grad;
-          ctx.fillRect(0,0,512,64);
-
-          for (let i=0;i<300;i++) {
-            ctx.fillStyle = `rgba(255,255,255,${Math.random()*.2})`;
-            ctx.fillRect(Math.random()*512,Math.random()*64,1,1);
-          }
-
-          const ringTexture = new THREE.CanvasTexture(ringTextureCanvas);
-
-          const ring = new THREE.Mesh(
-            new THREE.RingGeometry(config.radius*1.45,config.radius*2.15,128),
-            new THREE.MeshBasicMaterial({
-              map:ringTexture,
-              color:config.glow,
-              side:THREE.DoubleSide,
-              transparent:true,
-              opacity:.75,
-              depthWrite:false,
-            })
-          );
-
-          ring.rotation.x = Math.PI*.36;
-          ring.rotation.y = .16;
-          group.add(ring);
-        }
-
-        const label = makeLabel(node.title);
-        label.position.y = -config.radius-1;
-        group.add(label);
-
-        planet.userData.node = node;
-        clickable.push(planet);
-        objects.set(node.id,{group,planet,clouds,label,texture});
-      }
-
-      archive.forEach((node) => {
-        const config = planetSettings[node.id];
-        if (config) makePlanet(node,config);
-      });
-
-      // Article moons around Music and Photography.
-      function addArticleMoons(parentId,color) {
-        const parent = objects.get(parentId);
-        if (!parent) return;
-
-        const articles = archive.filter((node) => node.parent === parentId);
-        if (!articles.length) return;
-
-        const orbit = new THREE.Group();
-        parent.group.add(orbit);
-
-        const radius = 3.2;
-        const points = [];
-
-        for (let i=0;i<=120;i++) {
-          const a = i/120*Math.PI*2;
-          points.push(new THREE.Vector3(
-            Math.cos(a)*radius,
-            Math.sin(a)*radius*.72,
-            0
-          ));
-        }
-
-        const track = new THREE.LineLoop(
-          new THREE.BufferGeometry().setFromPoints(points),
-          new THREE.LineBasicMaterial({
-            color,
-            transparent:true,
-            opacity:.32,
-          })
-        );
-        orbit.add(track);
-
-        articles.forEach((node,index) => {
-          const a = index/articles.length*Math.PI*2;
-          const moonGroup = new THREE.Group();
-          moonGroup.position.set(
-            Math.cos(a)*radius,
-            Math.sin(a)*radius*.72,
-            random(-.3,.3)
-          );
-          orbit.add(moonGroup);
-
-          const moon = new THREE.Mesh(
-            new THREE.SphereGeometry(.26,32,32),
-            new THREE.MeshStandardMaterial({
-              color,
-              emissive:color,
-              emissiveIntensity:1.1,
-              roughness:.55,
-            })
-          );
-          moonGroup.add(moon);
-          moonGroup.add(glow(color,1.25,.55));
-
-          const label = makeLabel(node.title);
-          label.scale.set(4.8,.65,1);
-          label.position.y = -.7;
-          moonGroup.add(label);
-
-          moon.userData.node = node;
-          clickable.push(moon);
-          objects.set(node.id,{group:moonGroup,planet:moon,label});
-        });
-
-        orbitGroups.push({
-          group:orbit,
-          speed:parentId === 'music' ? .045 : -.035,
-        });
-      }
-
-      addArticleMoons('music',0xb68aff);
-      addArticleMoons('photography',0x8daaff);
-
-      // Asteroid belt with thousands of small purple rocks.
-      const asteroidPositions = [];
-      const asteroidColors = [];
-
-      for (let i=0;i<1800;i++) {
-        const angle = random(0,Math.PI*2);
-        const radius = random(14.5,16.8);
-        const y = random(-.55,.55);
-
-        asteroidPositions.push(
-          Math.cos(angle)*radius,
-          y,
-          Math.sin(angle)*radius
-        );
-
-        const col = new THREE.Color(
-          [0x8060a9,0x49345f,0xb18acb,0x6d5b89][Math.floor(Math.random()*4)]
-        );
-        asteroidColors.push(col.r,col.g,col.b);
-      }
-
-      const asteroidGeometry = new THREE.BufferGeometry();
-      asteroidGeometry.setAttribute(
-        'position',
-        new THREE.Float32BufferAttribute(asteroidPositions,3)
-      );
-      asteroidGeometry.setAttribute(
-        'color',
-        new THREE.Float32BufferAttribute(asteroidColors,3)
-      );
-
-      const asteroidBelt = new THREE.Points(
-        asteroidGeometry,
-        new THREE.PointsMaterial({
-          size:.09,
-          vertexColors:true,
-          transparent:true,
-          opacity:.78,
-          sizeAttenuation:true,
-        })
-      );
-      world.add(asteroidBelt);
-
-      // Comets with glowing heads and fading tails.
-      const comets = [];
-
-      for (let i=0;i<3;i++) {
-        const comet = new THREE.Group();
-        const head = new THREE.Mesh(
-          new THREE.SphereGeometry(.13,20,20),
-          new THREE.MeshBasicMaterial({color:0xf0dfff})
-        );
-        comet.add(head);
-        comet.add(glow(0xb78aff,2.5,.9));
-
-        const tailGeometry = new THREE.BufferGeometry();
-        const tailPositions = new Float32Array([
-          0,0,0,
-          0,0,0,
-          0,0,0,
-          0,0,0,
-          0,0,0,
-          0,0,0,
-        ]);
-        tailGeometry.setAttribute(
-          'position',
-          new THREE.BufferAttribute(tailPositions,3)
-        );
-
-        const tail = new THREE.Line(
-          tailGeometry,
-          new THREE.LineBasicMaterial({
-            color:0xc9a0ff,
-            transparent:true,
-            opacity:.55,
-            blending:THREE.AdditiveBlending,
-          })
-        );
-        comet.add(tail);
-
-        world.add(comet);
-
-        comets.push({
-          group:comet,
-          tail,
-          angle:random(0,Math.PI*2),
-          radius:random(20,29),
-          speed:random(.025,.055)*(i%2 ? -1 : 1),
-          height:random(-9,9),
-        });
-      }
-
-      // Interaction and selection.
-      const raycaster = new THREE.Raycaster();
-      const pointer = new THREE.Vector2();
-      let dragging = false;
-      let moved = false;
-      let previousX = 0;
-      let previousY = 0;
-      let velocityX = 0;
-      let velocityY = 0;
-      let selectedId = null;
-
-      function closePanel() {
-        detail.classList.remove('is-open');
-        selectedId = null;
-      }
-
-      function openNode(node) {
-        if (!node) return;
-
-        if (node.kind === 'about') {
-          document.querySelector('#about')?.scrollIntoView({
-            behavior:'smooth',
-            block:'start',
-          });
-          return;
-        }
-
-        if (node.url && node.kind !== 'category' && node.kind !== 'center') {
-          window.location.href = node.url;
-          return;
-        }
-
-        selectedId = node.id;
-        detailTitle.textContent = node.title;
-        detailDescription.textContent = node.description;
-        detailEyebrow.textContent =
-          node.kind === 'center' ? 'THE ARCHIVE' : 'EXPLORE THE COLLECTION';
-
-        detailLinks.replaceChildren();
-
-        if (node.kind === 'category') {
-          const children = archive.filter((item) => item.parent === node.id);
-
-          children.forEach((child) => {
-            const a = document.createElement('a');
-            a.href = child.url || '#';
-            a.textContent = `${child.title} ↗`;
-            detailLinks.appendChild(a);
-          });
-
-          if (!children.length) {
-            const empty = document.createElement('p');
-            empty.textContent = 'More stories coming soon.';
-            detailLinks.appendChild(empty);
-          }
-        }
-
-        if (node.kind === 'center') {
-          const a = document.createElement('a');
-          a.href = '#about';
-          a.textContent = 'Discover the story behind Turath ↗';
-          a.addEventListener('click',(event) => {
-            event.preventDefault();
-            document.querySelector('#about')?.scrollIntoView({behavior:'smooth'});
-          });
-          detailLinks.appendChild(a);
-        }
-
-        detail.classList.add('is-open');
-      }
-
-      section.querySelector('#universe-close')?.addEventListener('click',closePanel);
-
-      const canvas = renderer.domElement;
-
-      function setPointer(event) {
-        const rect = canvas.getBoundingClientRect();
-        pointer.x = ((event.clientX-rect.left)/rect.width)*2-1;
-        pointer.y = -((event.clientY-rect.top)/rect.height)*2+1;
-      }
-
-      canvas.addEventListener('pointerdown',(event) => {
-        dragging = true;
-        moved = false;
-        previousX = event.clientX;
-        previousY = event.clientY;
-        canvas.setPointerCapture(event.pointerId);
-      });
-
-      canvas.addEventListener('pointermove',(event) => {
-        if (!dragging) return;
-
-        const dx = event.clientX-previousX;
-        const dy = event.clientY-previousY;
-
-        if (Math.abs(dx)+Math.abs(dy)>2) moved = true;
-
-        velocityY = dx*.003;
-        velocityX = dy*.003;
-        world.rotation.y += velocityY;
-        world.rotation.x += velocityX;
-
-        previousX = event.clientX;
-        previousY = event.clientY;
-      });
-
-      const stopDrag = () => { dragging = false; };
-      canvas.addEventListener('pointerup',stopDrag);
-      canvas.addEventListener('pointercancel',stopDrag);
-
-      canvas.addEventListener('click',(event) => {
-        if (moved) {
-          moved = false;
-          return;
-        }
-
-        setPointer(event);
-        raycaster.setFromCamera(pointer,camera);
-        const hits = raycaster.intersectObjects(clickable,false);
-
-        if (hits.length) openNode(hits[0].object.userData.node);
-      });
-
-      canvas.addEventListener('wheel',(event) => {
-        event.preventDefault();
-        camera.position.z = clamp(camera.position.z+event.deltaY*.018,20,68);
-      },{passive:false});
-
-      search?.addEventListener('input',() => {
-        const query = search.value.trim().toLowerCase();
-        let matches = 0;
-
-        archive.forEach((node) => {
-          const match =
-            node.title.toLowerCase().includes(query) ||
-            node.description.toLowerCase().includes(query);
-
-          if (!query || match) matches++;
-
-          const item = objects.get(node.id);
-          if (item) {
-            item.planet.material.transparent = Boolean(query && !match);
-            item.planet.material.opacity = query && !match ? .15 : 1;
-            item.label.material.opacity = query && !match ? .12 : 1;
-          }
-        });
-
-        searchCount.textContent = query ? `${matches} FOUND` : '';
-      });
-
-      section.querySelector('#universe-reset')?.addEventListener('click',() => {
-        world.rotation.set(0,0,0);
-        camera.position.set(0,1,39);
-        search.value = '';
-        search.dispatchEvent(new Event('input'));
-        closePanel();
-      });
-
-      function resize() {
-        if (!section.isConnected) return;
-        const width = host.clientWidth;
-        const height = host.clientHeight;
-        if (!width || !height) return;
-
-        camera.aspect = width/height;
-        camera.updateProjectionMatrix();
-        renderer.setSize(width,height);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1,1.5));
-      }
-
-      window.addEventListener('resize',resize);
-
-      const clock = new THREE.Clock();
-      let animationFrame = 0;
-      let disposed = false;
-
-      function animate() {
-        if (disposed || !section.isConnected) return;
-        animationFrame = requestAnimationFrame(animate);
-
-        const delta = Math.min(clock.getDelta(),.04);
-        const elapsed = clock.elapsedTime;
-
-        stars.rotation.y += delta*.0025;
-        stars.rotation.x += delta*.0007;
-        dust.rotation.y -= delta*.006;
-        asteroidBelt.rotation.y += delta*.009;
-
-        sunSphere.rotation.y += delta*.09;
-        sunSphere.rotation.x += delta*.02;
-
-        sunLight.intensity = 185+Math.sin(elapsed*1.1)*12;
-
-        objects.forEach((item) => {
-          item.planet.rotation.y += delta*.07;
-          if (item.clouds) item.clouds.rotation.y += delta*.095;
-        });
-
-        orbitGroups.forEach((item) => {
-          item.group.rotation.z += delta*item.speed;
-        });
-
-        backgroundPlanets.forEach((planet,i) => {
-          planet.rotation.y += delta*(.018+i*.006);
-        });
-
-        comets.forEach((comet) => {
-          comet.angle += delta*comet.speed;
-
-          const x = Math.cos(comet.angle)*comet.radius;
-          const y = Math.sin(comet.angle)*comet.radius*.45+comet.height;
-          const z = Math.sin(comet.angle)*9-12;
-
-          comet.group.position.set(x,y,z);
-
-          const positions = comet.tail.geometry.attributes.position;
-          for (let i=0;i<6;i++) {
-            const t = i/5;
-            positions.setXYZ(i,-t*3.2,t*1.1,0);
-          }
-          positions.needsUpdate = true;
-        });
-
-        if (!dragging) {
-          world.rotation.y += velocityY*.12;
-          world.rotation.x += velocityX*.12;
-          velocityX *= .965;
-          velocityY *= .965;
-        }
-
-        renderer.render(scene,camera);
-      }
-
-      hideLoader();
-      animate();
-
-      cleanupUniverse = () => {
-        disposed = true;
-        cancelAnimationFrame(animationFrame);
-        window.removeEventListener('resize',resize);
-        renderer.dispose();
-
-        scene.traverse((object) => {
-          if (object.geometry) object.geometry.dispose();
-
-          if (object.material) {
-            const materials = Array.isArray(object.material)
-              ? object.material
-              : [object.material];
-
-            materials.forEach((material) => {
-              if (material.map) material.map.dispose();
-              material.dispose();
-            });
-          }
-        });
-
-        renderer.domElement.remove();
-      };
-
-    } catch (error) {
-      clearTimeout(timeoutId);
-      console.error('Turath universe initialization failed:',error);
-      showFallback();
+      line.position.copy(parent.position);
+      universe.add(line);
+      return line;
     }
+
+    function createPlanet(node, position, radius, palette, style = 'rocky', seed = 1) {
+      const group = new THREE.Group();
+      group.position.set(...position);
+      universe.add(group);
+
+      const texture = makeSurface(seed, palette, style);
+      const geometry = new THREE.SphereGeometry(radius, 64, 48);
+
+      const material = new THREE.MeshStandardMaterial({
+        map: texture,
+        roughness: style === 'gas' ? .75 : .88,
+        metalness: .08,
+      });
+
+      const planet = new THREE.Mesh(geometry, material);
+      planet.rotation.z = .18;
+      group.add(planet);
+
+      const atmosphere = new THREE.Mesh(
+        new THREE.SphereGeometry(radius * 1.055, 48, 32),
+        new THREE.MeshBasicMaterial({
+          color: palette[palette.length - 1],
+          transparent: true,
+          opacity: .08,
+          side: THREE.BackSide,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false,
+        })
+      );
+      group.add(atmosphere);
+
+      const glow = new THREE.Sprite(new THREE.SpriteMaterial({
+        map: glowTexture,
+        color: palette[palette.length - 1],
+        transparent: true,
+        opacity: node.id === 'turath' ? .9 : .38,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+      }));
+      glow.scale.set(radius * (node.id === 'turath' ? 5.5 : 4), radius * 4, 1);
+      group.add(glow);
+
+      // A soft atmospheric rim, layered outside the sphere.
+      const rim = new THREE.Mesh(
+        new THREE.SphereGeometry(radius * 1.025, 48, 32),
+        new THREE.MeshBasicMaterial({
+          color: palette[palette.length - 1],
+          transparent: true,
+          opacity: .08,
+          side: THREE.BackSide,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false,
+        })
+      );
+      group.add(rim);
+
+      const body = {
+        node,
+        group,
+        planet,
+        radius,
+        glow,
+        basePosition: new THREE.Vector3(...position),
+      };
+
+      bodyMeshes.push(planet);
+      bodyById.set(node.id, body);
+
+      if (node.id === 'music' || node.id === 'photography') {
+        const ring = new THREE.Mesh(
+          new THREE.RingGeometry(radius * 1.45, radius * 2.05, 120),
+          new THREE.MeshBasicMaterial({
+            color: node.id === 'music' ? '#bd91ff' : '#8b9aff',
+            side: THREE.DoubleSide,
+            transparent: true,
+            opacity: .42,
+            depthWrite: false,
+          })
+        );
+        ring.rotation.x = Math.PI * .34;
+        ring.rotation.y = .15;
+        group.add(ring);
+
+        const secondRing = new THREE.Mesh(
+          new THREE.RingGeometry(radius * 2.15, radius * 2.22, 120),
+          new THREE.MeshBasicMaterial({
+            color: '#e3caff',
+            side: THREE.DoubleSide,
+            transparent: true,
+            opacity: .2,
+            depthWrite: false,
+          })
+        );
+        secondRing.rotation.x = Math.PI * .34;
+        secondRing.rotation.y = .15;
+        group.add(secondRing);
+      }
+
+      return body;
+    }
+
+    // Central Turath star.
+    const centerNode = data.find(n => n.id === 'turath');
+    createPlanet(centerNode, positions.turath, 3.15, palettes.turath, 'gas', 17);
+
+    // Main orbit paths.
+    const center = new THREE.Vector3(0, 0, 0);
+    addOrbit(center, 13, 8, '#9b64d4');
+    addOrbit(center, 18, 12, '#6b4c9b');
+
+    const mainPlanets = data.filter(n => n.id !== 'turath' && !n.parent);
+
+    mainPlanets.forEach((node, index) => {
+      const position = positions[node.id] || [0, 0, 0];
+      const radius = node.id === 'acknowledgments' ? 1.65
+        : node.id === 'music' ? 2.35
+        : node.id === 'photography' ? 2.1
+        : node.id === 'about' ? 1.55
+        : 1.3;
+
+      const style = node.id === 'music' ? 'gas'
+        : node.id === 'photography' ? 'rocky'
+        : 'rocky';
+
+      createPlanet(
+        node,
+        position,
+        radius,
+        palettes[node.id] || palettes.latest,
+        style,
+        index + 30
+      );
+
+      if (node.id !== 'acknowledgments') {
+        addOrbit(
+          new THREE.Vector3(position[0], position[1], position[2]),
+          node.id === 'music' || node.id === 'photography' ? 4.2 : 2.8,
+          node.id === 'music' || node.id === 'photography' ? 2.8 : 1.9,
+          '#a78bfa'
+        );
+      }
+    });
+
+    // Article worlds orbit their parent category planets.
+    data.filter(n => n.parent).forEach((node, index) => {
+      const parent = bodyById.get(node.parent);
+      if (!parent) return;
+
+      const count = data.filter(n => n.parent === node.parent).length;
+      const radius = node.parent === 'music' ? 0.55 : 0.48;
+      const orbitRadius = node.parent === 'music' ? 4.2 : 3.5;
+      const angle = (index % Math.max(count, 1)) / Math.max(count, 1) * Math.PI * 2;
+
+      const group = new THREE.Group();
+      universe.add(group);
+
+      const moon = new THREE.Mesh(
+        new THREE.SphereGeometry(radius, 32, 24),
+        new THREE.MeshStandardMaterial({
+          map: makeSurface(index + 70, ['#171027', '#60428c', '#c8a8ec'], 'moon'),
+          roughness: .95,
+          metalness: .05,
+        })
+      );
+      group.add(moon);
+
+      const moonGlow = new THREE.Sprite(new THREE.SpriteMaterial({
+        map: glowTexture,
+        color: '#bd8bff',
+        transparent: true,
+        opacity: .24,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+      }));
+      moonGlow.scale.set(2.5, 2.5, 1);
+      group.add(moonGlow);
+
+      const articleBody = {
+        node,
+        group,
+        planet: moon,
+        radius,
+        parent,
+        angle,
+        orbitRadius,
+        orbitSpeed: .12 + (index % 4) * .035,
+      };
+
+      articleBodies.push(articleBody);
+      bodyMeshes.push(moon);
+      bodyById.set(node.id, articleBody);
+    });
+
+    // Comet particles with glowing heads and trailing paths.
+    const comets = [];
+    for (let i = 0; i < 3; i++) {
+      const cometGroup = new THREE.Group();
+      universe.add(cometGroup);
+
+      const head = new THREE.Mesh(
+        new THREE.SphereGeometry(.12, 12, 8),
+        new THREE.MeshBasicMaterial({ color: '#f1dcff' })
+      );
+      cometGroup.add(head);
+
+      const tailMaterial = new THREE.MeshBasicMaterial({
+        color: i === 1 ? '#9e75ff' : '#d2b2ff',
+        transparent: true,
+        opacity: .32,
+        side: THREE.DoubleSide,
+        depthWrite: false,
+      });
+
+      const tail = new THREE.Mesh(
+        new THREE.ConeGeometry(.18, 4.5, 12, 1, true),
+        tailMaterial
+      );
+      tail.rotation.z = Math.PI / 2;
+      tail.position.x = -2.2;
+      cometGroup.add(tail);
+
+      comets.push({
+        group: cometGroup,
+        phase: i * 2.1,
+        speed: .12 + i * .035,
+      });
+    }
+
+    // A few distant sparkling points.
+    const sparkles = [];
+    for (let i = 0; i < 28; i++) {
+      const star = new THREE.Sprite(new THREE.SpriteMaterial({
+        map: glowTexture,
+        color: i % 3 === 0 ? '#e9d5ff' : '#9e75ff',
+        transparent: true,
+        opacity: .25 + Math.random() * .35,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+      }));
+      const size = .3 + Math.random() * .8;
+      star.scale.set(size, size, 1);
+      star.position.set(
+        (Math.random() - .5) * 50,
+        (Math.random() - .5) * 35,
+        -Math.random() * 30
+      );
+      universe.add(star);
+      sparkles.push(star);
+    }
+
+    // Build accessible HTML labels.
+    data.forEach(node => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'planet-label';
+      button.textContent = node.title;
+      button.dataset.id = node.id;
+      button.addEventListener('click', () => selectNode(node));
+      labelsContainer.appendChild(button);
+      labelElements.set(node.id, button);
+    });
+
+    const detailTitle = section.querySelector('#detail-title');
+    const detailDescription = section.querySelector('#detail-description');
+    const detailLinks = section.querySelector('#detail-links');
+    const detailOpen = section.querySelector('#detail-open');
+
+    function selectNode(node) {
+      if (!node) return;
+
+      detailTitle.textContent = node.title;
+      detailDescription.textContent = node.description || 'Explore this part of the Turath universe.';
+      detailLinks.replaceChildren();
+
+      const children = data.filter(item => item.parent === node.id);
+
+      if (children.length) {
+        children.forEach(child => {
+          const link = document.createElement('a');
+          link.href = child.url || '#';
+          link.textContent = '↗  ' + child.title;
+          detailLinks.appendChild(link);
+        });
+      }
+
+      if (node.kind === 'article' && node.url) {
+        detailOpen.href = node.url;
+        detailOpen.textContent = 'READ STORY  ↗';
+        detailOpen.style.display = 'inline-block';
+      } else if (node.url) {
+        detailOpen.href = node.url;
+        detailOpen.textContent = node.id === 'about' ? 'DISCOVER TURATH  ↗' : 'EXPLORE  ↗';
+        detailOpen.style.display = 'inline-block';
+      } else {
+        detailOpen.style.display = 'none';
+      }
+
+      detail.classList.add('visible');
+
+      labelElements.forEach((label, id) => {
+        label.classList.toggle('active', id === node.id);
+      });
+    }
+
+    section.querySelector('#detail-close').addEventListener('click', () => {
+      detail.classList.remove('visible');
+      labelElements.forEach(label => label.classList.remove('active'));
+    });
+
+    search.addEventListener('input', () => {
+      const query = search.value.toLowerCase().trim();
+
+      data.forEach(node => {
+        const label = labelElements.get(node.id);
+        const matches = !query ||
+          node.title.toLowerCase().includes(query) ||
+          (node.description || '').toLowerCase().includes(query);
+
+        label.classList.toggle('dimmed', !matches);
+      });
+    });
+
+    // Drag rotation and zoom.
+    let dragging = false;
+    let lastX = 0;
+    let lastY = 0;
+    let rotationX = 0;
+    let rotationY = 0;
+    let targetRotationX = 0;
+    let targetRotationY = 0;
+    let zoom = 43;
+
+    canvas.addEventListener('pointerdown', event => {
+      dragging = true;
+      lastX = event.clientX;
+      lastY = event.clientY;
+      canvas.setPointerCapture(event.pointerId);
+    });
+
+    canvas.addEventListener('pointermove', event => {
+      if (!dragging) return;
+      const dx = event.clientX - lastX;
+      const dy = event.clientY - lastY;
+      targetRotationY += dx * .004;
+      targetRotationX += dy * .003;
+      targetRotationX = Math.max(-.7, Math.min(.7, targetRotationX));
+      lastX = event.clientX;
+      lastY = event.clientY;
+    });
+
+    const stopDragging = () => { dragging = false; };
+    canvas.addEventListener('pointerup', stopDragging);
+    canvas.addEventListener('pointercancel', stopDragging);
+    canvas.addEventListener('lostpointercapture', stopDragging);
+
+    canvas.addEventListener('wheel', event => {
+      event.preventDefault();
+      zoom = Math.max(27, Math.min(65, zoom + event.deltaY * .025));
+    }, { passive: false });
+
+    reset.addEventListener('click', () => {
+      targetRotationX = 0;
+      targetRotationY = 0;
+      zoom = 43;
+      search.value = '';
+      search.dispatchEvent(new Event('input'));
+      detail.classList.remove('visible');
+    });
+
+    // Resize handling.
+    function resize() {
+      const width = stage.clientWidth;
+      const height = stage.clientHeight;
+      if (!width || !height) return;
+
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height, false);
+    }
+
+    const resizeObserver = new ResizeObserver(resize);
+    resizeObserver.observe(stage);
+    resize();
+
+    const clock = new THREE.Clock();
+    const projected = new THREE.Vector3();
+    let animationFrame;
+    let lastRender = 0;
+
+    function animate(now = 0) {
+      if (!section.isConnected) {
+        cancelAnimationFrame(animationFrame);
+        resizeObserver.disconnect();
+        renderer.dispose();
+        return;
+      }
+
+      animationFrame = requestAnimationFrame(animate);
+
+      // Limit rendering on reduced-motion settings.
+      if (reducedMotion && now - lastRender < 100) return;
+      lastRender = now;
+
+      const elapsed = clock.getElapsedTime();
+
+      rotationX += (targetRotationX - rotationX) * .055;
+      rotationY += (targetRotationY - rotationY) * .055;
+
+      universe.rotation.x = rotationX;
+      universe.rotation.y = rotationY;
+
+      if (!reducedMotion) {
+        stars.rotation.y = elapsed * .003;
+        nearStars.rotation.y = -elapsed * .006;
+
+        bodyById.forEach(body => {
+          if (body.planet) body.planet.rotation.y += .0015;
+          if (body.glow) body.glow.material.opacity = .32 + Math.sin(elapsed * .7) * .035;
+        });
+
+        articleBodies.forEach(body => {
+          const angle = body.angle + elapsed * body.orbitSpeed;
+          body.group.position.set(
+            body.parent.basePosition.x + Math.cos(angle) * body.orbitRadius,
+            body.parent.basePosition.y + Math.sin(angle) * body.orbitRadius * .62,
+            body.parent.basePosition.z + Math.sin(angle * 1.7) * 1.2
+          );
+        });
+
+        comets.forEach(comet => {
+          const t = (elapsed * comet.speed + comet.phase) % (Math.PI * 2);
+          comet.group.position.set(
+            Math.cos(t) * 25,
+            Math.sin(t * 1.3) * 13,
+            -10 - Math.sin(t) * 10
+          );
+          comet.group.rotation.z = Math.atan2(
+            Math.cos(t * 1.3) * 13,
+            -Math.sin(t) * 25
+          );
+        });
+
+        sparkles.forEach((star, index) => {
+          star.material.opacity = .15 + (Math.sin(elapsed * (1 + index % 4) + index) + 1) * .2;
+        });
+      }
+
+      camera.position.z += (zoom - camera.position.z) * .06;
+
+      // Project each planet into the HTML label layer.
+      data.forEach(node => {
+        const body = bodyById.get(node.id);
+        const label = labelElements.get(node.id);
+        if (!body || !label) return;
+
+        projected.copy(body.group.position);
+        body.group.localToWorld(projected);
+        projected.project(camera);
+
+        const x = (projected.x * .5 + .5) * stage.clientWidth;
+        const y = (-projected.y * .5 + .5) * stage.clientHeight;
+        const visible = projected.z < 1 && x > -100 && x < stage.clientWidth + 100 &&
+          y > -50 && y < stage.clientHeight + 50;
+
+        label.style.left = `${x}px`;
+        label.style.top = `${y - (body.radius || .5) * 15 - 12}px`;
+        label.style.opacity = visible ? '1' : '0';
+        label.style.pointerEvents = visible ? 'auto' : 'none';
+      });
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    // Fade the loading screen away after the first render.
+    requestAnimationFrame(() => {
+      loading.classList.add('finished');
+      setTimeout(() => loading.remove(), 900);
+    });
+
+    // Click directly on a 3D planet.
+    const raycaster = new THREE.Raycaster();
+    const pointer = new THREE.Vector2();
+
+    canvas.addEventListener('click', event => {
+      if (dragging) return;
+
+      const rect = canvas.getBoundingClientRect();
+      pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+      raycaster.setFromCamera(pointer, camera);
+      const hits = raycaster.intersectObjects(bodyMeshes, false);
+
+      if (hits.length) {
+        const selected = [...bodyById.values()].find(body => body.planet === hits[0].object);
+        if (selected) selectNode(selected.node);
+      }
+    });
+
+    // Keep the scene working after Astro client-side navigation.
+    window.addEventListener('pagehide', () => {
+      cancelAnimationFrame(animationFrame);
+      resizeObserver.disconnect();
+      renderer.dispose();
+    }, { once: true });
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initialize, { once: true });
+  } else {
+    initialize();
   }
 
-  document.addEventListener('astro:page-load',initializeUniverse);
-
-  document.addEventListener('astro:before-swap',() => {
-    if (cleanupUniverse) {
-      cleanupUniverse();
-      cleanupUniverse = null;
-    }
-  });
-
-  initializeUniverse();
+  document.addEventListener('astro:page-load', initialize);
+})();
 </script>
