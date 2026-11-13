@@ -146,8 +146,7 @@ const nodes = [
     <div class="universe-fallback" id="universe-fallback" hidden>
       <p>THE OBSERVATORY IS UNAVAILABLE</p>
       <span>
-        Your browser could not initialize the 3D environment.
-        Try enabling hardware acceleration or using a WebGL-compatible browser.
+        The 3D environment could not be initialized. Please try again later.
       </span>
     </div>
   </div>
@@ -483,6 +482,10 @@ const nodes = [
     margin-left: 8px;
   }
 
+  .universe-fallback[hidden] {
+    display: none !important;
+  }
+
   .universe-fallback {
     position: absolute;
     inset: 0;
@@ -575,27 +578,44 @@ const nodes = [
 <script is:inline>
 (async () => {
   let THREE;
+  let initializationStarted = false;
 
-  // Load Three.js from its CDN.
-  try {
-    THREE = await import(
-      'https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js'
-    );
-  } catch (error) {
-    console.error('TURATH THREE.JS LOAD ERROR:', error);
+  function showFailure(message) {
+    console.error('TURATH OBSERVATORY ERROR:', message);
 
-    const loading = document.querySelector('#universe-loading');
-    const fallback = document.querySelector('#universe-fallback');
+    const section = document.querySelector('#turath-universe');
+    if (!section) return;
+
+    const loading = section.querySelector('#universe-loading');
+    const fallback = section.querySelector('#universe-fallback');
 
     if (loading) loading.classList.add('finished');
 
     if (fallback) {
       fallback.hidden = false;
-      fallback.querySelector('span').textContent =
-        'THREE.JS LOAD ERROR: ' + error.message;
+      fallback.querySelector('span').textContent = message;
     }
+  }
 
-    return;
+  // Load Three.js, with a backup CDN.
+  try {
+    THREE = await import(
+      'https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js'
+    );
+  } catch (firstError) {
+    console.warn('TURATH: Primary CDN failed. Trying backup.', firstError);
+
+    try {
+      THREE = await import(
+        'https://unpkg.com/three@0.180.0/build/three.module.js'
+      );
+    } catch (secondError) {
+      showFailure(
+        'THREE.JS COULD NOT LOAD: ' +
+        (secondError?.message || String(secondError))
+      );
+      return;
+    }
   }
 
   const initialize = () => {
@@ -615,11 +635,14 @@ const nodes = [
     const reset = section.querySelector('#universe-reset');
 
     const data = JSON.parse(section.dataset.archive || '[]');
+
     const reducedMotion = window.matchMedia(
       '(prefers-reduced-motion: reduce)'
     ).matches;
 
-    if (!section.isConnected) return;
+    if (!stage || !canvas || !labelsContainer || !loading || !fallback) {
+      throw new Error('Required observatory elements are missing.');
+    }
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color('#080510');
@@ -638,14 +661,10 @@ const nodes = [
         powerPreference: 'high-performance',
       });
     } catch (error) {
-      console.error('TURATH WEBGL ERROR:', error);
-
-      loading.classList.add('finished');
-      fallback.hidden = false;
-      fallback.querySelector('span').textContent =
-        'WEBGL ERROR: ' + error.message;
-
-      return;
+      throw new Error(
+        'WEBGL RENDERER ERROR: ' +
+        (error?.message || String(error))
+      );
     }
 
     renderer.setPixelRatio(
@@ -808,7 +827,6 @@ const nodes = [
       universe.add(sprite);
     }
 
-    // Purple nebula clouds.
     makeNebula(-17, 9, -24, 24, '#7433bd', .26);
     makeNebula(18, -8, -27, 29, '#4126a5', .22);
     makeNebula(0, 17, -35, 22, '#a34dce', .12);
@@ -874,7 +892,7 @@ const nodes = [
     const stars = new THREE.Points(starGeometry, starMaterial);
     universe.add(stars);
 
-    // A closer star layer adds depth.
+    // Closer stars.
     const nearStarPositions = new Float32Array(400 * 3);
 
     for (let i = 0; i < 400; i++) {
@@ -903,7 +921,6 @@ const nodes = [
 
     universe.add(nearStars);
 
-    // Main celestial object positions.
     const positions = {
       turath: [0, 0, 0],
       acknowledgments: [0, 12, -3],
@@ -1080,14 +1097,10 @@ const nodes = [
       return body;
     }
 
-    // Central Turath world.
     const centerNode = data.find(n => n.id === 'turath');
 
     if (!centerNode) {
-      console.error('TURATH UNIVERSE: Central node is missing.');
-      loading.classList.add('finished');
-      fallback.hidden = false;
-      return;
+      throw new Error('The central Turath planet is missing.');
     }
 
     createPlanet(
@@ -1099,7 +1112,6 @@ const nodes = [
       17
     );
 
-    // Main orbital paths.
     const center = new THREE.Vector3(0, 0, 0);
 
     addOrbit(center, 13, 8, '#9b64d4');
@@ -1139,22 +1151,19 @@ const nodes = [
       }
     });
 
-    // Article moons orbit their parent category planets.
+    // Article moons.
     data.filter(n => n.parent).forEach((node, index) => {
       const parent = bodyById.get(node.parent);
 
       if (!parent) return;
 
-      const count = data.filter(
-        n => n.parent === node.parent
-      ).length;
-
-      const radius = node.parent === 'music' ? .55 : .48;
-      const orbitRadius = node.parent === 'music' ? 4.2 : 3.5;
-
       const siblings = data.filter(
         n => n.parent === node.parent
       );
+
+      const count = siblings.length;
+      const radius = node.parent === 'music' ? .55 : .48;
+      const orbitRadius = node.parent === 'music' ? 4.2 : 3.5;
 
       const siblingIndex = siblings.findIndex(
         item => item.id === node.id
@@ -1211,7 +1220,7 @@ const nodes = [
       bodyById.set(node.id, articleBody);
     });
 
-    // Comets with glowing heads and tails.
+    // Comets.
     const comets = [];
 
     for (let i = 0; i < 3; i++) {
@@ -1249,7 +1258,7 @@ const nodes = [
       });
     }
 
-    // Additional sparkling stars.
+    // Sparkling stars.
     const sparkles = [];
 
     for (let i = 0; i < 28; i++) {
@@ -1278,7 +1287,7 @@ const nodes = [
       sparkles.push(star);
     }
 
-    // Create clickable HTML labels.
+    // Planet labels.
     data.forEach(node => {
       const button = document.createElement('button');
 
@@ -1357,7 +1366,7 @@ const nodes = [
       });
     });
 
-    // Search the archive.
+    // Search.
     search.addEventListener('input', () => {
       const query = search.value.toLowerCase().trim();
 
@@ -1373,8 +1382,9 @@ const nodes = [
       });
     });
 
-    // Drag rotation and zoom.
+    // Rotation and zoom.
     let dragging = false;
+    let movedDuringDrag = false;
     let lastX = 0;
     let lastY = 0;
 
@@ -1388,6 +1398,7 @@ const nodes = [
 
     canvas.addEventListener('pointerdown', event => {
       dragging = true;
+      movedDuringDrag = false;
 
       lastX = event.clientX;
       lastY = event.clientY;
@@ -1400,6 +1411,10 @@ const nodes = [
 
       const dx = event.clientX - lastX;
       const dy = event.clientY - lastY;
+
+      if (Math.abs(dx) + Math.abs(dy) > 2) {
+        movedDuringDrag = true;
+      }
 
       targetRotationY += dx * .004;
       targetRotationX += dy * .003;
@@ -1430,7 +1445,7 @@ const nodes = [
       );
     }, { passive: false });
 
-    // Reset the camera and search.
+    // Reset.
     reset.addEventListener('click', () => {
       targetRotationX = 0;
       targetRotationY = 0;
@@ -1446,7 +1461,7 @@ const nodes = [
       });
     });
 
-    // Responsive renderer.
+    // Responsive rendering.
     function resize() {
       const width = stage.clientWidth;
       const height = stage.clientHeight;
@@ -1480,12 +1495,12 @@ const nodes = [
       resizeObserver.disconnect();
 
       renderer.dispose();
-      starGeometry.dispose();
-      nearStarGeometry.dispose();
-      glowTexture.dispose();
+      renderer.forceContextLoss();
     }
 
     function animate(now = 0) {
+      if (disposed) return;
+
       if (!section.isConnected) {
         cleanup();
         return;
@@ -1561,16 +1576,16 @@ const nodes = [
 
       camera.position.z += (zoom - camera.position.z) * .06;
 
-      // Project each planet into the HTML label layer.
+      // Project planet positions into the HTML label layer.
       data.forEach(node => {
         const body = bodyById.get(node.id);
         const label = labelElements.get(node.id);
 
         if (!body || !label) return;
 
-        // Project the actual center of the planet.
-        projected.set(0, 0, 0);
-        body.group.localToWorld(projected);
+        body.group.updateWorldMatrix(true, false);
+
+        projected.setFromMatrixPosition(body.group.matrixWorld);
         projected.project(camera);
 
         const x =
@@ -1581,6 +1596,7 @@ const nodes = [
 
         const visible =
           projected.z < 1 &&
+          projected.z > -1 &&
           x > -100 &&
           x < stage.clientWidth + 100 &&
           y > -50 &&
@@ -1602,7 +1618,7 @@ const nodes = [
 
     animate();
 
-    // Remove the loading screen after initialization.
+    // Remove loading screen once rendering starts.
     requestAnimationFrame(() => {
       loading.classList.add('finished');
 
@@ -1611,12 +1627,15 @@ const nodes = [
       }, 900);
     });
 
-    // Click directly on a 3D planet.
+    // Direct planet selection.
     const raycaster = new THREE.Raycaster();
     const pointer = new THREE.Vector2();
 
     canvas.addEventListener('click', event => {
-      if (dragging) return;
+      if (movedDuringDrag) {
+        movedDuringDrag = false;
+        return;
+      }
 
       const rect = canvas.getBoundingClientRect();
 
@@ -1641,19 +1660,50 @@ const nodes = [
       }
     });
 
-    // Clean up when navigating away.
+    // Clean up on full page unload.
     window.addEventListener('pagehide', cleanup, { once: true });
   };
 
-  // Initialize on normal page load and Astro navigation.
+  // Guard against initialization errors.
+  const safeInitialize = () => {
+    if (initializationStarted) return;
+
+    const section = document.querySelector('#turath-universe');
+
+    if (!section || section.dataset.initialized === 'true') return;
+
+    initializationStarted = true;
+
+    try {
+      initialize();
+    } catch (error) {
+      initializationStarted = false;
+      section.dataset.initialized = 'false';
+
+      showFailure(
+        'OBSERVATORY INITIALIZATION FAILED: ' +
+        (error?.message || String(error))
+      );
+
+      console.error('TURATH INITIALIZATION ERROR:', error);
+    }
+  };
+
+  // Normal page load.
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initialize, {
-      once: true,
-    });
+    document.addEventListener(
+      'DOMContentLoaded',
+      safeInitialize,
+      { once: true }
+    );
   } else {
-    initialize();
+    safeInitialize();
   }
 
-  document.addEventListener('astro:page-load', initialize);
+  // Astro client-side navigation.
+  document.addEventListener('astro:page-load', () => {
+    initializationStarted = false;
+    safeInitialize();
+  });
 })();
 </script>
