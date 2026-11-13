@@ -1535,20 +1535,19 @@ const nodes = [
           }
         });
 
-        articleBodies.forEach(body => {
-          const angle = body.angle + elapsed * body.orbitSpeed;
+       articleBodies.forEach(body => {
+  const angle = body.angle + elapsed * body.orbitSpeed;
 
-          body.group.position.set(
-            body.parent.basePosition.x +
-              Math.cos(angle) * body.orbitRadius,
+  const parentPosition = body.parent?.group?.position;
 
-            body.parent.basePosition.y +
-              Math.sin(angle) * body.orbitRadius * .62,
+  if (!parentPosition) return;
 
-            body.parent.basePosition.z +
-              Math.sin(angle * 1.7) * 1.2
-          );
-        });
+  body.group.position.set(
+    parentPosition.x + Math.cos(angle) * body.orbitRadius,
+    parentPosition.y + Math.sin(angle) * body.orbitRadius * .62,
+    parentPosition.z + Math.sin(angle * 1.7) * 1.2
+  );
+});
 
         comets.forEach(comet => {
           const t =
