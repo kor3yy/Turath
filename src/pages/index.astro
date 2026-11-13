@@ -3,7 +3,6 @@
 import TurathIntro from '../components/TurathIntro.astro';
 import { getCollection } from 'astro:content';
 import '../styles/global.css';
-import LiquidCursor from '../components/LiquidCursor.astro';
 import BackgroundPhotoFlash from '../components/backgroundphotoflash.astro';
 import { ClientRouter } from 'astro:transitions';
 import TurathInteractions from '../components/TurathInteractions.astro';
@@ -663,11 +662,6 @@ const latestArticle = allPosts
   <body class="home">
     <BackgroundPhotoFlash />
     <TurathIntro />
-    <LiquidCursor />
-
-    <header>
-      <a class="home-header-mark" href="/">AN ARCHIVE OF CULTURE & EXPRESSION</a>
-    </header>
 
     <nav class="archive-navigation" aria-label="Explore Turath">
       <div class="archive-nav-item">
