@@ -151,13 +151,42 @@ const sections = [
         box-shadow: none;
       }
 
-      body.home .hero h1 {
-        margin: 0;
-        font-family: 'Queen Sheila Free', cursive;
-        font-size: clamp(4rem, 10vw, 7rem);
-        font-weight: normal;
-        letter-spacing: normal;
-        line-height: 1.3;
+      body.home .hero-logo {
+        position: relative;
+        width: clamp(180px, 35vw, 480px);
+        height: clamp(100px, 18vw, 220px);
+        margin: 0 auto;
+      }
+
+      body.home .hero-logo__image {
+        position: absolute;
+        inset: 0;
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        opacity: 0;
+        animation: hero-logo-crossfade 4s ease-in-out infinite;
+      }
+
+      body.home .hero-logo__image--first {
+        animation-delay: 0s;
+      }
+
+      body.home .hero-logo__image--second {
+        animation-delay: 2s;
+      }
+
+      @keyframes hero-logo-crossfade {
+        0%, 45% {
+          opacity: 1;
+        }
+        55%, 95% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
       }
 
       body.home .nav-links a {
@@ -742,7 +771,18 @@ const sections = [
 
     <main>
       <section class="hero">
-        <h1>Turath</h1>
+        <div class="hero-logo" aria-label="Turath">
+          <img
+            src="/images/newfavicon.png"
+            alt=""
+            class="hero-logo__image hero-logo__image--first"
+          />
+          <img
+            src="/images/newfavicon2.png"
+            alt=""
+            class="hero-logo__image hero-logo__image--second"
+          />
+        </div>
       </section>
 
       <div class="turath-marquee" aria-label="Culture. Art. Expression. History.">
