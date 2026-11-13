@@ -572,11 +572,14 @@ const nodes = [
     let THREE;
     try {
       THREE = await import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js');
-    } catch (error) {
-      loading.classList.add('finished');
-      fallback.hidden = false;
-      return;
-    }
+   } catch (error) {
+  console.error('TURATH THREE.JS LOAD ERROR:', error);
+  loading.classList.add('finished');
+  fallback.hidden = false;
+  fallback.querySelector('span').textContent =
+    'THREE.JS LOAD ERROR: ' + error.message;
+  return;
+}
 
     if (!section.isConnected) return;
 
@@ -589,8 +592,14 @@ const nodes = [
 
     let renderer;
     try {
-      renderer = new THREE.WebGLRenderer({
-        canvas,
+} catch (error) {
+  console.error('TURATH WEBGL ERROR:', error);
+  loading.classList.add('finished');
+  fallback.hidden = false;
+  fallback.querySelector('span').textContent =
+    'WEBGL ERROR: ' + error.message;
+  return;
+}        canvas,
         alpha: false,
         antialias: true,
         powerPreference: 'high-performance',
