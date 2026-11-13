@@ -550,8 +550,8 @@ const nodes = [
   }
 </style>
 
-<script is:inline>
-(() => {
+<script>
+import * as THREE from 'three';(() => {
   const initialize = async () => {
     const section = document.querySelector('#turath-universe');
     if (!section || section.dataset.initialized === 'true') return;
@@ -568,18 +568,6 @@ const nodes = [
 
     const data = JSON.parse(section.dataset.archive || '[]');
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    let THREE;
-    try {
-      THREE = await import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js');
-   } catch (error) {
-  console.error('TURATH THREE.JS LOAD ERROR:', error);
-  loading.classList.add('finished');
-  fallback.hidden = false;
-  fallback.querySelector('span').textContent =
-    'THREE.JS LOAD ERROR: ' + error.message;
-  return;
-}
 
     if (!section.isConnected) return;
 
