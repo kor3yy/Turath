@@ -76,6 +76,7 @@ const nodes = [
       <h2>THE UNIVERSE</h2>
       <p>Explore the worlds, stories, and people within Turath.</p>
     </div>
+
     <div class="universe-status">
       <span class="status-light"></span>
       DEEP SPACE OBSERVATION
@@ -93,11 +94,15 @@ const nodes = [
         aria-label="Search the Turath universe"
       />
     </div>
+
     <button type="button" id="universe-reset">RESET VIEW</button>
   </div>
 
   <div class="universe-stage" id="universe-stage">
-    <canvas id="universe-canvas" aria-label="Interactive 3D planetary universe"></canvas>
+    <canvas
+      id="universe-canvas"
+      aria-label="Interactive 3D planetary universe"
+    ></canvas>
 
     <div class="universe-loading" id="universe-loading">
       <div class="loading-orbit"><span></span></div>
@@ -110,23 +115,40 @@ const nodes = [
       <span>SECTOR 001</span>
       <span>THE TURATH SYSTEM</span>
     </div>
+
     <div class="universe-corner universe-corner-right">
       <span>3D ORBITAL VIEW</span>
       <span>DRAG TO ROTATE · SCROLL TO ZOOM</span>
     </div>
 
     <div class="universe-detail" id="universe-detail" aria-live="polite">
-      <button type="button" class="detail-close" id="detail-close" aria-label="Close details">×</button>
+      <button
+        type="button"
+        class="detail-close"
+        id="detail-close"
+        aria-label="Close details"
+      >×</button>
+
       <span class="detail-eyebrow">CELESTIAL OBJECT</span>
       <h3 id="detail-title">TURATH</h3>
-      <p id="detail-description">An archive of culture, art, expression, and the people behind them.</p>
+
+      <p id="detail-description">
+        An archive of culture, art, expression, and the people behind them.
+      </p>
+
       <div id="detail-links"></div>
-      <a id="detail-open" href="#about">EXPLORE <span>↗</span></a>
+
+      <a id="detail-open" href="#about">
+        EXPLORE <span>↗</span>
+      </a>
     </div>
 
     <div class="universe-fallback" id="universe-fallback" hidden>
       <p>THE OBSERVATORY IS UNAVAILABLE</p>
-      <span>Your browser could not initialize the 3D environment. Try enabling hardware acceleration or using a WebGL-compatible browser.</span>
+      <span>
+        Your browser could not initialize the 3D environment.
+        Try enabling hardware acceleration or using a WebGL-compatible browser.
+      </span>
     </div>
   </div>
 
@@ -554,8 +576,11 @@ const nodes = [
 (async () => {
   let THREE;
 
+  // Load Three.js from its CDN.
   try {
-    THREE = await import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js');
+    THREE = await import(
+      'https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js'
+    );
   } catch (error) {
     console.error('TURATH THREE.JS LOAD ERROR:', error);
 
@@ -573,7 +598,7 @@ const nodes = [
     return;
   }
 
-  const initialize = async () => {
+  const initialize = () => {
     const section = document.querySelector('#turath-universe');
 
     if (!section || section.dataset.initialized === 'true') return;
@@ -590,7 +615,9 @@ const nodes = [
     const reset = section.querySelector('#universe-reset');
 
     const data = JSON.parse(section.dataset.archive || '[]');
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const reducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
 
     if (!section.isConnected) return;
 
@@ -612,14 +639,19 @@ const nodes = [
       });
     } catch (error) {
       console.error('TURATH WEBGL ERROR:', error);
+
       loading.classList.add('finished');
       fallback.hidden = false;
       fallback.querySelector('span').textContent =
         'WEBGL ERROR: ' + error.message;
+
       return;
     }
 
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+    renderer.setPixelRatio(
+      Math.min(window.devicePixelRatio || 1, 1.5)
+    );
+
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.25;
@@ -661,7 +693,10 @@ const nodes = [
       const gradient = ctx.createLinearGradient(0, 0, 512, 256);
 
       palette.forEach((color, index) => {
-        gradient.addColorStop(index / (palette.length - 1), color);
+        gradient.addColorStop(
+          index / (palette.length - 1),
+          color
+        );
       });
 
       ctx.fillStyle = gradient;
@@ -674,6 +709,7 @@ const nodes = [
         const alpha = .025 + random() * .16;
 
         ctx.beginPath();
+
         ctx.ellipse(
           x,
           y,
@@ -694,6 +730,7 @@ const nodes = [
       if (style === 'gas') {
         for (let i = 0; i < 38; i++) {
           const y = random() * 256;
+
           ctx.fillStyle = `rgba(230,205,255,${.025 + random() * .1})`;
           ctx.fillRect(0, y, 512, 2 + random() * 10);
         }
@@ -735,7 +772,10 @@ const nodes = [
     function makeGlowTexture() {
       const [c, ctx] = textureCanvas(128, 128);
 
-      const g = ctx.createRadialGradient(64, 64, 2, 64, 64, 64);
+      const g = ctx.createRadialGradient(
+        64, 64, 2,
+        64, 64, 64
+      );
 
       g.addColorStop(0, 'rgba(255,255,255,.85)');
       g.addColorStop(.12, 'rgba(213,160,255,.42)');
@@ -761,19 +801,21 @@ const nodes = [
       });
 
       const sprite = new THREE.Sprite(material);
+
       sprite.position.set(x, y, z);
       sprite.scale.set(size, size * .65, 1);
 
       universe.add(sprite);
     }
 
+    // Purple nebula clouds.
     makeNebula(-17, 9, -24, 24, '#7433bd', .26);
     makeNebula(18, -8, -27, 29, '#4126a5', .22);
     makeNebula(0, 17, -35, 22, '#a34dce', .12);
     makeNebula(-4, -18, -30, 26, '#5522a0', .15);
     makeNebula(22, 12, -40, 18, '#bd73ff', .11);
 
-    // Distant stars
+    // Distant stars.
     const starCount = 2400;
     const starPositions = new Float32Array(starCount * 3);
     const starColors = new Float32Array(starCount * 3);
@@ -789,7 +831,11 @@ const nodes = [
       const tint = Math.random();
 
       const color = new THREE.Color(
-        tint > .84 ? '#d6b2ff' : tint > .55 ? '#9f9bff' : '#ffffff'
+        tint > .84
+          ? '#d6b2ff'
+          : tint > .55
+            ? '#9f9bff'
+            : '#ffffff'
       );
 
       starColors[i3] = color.r;
@@ -828,7 +874,7 @@ const nodes = [
     const stars = new THREE.Points(starGeometry, starMaterial);
     universe.add(stars);
 
-    // A second, closer star layer adds depth.
+    // A closer star layer adds depth.
     const nearStarPositions = new Float32Array(400 * 3);
 
     for (let i = 0; i < 400; i++) {
@@ -887,11 +933,13 @@ const nodes = [
       for (let i = 0; i <= 160; i++) {
         const a = (i / 160) * Math.PI * 2;
 
-        points.push(new THREE.Vector3(
-          Math.cos(a) * radiusX,
-          Math.sin(a) * radiusY,
-          0
-        ));
+        points.push(
+          new THREE.Vector3(
+            Math.cos(a) * radiusX,
+            Math.sin(a) * radiusY,
+            0
+          )
+        );
       }
 
       const geometry = new THREE.BufferGeometry().setFromPoints(points);
@@ -912,8 +960,16 @@ const nodes = [
       return line;
     }
 
-    function createPlanet(node, position, radius, palette, style = 'rocky', seed = 1) {
+    function createPlanet(
+      node,
+      position,
+      radius,
+      palette,
+      style = 'rocky',
+      seed = 1
+    ) {
       const group = new THREE.Group();
+
       group.position.set(...position);
       universe.add(group);
 
@@ -944,14 +1000,16 @@ const nodes = [
 
       group.add(atmosphere);
 
-      const glow = new THREE.Sprite(new THREE.SpriteMaterial({
-        map: glowTexture,
-        color: palette[palette.length - 1],
-        transparent: true,
-        opacity: node.id === 'turath' ? .9 : .38,
-        depthWrite: false,
-        blending: THREE.AdditiveBlending,
-      }));
+      const glow = new THREE.Sprite(
+        new THREE.SpriteMaterial({
+          map: glowTexture,
+          color: palette[palette.length - 1],
+          transparent: true,
+          opacity: node.id === 'turath' ? .9 : .38,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending,
+        })
+      );
 
       glow.scale.set(
         radius * (node.id === 'turath' ? 5.5 : 4),
@@ -961,7 +1019,6 @@ const nodes = [
 
       group.add(glow);
 
-      // A soft atmospheric rim, layered outside the sphere.
       const rim = new THREE.Mesh(
         new THREE.SphereGeometry(radius * 1.025, 48, 32),
         new THREE.MeshBasicMaterial({
@@ -1023,8 +1080,15 @@ const nodes = [
       return body;
     }
 
-    // Central Turath star.
+    // Central Turath world.
     const centerNode = data.find(n => n.id === 'turath');
+
+    if (!centerNode) {
+      console.error('TURATH UNIVERSE: Central node is missing.');
+      loading.classList.add('finished');
+      fallback.hidden = false;
+      return;
+    }
 
     createPlanet(
       centerNode,
@@ -1035,13 +1099,15 @@ const nodes = [
       17
     );
 
-    // Main orbit paths.
+    // Main orbital paths.
     const center = new THREE.Vector3(0, 0, 0);
 
     addOrbit(center, 13, 8, '#9b64d4');
     addOrbit(center, 18, 12, '#6b4c9b');
 
-    const mainPlanets = data.filter(n => n.id !== 'turath' && !n.parent);
+    const mainPlanets = data.filter(
+      n => n.id !== 'turath' && !n.parent
+    );
 
     mainPlanets.forEach((node, index) => {
       const position = positions[node.id] || [0, 0, 0];
@@ -1052,9 +1118,7 @@ const nodes = [
         : node.id === 'about' ? 1.55
         : 1.3;
 
-      const style = node.id === 'music' ? 'gas'
-        : node.id === 'photography' ? 'rocky'
-        : 'rocky';
+      const style = node.id === 'music' ? 'gas' : 'rocky';
 
       createPlanet(
         node,
@@ -1067,7 +1131,7 @@ const nodes = [
 
       if (node.id !== 'acknowledgments') {
         addOrbit(
-          new THREE.Vector3(position[0], position[1], position[2]),
+          new THREE.Vector3(...position),
           node.id === 'music' || node.id === 'photography' ? 4.2 : 2.8,
           node.id === 'music' || node.id === 'photography' ? 2.8 : 1.9,
           '#a78bfa'
@@ -1075,18 +1139,29 @@ const nodes = [
       }
     });
 
-    // Article worlds orbit their parent category planets.
+    // Article moons orbit their parent category planets.
     data.filter(n => n.parent).forEach((node, index) => {
       const parent = bodyById.get(node.parent);
 
       if (!parent) return;
 
-      const count = data.filter(n => n.parent === node.parent).length;
-      const radius = node.parent === 'music' ? 0.55 : 0.48;
+      const count = data.filter(
+        n => n.parent === node.parent
+      ).length;
+
+      const radius = node.parent === 'music' ? .55 : .48;
       const orbitRadius = node.parent === 'music' ? 4.2 : 3.5;
 
+      const siblings = data.filter(
+        n => n.parent === node.parent
+      );
+
+      const siblingIndex = siblings.findIndex(
+        item => item.id === node.id
+      );
+
       const angle =
-        (index % Math.max(count, 1)) / Math.max(count, 1) * Math.PI * 2;
+        (siblingIndex / Math.max(count, 1)) * Math.PI * 2;
 
       const group = new THREE.Group();
       universe.add(group);
@@ -1106,14 +1181,16 @@ const nodes = [
 
       group.add(moon);
 
-      const moonGlow = new THREE.Sprite(new THREE.SpriteMaterial({
-        map: glowTexture,
-        color: '#bd8bff',
-        transparent: true,
-        opacity: .24,
-        depthWrite: false,
-        blending: THREE.AdditiveBlending,
-      }));
+      const moonGlow = new THREE.Sprite(
+        new THREE.SpriteMaterial({
+          map: glowTexture,
+          color: '#bd8bff',
+          transparent: true,
+          opacity: .24,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending,
+        })
+      );
 
       moonGlow.scale.set(2.5, 2.5, 1);
       group.add(moonGlow);
@@ -1134,7 +1211,7 @@ const nodes = [
       bodyById.set(node.id, articleBody);
     });
 
-    // Comet particles with glowing heads and trailing paths.
+    // Comets with glowing heads and tails.
     const comets = [];
 
     for (let i = 0; i < 3; i++) {
@@ -1172,18 +1249,20 @@ const nodes = [
       });
     }
 
-    // A few distant sparkling points.
+    // Additional sparkling stars.
     const sparkles = [];
 
     for (let i = 0; i < 28; i++) {
-      const star = new THREE.Sprite(new THREE.SpriteMaterial({
-        map: glowTexture,
-        color: i % 3 === 0 ? '#e9d5ff' : '#9e75ff',
-        transparent: true,
-        opacity: .25 + Math.random() * .35,
-        depthWrite: false,
-        blending: THREE.AdditiveBlending,
-      }));
+      const star = new THREE.Sprite(
+        new THREE.SpriteMaterial({
+          map: glowTexture,
+          color: i % 3 === 0 ? '#e9d5ff' : '#9e75ff',
+          transparent: true,
+          opacity: .25 + Math.random() * .35,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending,
+        })
+      );
 
       const size = .3 + Math.random() * .8;
 
@@ -1199,7 +1278,7 @@ const nodes = [
       sparkles.push(star);
     }
 
-    // Build accessible HTML labels.
+    // Create clickable HTML labels.
     data.forEach(node => {
       const button = document.createElement('button');
 
@@ -1229,13 +1308,17 @@ const nodes = [
 
       detailLinks.replaceChildren();
 
-      const children = data.filter(item => item.parent === node.id);
+      const children = data.filter(
+        item => item.parent === node.id
+      );
 
       if (children.length) {
         children.forEach(child => {
+          if (!child.url) return;
+
           const link = document.createElement('a');
 
-          link.href = child.url || '#';
+          link.href = child.url;
           link.textContent = '↗  ' + child.title;
 
           detailLinks.appendChild(link);
@@ -1250,7 +1333,9 @@ const nodes = [
         detailOpen.href = node.url;
 
         detailOpen.textContent =
-          node.id === 'about' ? 'DISCOVER TURATH  ↗' : 'EXPLORE  ↗';
+          node.id === 'about'
+            ? 'DISCOVER TURATH  ↗'
+            : 'EXPLORE  ↗';
 
         detailOpen.style.display = 'inline-block';
       } else {
@@ -1272,13 +1357,15 @@ const nodes = [
       });
     });
 
+    // Search the archive.
     search.addEventListener('input', () => {
       const query = search.value.toLowerCase().trim();
 
       data.forEach(node => {
         const label = labelElements.get(node.id);
 
-        const matches = !query ||
+        const matches =
+          !query ||
           node.title.toLowerCase().includes(query) ||
           (node.description || '').toLowerCase().includes(query);
 
@@ -1317,7 +1404,10 @@ const nodes = [
       targetRotationY += dx * .004;
       targetRotationX += dy * .003;
 
-      targetRotationX = Math.max(-.7, Math.min(.7, targetRotationX));
+      targetRotationX = Math.max(
+        -.7,
+        Math.min(.7, targetRotationX)
+      );
 
       lastX = event.clientX;
       lastY = event.clientY;
@@ -1334,9 +1424,13 @@ const nodes = [
     canvas.addEventListener('wheel', event => {
       event.preventDefault();
 
-      zoom = Math.max(27, Math.min(65, zoom + event.deltaY * .025));
+      zoom = Math.max(
+        27,
+        Math.min(65, zoom + event.deltaY * .025)
+      );
     }, { passive: false });
 
+    // Reset the camera and search.
     reset.addEventListener('click', () => {
       targetRotationX = 0;
       targetRotationY = 0;
@@ -1346,9 +1440,13 @@ const nodes = [
       search.dispatchEvent(new Event('input'));
 
       detail.classList.remove('visible');
+
+      labelElements.forEach(label => {
+        label.classList.remove('active');
+      });
     });
 
-    // Resize handling.
+    // Responsive renderer.
     function resize() {
       const width = stage.clientWidth;
       const height = stage.clientHeight;
@@ -1371,18 +1469,30 @@ const nodes = [
 
     let animationFrame;
     let lastRender = 0;
+    let disposed = false;
+
+    function cleanup() {
+      if (disposed) return;
+
+      disposed = true;
+
+      cancelAnimationFrame(animationFrame);
+      resizeObserver.disconnect();
+
+      renderer.dispose();
+      starGeometry.dispose();
+      nearStarGeometry.dispose();
+      glowTexture.dispose();
+    }
 
     function animate(now = 0) {
       if (!section.isConnected) {
-        cancelAnimationFrame(animationFrame);
-        resizeObserver.disconnect();
-        renderer.dispose();
+        cleanup();
         return;
       }
 
       animationFrame = requestAnimationFrame(animate);
 
-      // Limit rendering on reduced-motion settings.
       if (reducedMotion && now - lastRender < 100) return;
 
       lastRender = now;
@@ -1400,7 +1510,9 @@ const nodes = [
         nearStars.rotation.y = -elapsed * .006;
 
         bodyById.forEach(body => {
-          if (body.planet) body.planet.rotation.y += .0015;
+          if (body.planet) {
+            body.planet.rotation.y += .0015;
+          }
 
           if (body.glow) {
             body.glow.material.opacity =
@@ -1412,14 +1524,21 @@ const nodes = [
           const angle = body.angle + elapsed * body.orbitSpeed;
 
           body.group.position.set(
-            body.parent.basePosition.x + Math.cos(angle) * body.orbitRadius,
-            body.parent.basePosition.y + Math.sin(angle) * body.orbitRadius * .62,
-            body.parent.basePosition.z + Math.sin(angle * 1.7) * 1.2
+            body.parent.basePosition.x +
+              Math.cos(angle) * body.orbitRadius,
+
+            body.parent.basePosition.y +
+              Math.sin(angle) * body.orbitRadius * .62,
+
+            body.parent.basePosition.z +
+              Math.sin(angle * 1.7) * 1.2
           );
         });
 
         comets.forEach(comet => {
-          const t = (elapsed * comet.speed + comet.phase) % (Math.PI * 2);
+          const t =
+            (elapsed * comet.speed + comet.phase) %
+            (Math.PI * 2);
 
           comet.group.position.set(
             Math.cos(t) * 25,
@@ -1435,7 +1554,8 @@ const nodes = [
 
         sparkles.forEach((star, index) => {
           star.material.opacity =
-            .15 + (Math.sin(elapsed * (1 + index % 4) + index) + 1) * .2;
+            .15 +
+            (Math.sin(elapsed * (1 + index % 4) + index) + 1) * .2;
         });
       }
 
@@ -1448,12 +1568,16 @@ const nodes = [
 
         if (!body || !label) return;
 
+        // Project the actual center of the planet.
         projected.set(0, 0, 0);
         body.group.localToWorld(projected);
         projected.project(camera);
 
-        const x = (projected.x * .5 + .5) * stage.clientWidth;
-        const y = (-projected.y * .5 + .5) * stage.clientHeight;
+        const x =
+          (projected.x * .5 + .5) * stage.clientWidth;
+
+        const y =
+          (-projected.y * .5 + .5) * stage.clientHeight;
 
         const visible =
           projected.z < 1 &&
@@ -1463,9 +1587,14 @@ const nodes = [
           y < stage.clientHeight + 50;
 
         label.style.left = `${x}px`;
-        label.style.top = `${y - (body.radius || .5) * 15 - 12}px`;
+
+        label.style.top =
+          `${y - (body.radius || .5) * 15 - 12}px`;
+
         label.style.opacity = visible ? '1' : '0';
-        label.style.pointerEvents = visible ? 'auto' : 'none';
+
+        label.style.pointerEvents =
+          visible ? 'auto' : 'none';
       });
 
       renderer.render(scene, camera);
@@ -1473,7 +1602,7 @@ const nodes = [
 
     animate();
 
-    // Fade the loading screen away after the first render.
+    // Remove the loading screen after initialization.
     requestAnimationFrame(() => {
       loading.classList.add('finished');
 
@@ -1491,8 +1620,11 @@ const nodes = [
 
       const rect = canvas.getBoundingClientRect();
 
-      pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      pointer.x =
+        ((event.clientX - rect.left) / rect.width) * 2 - 1;
+
+      pointer.y =
+        -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
       raycaster.setFromCamera(pointer, camera);
 
@@ -1503,20 +1635,21 @@ const nodes = [
           body => body.planet === hits[0].object
         );
 
-        if (selected) selectNode(selected.node);
+        if (selected) {
+          selectNode(selected.node);
+        }
       }
     });
 
-    // Keep the scene working after Astro client-side navigation.
-    window.addEventListener('pagehide', () => {
-      cancelAnimationFrame(animationFrame);
-      resizeObserver.disconnect();
-      renderer.dispose();
-    }, { once: true });
+    // Clean up when navigating away.
+    window.addEventListener('pagehide', cleanup, { once: true });
   };
 
+  // Initialize on normal page load and Astro navigation.
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initialize, { once: true });
+    document.addEventListener('DOMContentLoaded', initialize, {
+      once: true,
+    });
   } else {
     initialize();
   }
