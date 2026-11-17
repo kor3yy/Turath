@@ -6,56 +6,28 @@ import BackgroundPhotoFlash from '../components/backgroundphotoflash.astro';
 import { ClientRouter } from 'astro:transitions';
 import TurathIntro from '../components/TurathIntro.astro';
 import TurathInteractions from '../components/TurathInteractions.astro';
-import TurathConstellation from '../components/TurathConstellation.astro';
 
 const allPosts = await getCollection('blog');
 
 const newestFirst = (a, b) =>
   (b.data.pubDate?.valueOf() || 0) - (a.data.pubDate?.valueOf() || 0);
 
-const acknowledgments = allPosts.find((post) =>
-  post.data.title.toLowerCase().includes('acknowledgment')
-);
+const visiblePosts = allPosts
+  .filter((post) => !post.slug.includes('pr0crastn8-finding-his-own-lane'))
+  .sort(newestFirst);
 
-const findPost = (identity) => {
-  const normalizedIdentity = identity.toLowerCase();
+const featuredPosts = visiblePosts.slice(0, 6);
 
-  return allPosts.find((post) =>
-    post.data.title.toLowerCase().includes(normalizedIdentity) ||
-    post.slug.toLowerCase().includes(normalizedIdentity.replaceAll(' ', '-'))
+const postsWithThumbs = featuredPosts.map((post) => {
+  const match = post.body?.match(
+    /src="([^"]*\.(jpg|jpeg|png|gif|webp))"/i
   );
-};
 
-const uniquePosts = (posts) => {
-  const seen = new Set();
-
-  return posts.filter((post) => {
-    if (!post || seen.has(post.slug)) return false;
-    seen.add(post.slug);
-    return true;
-  });
-};
-
-const photographyPosts = uniquePosts([
-  findPost('will abbass'),
-  findPost('ian armata'),
-]);
-
-const musicPosts = uniquePosts([
-  findPost('savia'),
-  findPost('razi'),
-  findPost('jenna'),
-  findPost('toren'),
-  findPost('onyx'),
-  findPost('pr0crastn8'),
-]);
-
-const latestArticle = allPosts
-  .filter((post) =>
-    post.slug !== acknowledgments?.slug &&
-    !musicPosts.some((item) => item.slug === post.slug)
-  )
-  .sort(newestFirst)[0];
+  return {
+    ...post,
+    firstImage: match ? match[1] : post.data.thumbnail,
+  };
+});
 ---
 
 <!doctype html>
@@ -68,6 +40,7 @@ const latestArticle = allPosts
       name="description"
       content="Turath — heritage, culture, art, expression, and the people behind them."
     />
+
     <link rel="icon" type="image/png" href="/images/newfavicon.png" />
 
     <script is:inline>
@@ -86,6 +59,7 @@ const latestArticle = allPosts
       updateFavicon();
 
       const observer = new MutationObserver(updateFavicon);
+
       observer.observe(document.documentElement, {
         attributes: true,
         attributeFilter: ['data-theme']
@@ -150,6 +124,90 @@ const latestArticle = allPosts
         font-weight: 600;
       }
 
+      .home-articles {
+        width: min(1000px, calc(100% - 3rem));
+        margin: 0 auto 6rem;
+      }
+
+      .home-articles-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .home-articles-heading h2 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 500;
+      }
+
+      .view-all-posts {
+        color: var(--muted);
+        font-size: 0.85rem;
+        text-decoration: none;
+        transition: color 0.2s ease;
+      }
+
+      .view-all-posts:hover {
+        color: var(--page-text);
+      }
+
+      .home-article-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 2.5rem 2rem;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+      }
+
+      .home-article-card {
+        min-width: 0;
+      }
+
+      .home-article-card a {
+        display: block;
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .home-article-thumbnail {
+        display: block;
+        width: 100%;
+        aspect-ratio: 16 / 10;
+        margin-bottom: 1rem;
+        object-fit: cover;
+        border-radius: 8px;
+        background: var(--surface-bg, #111);
+        transition: opacity 0.3s ease;
+      }
+
+      .home-article-card a:hover .home-article-thumbnail {
+        opacity: 0.8;
+      }
+
+      .home-article-card h3 {
+        margin: 0 0 0.6rem;
+        font-size: 1.15rem;
+        font-weight: 500;
+        line-height: 1.4;
+      }
+
+      .home-article-date {
+        margin: 0 0 0.75rem;
+        color: var(--muted);
+        font-size: 0.75rem;
+      }
+
+      .home-article-description {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.85rem;
+        line-height: 1.7;
+      }
+
       body.home footer {
         padding: 1.5rem;
         color: var(--muted);
@@ -161,6 +219,20 @@ const latestArticle = allPosts
         .home-introduction {
           width: calc(100% - 2rem);
           margin-bottom: 3.5rem;
+        }
+
+        .home-articles {
+          width: calc(100% - 2rem);
+          margin-bottom: 4rem;
+        }
+
+        .home-article-list {
+          grid-template-columns: 1fr;
+          gap: 2rem;
+        }
+
+        .home-articles-heading h2 {
+          font-size: 1.25rem;
         }
 
         body.home footer {
@@ -185,13 +257,6 @@ const latestArticle = allPosts
     <TurathIntro />
 
     <main>
-      <TurathConstellation
-        acknowledgments={acknowledgments}
-        musicPosts={musicPosts}
-        photographyPosts={photographyPosts}
-        latestArticle={latestArticle}
-      />
-
       <section class="home-introduction" id="about">
         <div class="home-introduction-details">
           <p>
@@ -259,6 +324,46 @@ const latestArticle = allPosts
             music producers, and many more creatives.
           </p>
         </div>
+      </section>
+
+      <section class="home-articles" id="articles">
+        <div class="home-articles-heading">
+          <h2>Latest Articles</h2>
+          <a href="/blog" class="view-all-posts">View all posts &rarr;</a>
+        </div>
+
+        <ul class="home-article-list">
+          {postsWithThumbs.map((post) => (
+            <li class="home-article-card">
+              <a href={`/blog/${post.slug}/`}>
+                {post.firstImage && (
+                  <img
+                    src={post.firstImage}
+                    alt={post.data.title}
+                    class="home-article-thumbnail"
+                    loading="lazy"
+                  />
+                )}
+
+                <h3>{post.data.title}</h3>
+
+                <p class="home-article-date">
+                  {post.data.pubDate
+                    ? post.data.pubDate.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })
+                    : ''}
+                </p>
+
+                <p class="home-article-description">
+                  {post.data.description}
+                </p>
+              </a>
+            </li>
+          ))}
+        </ul>
       </section>
     </main>
 
