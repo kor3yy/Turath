@@ -1,376 +1,380 @@
-
----
-import { getCollection } from 'astro:content';
-import '../styles/global.css';
-import BackgroundPhotoFlash from '../components/backgroundphotoflash.astro';
-import { ClientRouter } from 'astro:transitions';
-import TurathIntro from '../components/TurathIntro.astro';
-import TurathInteractions from '../components/TurathInteractions.astro';
-
-const allPosts = await getCollection('blog');
-
-const newestFirst = (a, b) =>
-  (b.data.pubDate?.valueOf() || 0) - (a.data.pubDate?.valueOf() || 0);
-
-const visiblePosts = allPosts
-  .filter((post) => !post.slug.includes('pr0crastn8-finding-his-own-lane'))
-  .sort(newestFirst);
-
-const featuredPosts = visiblePosts.slice(0, 6);
-
-const postsWithThumbs = featuredPosts.map((post) => {
-  const match = post.body?.match(
-    /src="([^"]*\.(jpg|jpeg|png|gif|webp))"/i
-  );
-
-  return {
-    ...post,
-    firstImage: match ? match[1] : post.data.thumbnail,
-  };
-});
----
-
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Turath — heritage, culture, art, expression, and the people behind them."
-    />
-
-    <link rel="icon" type="image/png" href="/images/newfavicon.png" />
-
-    <script is:inline>
-      function updateFavicon() {
-        const theme = document.documentElement.getAttribute('data-theme');
-        const favicon = document.querySelector('link[rel="icon"]');
-
-        if (favicon) {
-          favicon.href =
-            theme === 'dark'
-              ? '/images/newfavicon.png'
-              : '/images/newfavicon2.png';
-        }
+```astro
       }
 
-      updateFavicon();
-
-      const observer = new MutationObserver(updateFavicon);
-
-      observer.observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ['data-theme']
-      });
-    </script>
-
-    <title>Turath</title>
-    <ClientRouter />
-
-    <style is:global>
-      @font-face {
-        font-family: 'Queen Sheila Free';
-        src: url('/fonts/queen-sheila-free.ttf') format('truetype');
-        font-weight: 400;
-        font-style: normal;
-        font-display: swap;
+      .featured-card:hover {
+        transform: translateY(-4px);
+        border-color: var(--page-text);
       }
 
-      html,
-      body {
-        min-height: 100%;
-        background: var(--page-bg);
-        color: var(--page-text);
-      }
-
-      body.home {
-        min-height: 100vh;
-        background-image: none;
-      }
-
-      body.home main,
-      body.home footer {
-        color: var(--page-text);
-      }
-
-      .home-introduction {
-        width: min(760px, calc(100% - 3rem));
-        margin: 0 auto 5rem;
-        padding-top: 2rem;
-        text-align: center;
-      }
-
-      .home-introduction-details {
-        max-width: 690px;
-        margin: 0 auto;
-        text-align: left;
-      }
-
-      .home-introduction-details p {
-        margin: 0 0 1.15rem;
-        color: var(--muted);
-        font-size: 0.9rem;
-        line-height: 1.85;
-      }
-
-      .home-introduction-details p:last-child {
-        margin-bottom: 0;
-      }
-
-      .dedication-line {
-        color: var(--page-text) !important;
-        font-weight: 600;
-      }
-
-      .home-articles {
-        width: min(1000px, calc(100% - 3rem));
-        margin: 0 auto 6rem;
-      }
-
-      .home-articles-heading {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
-        margin-bottom: 2rem;
-      }
-
-      .home-articles-heading h2 {
-        margin: 0;
-        font-size: 1.5rem;
-        font-weight: 500;
-      }
-
-      .view-all-posts {
-        color: var(--muted);
-        font-size: 0.85rem;
-        text-decoration: none;
-        transition: color 0.2s ease;
-      }
-
-      .view-all-posts:hover {
-        color: var(--page-text);
-      }
-
-      .home-article-list {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 2.5rem 2rem;
-        padding: 0;
-        margin: 0;
-        list-style: none;
-      }
-
-      .home-article-card {
-        min-width: 0;
-      }
-
-      .home-article-card a {
-        display: block;
-        color: inherit;
-        text-decoration: none;
-      }
-
-      .home-article-thumbnail {
+      .featured-image {
         display: block;
         width: 100%;
-        aspect-ratio: 16 / 10;
-        margin-bottom: 1rem;
+        height: 240px;
         object-fit: cover;
-        border-radius: 8px;
-        background: var(--surface-bg, #111);
-        transition: opacity 0.3s ease;
       }
 
-      .home-article-card a:hover .home-article-thumbnail {
-        opacity: 0.8;
+      .featured-copy {
+        padding: 1.2rem 1.3rem 1.4rem;
+        text-align: center;
       }
 
-      .home-article-card h3 {
-        margin: 0 0 0.6rem;
-        font-size: 1.15rem;
-        font-weight: 500;
-        line-height: 1.4;
-      }
-
-      .home-article-date {
-        margin: 0 0 0.75rem;
+      .eyebrow {
+        margin: 0 0 0.5rem;
         color: var(--muted);
-        font-size: 0.75rem;
+        font-size: 0.68rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
       }
 
-      .home-article-description {
+      .featured-copy h2 {
+        margin: 0 0 0.65rem;
+        color: var(--page-text);
+        font-size: 1.5rem;
+      }
+
+      .featured-copy p:last-child {
         margin: 0;
         color: var(--muted);
-        font-size: 0.85rem;
-        line-height: 1.7;
+        font-size: 0.88rem;
       }
 
-      body.home footer {
-        padding: 1.5rem;
+      /* Latest article */
+      .latest-article-section {
+        width: min(100% - 2rem, 900px);
+        margin: 0 auto 5rem;
+      }
+
+      .latest-article-heading {
+        margin-bottom: 1.2rem;
+      }
+
+      .latest-article-heading h2 {
+        margin: 0;
+        font-size: clamp(1.7rem, 4vw, 2.4rem);
+        letter-spacing: -0.04em;
+      }
+
+      .latest-article-card {
+        display: grid;
+        grid-template-columns: 1.1fr 1fr;
+        min-height: 280px;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        background: var(--surface-bg);
+        color: var(--page-text);
+        text-decoration: none;
+        transition: transform 250ms ease, border-color 250ms ease;
+      }
+
+      .latest-article-card:hover {
+        transform: translateY(-4px);
+        border-color: var(--page-text);
+      }
+
+      .latest-article-image {
+        display: block;
+        width: 100%;
+        height: 100%;
+        min-height: 280px;
+        object-fit: cover;
+      }
+
+      .latest-article-copy {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 2rem;
+      }
+
+      .latest-article-copy h3 {
+        margin: 0 0 0.8rem;
+        font-size: clamp(1.4rem, 3vw, 2rem);
+        line-height: 1.2;
+      }
+
+      .latest-article-copy p:not(.eyebrow) {
         color: var(--muted);
-        text-align: center;
+        font-size: 0.9rem;
+        line-height: 1.6;
+      }
+
+      .latest-article-copy span {
+        margin-top: 1rem;
+        font-size: 0.8rem;
+        letter-spacing: 0.08em;
+      }
+
+      /* Category sections */
+      .archive {
+        margin: 0 auto 4rem;
+      }
+
+      .archive-heading {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .archive-heading h2 {
+        margin: 0;
+        font-size: clamp(1.7rem, 4vw, 2.4rem);
+        letter-spacing: -0.04em;
+      }
+
+      .archive-heading p {
+        margin: 0.35rem 0 0;
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      .open-archive {
+        flex-shrink: 0;
+        padding: 0.65rem 0.9rem;
+        border: 1px solid var(--border-color);
+        border-radius: 999px;
+        color: var(--page-text);
+        background: var(--surface-bg);
+        cursor: pointer;
+        transition: border-color 200ms ease;
+      }
+
+      .open-archive:hover,
+      .open-archive[aria-expanded="true"] {
+        border-color: var(--page-text);
+      }
+
+      .category-cover {
+        position: relative;
+        display: block;
+        width: 100%;
+        height: clamp(250px, 39vw, 430px);
+        padding: 0;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        background: var(--surface-bg);
+        color: var(--page-text);
+        text-decoration: none;
+      }
+
+      .category-cover img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0;
+        transition: opacity 1s ease;
+      }
+
+      .category-cover img.is-current {
+        opacity: 1;
+      }
+
+      .category-cover::after {
+        position: absolute;
+        inset: 0;
+        content: '';
+        background: linear-gradient(
+          to top,
+          rgba(0, 0, 0, 0.75),
+          transparent 65%
+        );
+      }
+
+      .category-cover-copy {
+        position: absolute;
+        z-index: 1;
+        right: 1.5rem;
+        bottom: 1.5rem;
+        left: 1.5rem;
+        color: #fff;
+      }
+
+      .category-cover-copy h3 {
+        margin: 0 0 0.5rem;
+        font-size: clamp(2rem, 5vw, 3.5rem);
+      }
+
+      .category-cover-copy p {
+        margin: 0;
+        font-size: 0.9rem;
+        opacity: 0.85;
+      }
+
+      .section-view {
+        display: none;
+        padding: 2rem 0 0;
+      }
+
+      .section-view.is-open {
+        display: block;
+      }
+
+      .article-stage {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 330px;
+        overflow: hidden;
+        touch-action: pan-y;
+      }
+
+      .article-card {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        display: block;
+        width: min(230px, 58vw);
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        background: var(--surface-bg);
+        color: var(--page-text);
+        text-decoration: none;
+        opacity: var(--opacity, 0);
+        transform: translate(
+          calc(-50% + var(--x, 0px)),
+          -50%
+        ) scale(var(--scale, 0.7));
+        z-index: var(--z, 0);
+        transition:
+          transform 350ms ease,
+          opacity 350ms ease;
+        pointer-events: none;
+      }
+
+      .article-card.is-visible {
+        pointer-events: auto;
+      }
+
+      .article-card.is-active {
+        border-color: var(--page-text);
+      }
+
+      .article-card-image-wrap {
+        width: 100%;
+        height: 170px;
+        overflow: hidden;
+        background: var(--page-bg);
+      }
+
+      .article-card-image-wrap img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .article-card-copy {
+        padding: 1rem;
+      }
+
+      .article-card-copy h4 {
+        margin: 0 0 0.5rem;
+        font-size: 1rem;
+        line-height: 1.3;
+      }
+
+      .article-card-copy p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.78rem;
+        line-height: 1.5;
+      }
+
+      .section-controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        margin: 1.5rem auto 0;
+      }
+
+      .section-arrow {
+        display: grid;
+        width: 40px;
+        height: 40px;
+        place-items: center;
+        border: 1px solid var(--border-color);
+        border-radius: 50%;
+        background: var(--surface-bg);
+        color: var(--page-text);
+        cursor: pointer;
+      }
+
+      .section-arrow:hover {
+        border-color: var(--page-text);
+      }
+
+      .section-slider-wrap {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        width: min(280px, 55vw);
+      }
+
+      .section-slider {
+        flex: 1;
+        min-width: 0;
+        accent-color: var(--page-text);
+      }
+
+      .section-count {
+        min-width: 65px;
+        color: var(--muted);
         font-size: 0.75rem;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+
+      @keyframes turath-scroll {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-50%);
+        }
       }
 
       @media (max-width: 650px) {
-        .home-introduction {
-          width: calc(100% - 2rem);
-          margin-bottom: 3.5rem;
+        body.home .hero {
+          padding: 2rem 1rem 1rem;
         }
 
-        .home-articles {
-          width: calc(100% - 2rem);
-          margin-bottom: 4rem;
+        body.home .hero-logo {
+          width: clamp(170px, 58vw, 320px);
+          height: clamp(95px, 32vw, 175px);
         }
 
-        .home-article-list {
+        .latest-article-card {
           grid-template-columns: 1fr;
-          gap: 2rem;
         }
 
-        .home-articles-heading h2 {
-          font-size: 1.25rem;
+        .latest-article-image {
+          height: 220px;
+          min-height: 220px;
         }
 
-        body.home footer {
-          padding-bottom: 5rem;
+        .latest-article-copy {
+          padding: 1.3rem;
         }
-      }
 
-      @media (prefers-reduced-motion: reduce) {
-        *,
-        *::before,
-        *::after {
-          scroll-behavior: auto !important;
-          animation-duration: 0.01ms !important;
-          transition-duration: 0.01ms !important;
+        .archive-heading {
+          align-items: start;
+        }
+
+        .category-cover {
+          height: 280px;
+        }
+
+        .article-stage {
+          min-height: 300px;
         }
       }
     </style>
   </head>
-
-  <body class="home">
-    <BackgroundPhotoFlash />
-    <TurathIntro />
-
-    <main>
-      <section class="home-introduction" id="about">
-        <div class="home-introduction-details">
-          <p>
-            Turath (Arabic تُراث) literally means heritage, tradition, and culture.
-          </p>
-
-          <p>
-            The word comes from the Arabic root w-r-th (وَرث), meaning “to inherit”
-            or “to receive as a legacy.” Over time, its meaning grew beyond material
-            inheritance to represent the cultural, intellectual, and spiritual legacies
-            passed from one generation to the next — language, art, customs, stories,
-            beliefs, knowledge, and traditions.
-          </p>
-
-          <p>
-            Turath originally began as an idea for a clothing brand: a way to display
-            culture, art, and expression while creating a voice for people and
-            communities whose stories are often overlooked, misunderstood, or unheard.
-          </p>
-
-          <p>
-            The cultures intended to shape Turath include Congo, Iran, Algeria,
-            Palestine, Sudan, Lebanon, Kurdistan, Iraq, Ethiopia, Afghanistan,
-            South Africa, Somalia, Yemen, Haiti, and many others. These places represent
-            incredibly rich and diverse histories — cultures shaped by faith, migration,
-            creativity, colonialism, war, struggle, resilience, oppression, resistance,
-            and survival.
-          </p>
-
-          <p>The idea for Turath began with myself and Leen.</p>
-
-          <p>
-            Leen was, and remains, one of the dearest people to my soul. She was my
-            sister in everything but blood, my friend, and a divine expression of art,
-            humour, feeling, elegance, and strength. She was a fighter — someone whose
-            presence carried a warmth and spirit that is difficult to put into words.
-          </p>
-
-          <p>
-            On October 29th, Leen’s life was cut short in Gaza when an Israeli missile
-            struck the building where she and her family were residing. Leen, alongside
-            her sister Sara, her brother Ibrahim, and her mother Enas, did not survive.
-          </p>
-
-          <p>
-            There are some losses that change the shape of your life. For me, this was
-            the biggest one.
-          </p>
-
-          <p class="dedication-line">
-            Turath is dedicated to Leen, Sara, Ibrahim, and Enas.
-          </p>
-
-          <p>
-            What began as an idea between two people became something I now carry
-            forward alone, but never without her. Turath was one of Leen’s last wishes
-            for me — and fulfilling it is more than a project or a creative pursuit.
-            It is a promise.
-          </p>
-
-          <p>
-            Turath is a collection of ideas, stories, and perspectives across different
-            subgenres of art, ranging from music, photography, creative directing,
-            athletes, clothing brands, visual artists, entrepreneurs, business owners,
-            music producers, and many more creatives.
-          </p>
-        </div>
-      </section>
-
-      <section class="home-articles" id="articles">
-        <div class="home-articles-heading">
-          <h2>Latest Articles</h2>
-          <a href="/blog" class="view-all-posts">View all posts &rarr;</a>
-        </div>
-
-        <ul class="home-article-list">
-          {postsWithThumbs.map((post) => (
-            <li class="home-article-card">
-              <a href={`/blog/${post.slug}/`}>
-                {post.firstImage && (
-                  <img
-                    src={post.firstImage}
-                    alt={post.data.title}
-                    class="home-article-thumbnail"
-                    loading="lazy"
-                  />
-                )}
-
-                <h3>{post.data.title}</h3>
-
-                <p class="home-article-date">
-                  {post.data.pubDate
-                    ? post.data.pubDate.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      })
-                    : ''}
-                </p>
-
-                <p class="home-article-description">
-                  {post.data.description}
-                </p>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </section>
-    </main>
-
-    <footer>
-      <p>&copy; {new Date().getFullYear()} Turath. All rights reserved.</p>
-    </footer>
-
-    <TurathInteractions />
-  </body>
-</html>
